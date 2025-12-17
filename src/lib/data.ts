@@ -56,7 +56,7 @@ export const servicesData: ServiceCategory[] = [
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
         steps: [
-          { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
+          { id: '1', title: 'Paso 1: Solicitud de RFC Original', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
           { id: '2', title: 'Paso 2: Agenda una cita', content: 'Agenda una cita en la oficina del SAT más cercana.' },
           { id: '3', title: 'Paso 3: Acude a tu cita', content: 'Presenta tu documentación oficial para concluir el trámite.' },
           { id: '4', title: 'Paso 4: Obtén tu Acuse', content: 'Recibirás tu Acuse Único de Inscripción al RFC.' },
@@ -258,3 +258,4 @@ export const progressData: ProgressItem[] = [
     
 
     
+
