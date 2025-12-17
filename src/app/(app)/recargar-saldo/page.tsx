@@ -26,9 +26,9 @@ const banks = [
 ];
 
 const bankDetails = {
-    accountHolder: 'Tu Nombre Completo',
-    bankName: 'Nombre de tu Banco',
-    accountNumber: '123-456-7890'
+    accountHolder: 'ROSEMBER CRUZ BETANCOURT',
+    bankName: 'BBVA BANCOMER',
+    accountNumber: '4152 3140 2739 8869'
 };
 
 export default function AddBalancePage() {
