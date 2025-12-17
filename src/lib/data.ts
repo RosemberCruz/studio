@@ -171,7 +171,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
         imageHint: 'car insurance',
         steps: [
-            { id: '1', title: 'Solicitar Trámite', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'PROPORCIONA LOS DATOS DE TU VEHICULO PARA SOLICTAR EL TRAMITE' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -285,6 +285,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
