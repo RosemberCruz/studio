@@ -21,10 +21,58 @@ import {
   ClipboardCheck,
   ListChecks,
   Settings,
+  Wallet,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppHeader } from '@/components/AppHeader';
 import { AppLogo } from '@/components/AppLogo';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+
+
+function UserProfile() {
+  const { user } = useUser();
+  const firestore = useFirestore();
+  
+  const userDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
+  
+  const { data: userData } = useDoc(userDocRef);
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <>
+        <SidebarMenuItem>
+            <div className="flex items-center gap-3 p-2 border rounded-lg m-2">
+                <Wallet className="h-6 w-6 text-primary" />
+                <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Saldo Actual</span>
+                    <span className="font-semibold text-lg">
+                        {userData ? `$${userData.balance.toFixed(2)}` : '$0.00'}
+                    </span>
+                </div>
+            </div>
+        </SidebarMenuItem>
+         <SidebarMenuItem>
+          <div className="flex items-center gap-3 p-2">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt="Usuario" />
+              <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden">
+              <span className="font-semibold truncate">{user.displayName || 'Usuario'}</span>
+              <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+            </div>
+          </div>
+        </SidebarMenuItem>
+    </>
+  )
+}
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -91,18 +139,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 Configuración
               </SidebarMenuButton>
             </SidebarMenuItem>
-             <SidebarMenuItem>
-              <div className="flex items-center gap-3 p-2">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="Usuario" />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-semibold">Usuario</span>
-                  <span className="text-xs text-muted-foreground">usuario@email.com</span>
-                </div>
-              </div>
-            </SidebarMenuItem>
+             <UserProfile />
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>

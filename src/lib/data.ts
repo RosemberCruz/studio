@@ -13,6 +13,7 @@ export type Service = {
   slug: string;
   name: string;
   description: string;
+  cost: number;
   steps: Step[];
   documents: Document[];
 };
@@ -50,6 +51,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-original',
         name: 'Inscripción al RFC (Original)',
         description: 'Obtén tu Registro Federal de Contribuyentes por primera vez.',
+        cost: 250,
         steps: [
           { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
           { id: '2', title: 'Paso 2: Agenda una cita', content: 'Agenda una cita en la oficina del SAT más cercana.' },
@@ -67,6 +69,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-clon',
         name: 'Reimpresión de Constancia RFC (Clon)',
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
+        cost: 150,
         steps: [
           { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
           { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
@@ -82,6 +85,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-idcif',
         name: 'Constancia de Situación Fiscal (CIF)',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
+        cost: 200,
         steps: [
             { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
@@ -105,6 +109,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'antecedentes-no-penales',
             name: 'Certificado de Antecedentes No Penales',
             description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
+            cost: 180,
              steps: [
                 { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa al portal de tu estado y llena la solicitud.' },
                 { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago correspondiente en línea o en bancos.' },
@@ -120,6 +125,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'actas-registro-civil',
             name: 'Actas del Registro Civil',
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
+            cost: 100,
             steps: [
                 { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
                 { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago en línea.' },
@@ -142,6 +148,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'poliza-seguro',
         name: 'Póliza de Seguro Vehicular',
         description: 'Contrata o renueva la póliza de seguro para tu vehículo.',
+        cost: 1500,
         steps: [
             { id: '1', title: 'Paso 1: Cotización', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
             { id: '2', title: 'Paso 2: Elección de Cobertura', content: 'Elige la cobertura que mejor se adapte a tus necesidades.' },
@@ -158,6 +165,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'permiso-circular-sin-placas',
         name: 'Permiso para Circular sin Placas',
         description: 'Obtén un permiso temporal para circular mientras realizas el trámite de placas.',
+        cost: 350,
         steps: [
             { id: '1', title: 'Paso 1: Presentar Documentos', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
             { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Realiza el pago por la expedición del permiso.' },
@@ -181,6 +189,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'certificado-estudios',
             name: 'Certificado de Estudios',
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
+            cost: 300,
             steps: [
                 { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
@@ -197,6 +206,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'receta-medica',
             name: 'Receta Médica Digital',
             description: 'Genera una receta médica certificada por un profesional de la salud.',
+            cost: 120,
             steps: [
                 { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
                 { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
@@ -212,6 +222,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'incapacidad-medica',
             name: 'Justificante de Incapacidad Médica',
             description: 'Obtén un justificante de incapacidad médica para tu trabajo o escuela.',
+            cost: 220,
             steps: [
                 { id: '1', title: 'Paso 1: Valoración Médica', content: 'Un médico evaluará tu condición de salud.' },
                 { id: '2', title: 'Paso 2: Emisión del Justificante', content: 'El médico expide el documento con los días de incapacidad.' },

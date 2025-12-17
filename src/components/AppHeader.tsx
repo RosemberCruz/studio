@@ -18,30 +18,41 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, Home, Search } from 'lucide-react';
+import { Bell, Home, LogOut, Search } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { usePathname } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import React from 'react';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 function UserNav() {
+  const { user } = useUser();
+  const auth = useAuth();
+
+  const handleSignOut = () => {
+    signOut(auth);
+  }
+
+  if (!user) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="Usuario" />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt="Usuario" />
+            <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Usuario</p>
-            <p className="text-xs leading-none text-muted-foreground">usuario@email.com</p>
+            <p className="text-sm font-medium leading-none">{user.displayName || 'Usuario'}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -49,7 +60,10 @@ function UserNav() {
         <DropdownMenuItem>Facturación</DropdownMenuItem>
         <DropdownMenuItem>Configuración</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Cerrar Sesión</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="mr-2" />
+            Cerrar Sesión
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

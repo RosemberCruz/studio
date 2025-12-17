@@ -32,6 +32,10 @@
           "type": "string",
           "description": "Date and time when the user account was created.",
           "format": "date-time"
+        },
+        "balance": {
+            "type": "number",
+            "description": "The user's current account balance."
         }
       },
       "required": [
@@ -39,7 +43,8 @@
         "email",
         "firstName",
         "lastName",
-        "creationDate"
+        "creationDate",
+        "balance"
       ]
     }
   },
