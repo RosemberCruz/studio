@@ -15,9 +15,9 @@ function getStatusBadgeVariant(status: string): "default" | "secondary" | "destr
     switch (status) {
         case "Completado": return "default";
         case "En Proceso": return "secondary";
-        case "Solicitado": return "secondary";
+        case "Solicitado": return "outline";
         case "Rechazado": return "destructive";
-        default: return "outline";
+        default: return "secondary";
     }
 }
 
