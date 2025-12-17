@@ -66,16 +66,15 @@ export const servicesData: ServiceCategory[] = [
         id: 'rfc-clon',
         slug: 'rfc-clon',
         name: 'Reimpresión de Constancia RFC (Clon)',
-        description: 'Obtén una réplica de tu Registro Federal de Contribuyentes.',
+        description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         steps: [
-          { id: '1', title: 'Paso 1: Proporcionar Datos', content: 'Ingresa tu RFC y datos personales para generar el documento.' },
-          { id: '2', title: 'Paso 2: Verificación', content: 'Verificamos la información con los registros correspondientes.' },
-          { id: '3', title: 'Paso 3: Generación', content: 'Se genera una copia (clon) de tu constancia RFC.' },
-          { id: '4', title: 'Paso 4: Entrega', content: 'Recibe tu documento digitalmente.' },
+          { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
+          { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
+          { id: '3', title: 'Paso 3: Carga de Documento', content: 'Un administrador subirá el documento PDF a tu cuenta.' },
+          { id: '4', title: 'Paso 4: Descarga', content: 'Recibirás una notificación para que puedas descargar tu constancia RFC desde la plataforma.' },
         ],
         documents: [
-          { id: '1', name: 'Número de RFC', description: 'Tu Registro Federal de Contribuyentes.' },
-          { id: '2', name: 'Identificación Oficial', description: 'Para corroborar tu identidad.' },
+          { id: '1', name: 'CURP', description: 'Tu Clave Única de Registro de Población, la usaremos para encontrar tu RFC.' },
         ],
       },
       {
