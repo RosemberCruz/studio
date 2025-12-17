@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useCollection, useMemoFirebase } from '@/firebase';
@@ -9,9 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ShieldCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboardPage() {
     const firestore = useFirestore();
+    const router = useRouter();
 
     const usersQuery = useMemoFirebase(() => {
         if (!firestore) return null;
@@ -19,6 +20,10 @@ export default function AdminDashboardPage() {
     }, [firestore]);
 
     const { data: users, isLoading } = useCollection(usersQuery);
+
+    const handleUserClick = (userId: string) => {
+        router.push(`/admin/users/${userId}`);
+    }
 
     return (
         <div className="space-y-8">
@@ -38,7 +43,7 @@ export default function AdminDashboardPage() {
                 <CardHeader>
                     <CardTitle>Usuarios Registrados</CardTitle>
                     <CardDescription>
-                        Esta es la lista de todos los usuarios en la plataforma.
+                        Esta es la lista de todos los usuarios en la plataforma. Haz clic en un usuario para ver sus detalles.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -57,7 +62,7 @@ export default function AdminDashboardPage() {
                             </TableHeader>
                             <TableBody>
                                 {users?.map((user) => (
-                                    <TableRow key={user.id}>
+                                    <TableRow key={user.id} onClick={() => handleUserClick(user.id)} className="cursor-pointer">
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-9 w-9">
