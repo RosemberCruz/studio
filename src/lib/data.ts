@@ -125,7 +125,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'actas-registro-civil',
             name: 'Actas del Registro Civil',
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
-            cost: 100,
+            cost: 120,
             steps: [
                 { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
                 { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago en línea.' },
