@@ -84,7 +84,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-idcif',
         name: 'Constancia de Situación Fiscal IDCIF',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
-        cost: 200,
+        cost: 60,
         steps: [
             { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
@@ -244,4 +244,6 @@ export const progressData: ProgressItem[] = [
 ];
 
     
+    
+
     
