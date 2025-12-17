@@ -140,7 +140,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'actas-registro-civil',
             name: 'Actas del Registro Civil',
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
-            cost: 120,
+            cost: 50,
             deliveryTime: "10 minutos",
             imageUrl: 'https://picsum.photos/seed/civil-registry/600/400',
             imageHint: 'birth certificate',
@@ -150,7 +150,7 @@ export const servicesData: ServiceCategory[] = [
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
-                { id: '1', name: 'Datos del Registrado', description: 'Nombre completo, fecha y lugar de registro.' },
+                { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población de la persona registrada.' },
                 { id: '2', name: 'Tipo de Acta', description: 'Nacimiento, Matrimonio, Divorcio o Defunción.' },
             ],
         },
@@ -281,6 +281,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
