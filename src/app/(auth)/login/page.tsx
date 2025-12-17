@@ -13,10 +13,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { useAuth, useFirestore } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { updateProfile, User } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
@@ -29,6 +39,9 @@ export default function LoginPage() {
 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
 
   const [signupFirstName, setSignupFirstName] = useState('');
   const [signupLastName, setSignupLastName] = useState('');
@@ -101,8 +114,36 @@ export default function LoginPage() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if (!resetEmail) {
+        toast({
+            variant: "destructive",
+            title: "Correo requerido",
+            description: "Por favor, ingresa tu correo electrónico."
+        });
+        return;
+    }
+    try {
+        await sendPasswordResetEmail(auth, resetEmail);
+        toast({
+            title: "Correo Enviado",
+            description: "Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico."
+        });
+        setIsResetDialogOpen(false);
+        setResetEmail('');
+    } catch (error: any) {
+        console.error("Password Reset Error: ", error);
+        toast({
+            variant: "destructive",
+            title: "Error al Enviar Correo",
+            description: "No se pudo enviar el correo de restablecimiento. Verifica que el correo sea correcto."
+        });
+    }
+  }
+
 
   return (
+    <>
     <Tabs defaultValue="login" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
@@ -130,7 +171,16 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="login-password">Contraseña</Label>
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="login-password">Contraseña</Label>
+                    <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                        <DialogTrigger asChild>
+                             <Button variant="link" type="button" className="p-0 h-auto text-xs">
+                                ¿Olvidaste tu contraseña?
+                            </Button>
+                        </DialogTrigger>
+                    </Dialog>
+                </div>
                 <Input
                   id="login-password"
                   type="password"
@@ -218,5 +268,29 @@ export default function LoginPage() {
         </Card>
       </TabsContent>
     </Tabs>
+
+     <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Restablecer Contraseña</DialogTitle>
+          <DialogDescription>
+            Ingresa tu correo electrónico y te enviaremos un enlace para que puedas restablecer tu contraseña.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-2">
+          <Label htmlFor="reset-email">Correo Electrónico</Label>
+          <Input
+            id="reset-email"
+            type="email"
+            placeholder="tu@email.com"
+            value={resetEmail}
+            onChange={(e) => setResetEmail(e.target.value)}
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsResetDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={handlePasswordReset}>Enviar Correo</Button>
+        </DialogFooter>
+      </DialogContent>
+    </>
   );
 }
