@@ -57,7 +57,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
-        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
         imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Solicitar Trámite', content: 'CSF 100% ORIGINAL' },
@@ -75,7 +75,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
         imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
@@ -93,7 +93,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/tax-id/600/400',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax document',
         steps: [
             { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
@@ -119,7 +119,7 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
             cost: 100,
             deliveryTime: "20 minutos",
-            imageUrl: 'https://picsum.photos/seed/police-record/600/400',
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/d2170367-937d-4113-adaf-557375e2f754.png',
             imageHint: 'legal document',
              steps: [
                 { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
@@ -131,7 +131,7 @@ export const servicesData: ServiceCategory[] = [
                 { id: '2', name: 'CURP', description: 'Clave Única de Registro de Población.' },
                 { id: '3', name: 'Fecha de Nacimiento', description: 'Tu fecha de nacimiento completa.' },
                 { id: '4', name: 'Domicilio', description: 'Tu dirección de residencia actual.' },
-                { id: '5', name: 'Identificación Oficial (INE)', description: 'Se requiere la clave de elector.' },
+                { id: '5', name: 'Clave de Elector', description: 'Se encuentra en tu credencial del INE.' },
                 { id: '6', name: 'Estado', description: 'El estado en el que solicitarás el antecedente no penal.' },
             ],
         },
@@ -142,7 +142,7 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
             cost: 50,
             deliveryTime: "10 minutos",
-            imageUrl: 'https://picsum.photos/seed/civil-registry/600/400',
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/b0f19ac5-c6e3-40f4-8a4b-e8533b379965.png',
             imageHint: 'birth certificate',
             steps: [
                 { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos de la persona para buscar el acta.' },
@@ -168,7 +168,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'POLIZA DE SEGURO ADMINISTRATIVO POR 1 AÑO',
         cost: 130,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/238b7157-555f-46df-98c4-a3f1244463c2.png',
         imageHint: 'car insurance',
         steps: [
             { id: '1', title: 'Solicitar Trámite', content: 'PROPORCIONA LOS DATOS DE TU VEHICULO PARA SOLICTAR EL TRAMITE' },
@@ -190,19 +190,24 @@ export const servicesData: ServiceCategory[] = [
         slug: 'permiso-circular-sin-placas',
         name: 'Permiso para Circular sin Placas',
         description: 'Obtén un permiso temporal para circular mientras realizas el trámite de placas.',
-        cost: 350,
-        deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/no-plates-permit/600/400',
+        cost: 160,
+        deliveryTime: "1 hora",
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/32bb649c-a1b7-4e38-89c0-9d0d346fe18f.png',
         imageHint: 'temporary permit',
         steps: [
-            { id: '1', title: 'Solicitar Trámite', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
-            { id: '1', name: 'Factura o Carta Factura del Vehículo', description: 'Debe estar a tu nombre.' },
-            { id: '2', name: 'Identificación Oficial', description: 'INE o Pasaporte vigente.' },
-            { id: '3', name: 'Comprobante de Domicilio', description: 'No mayor a 3 meses.' },
+            { id: '1', name: 'Nombre del Propietario', description: 'Nombre completo tal como aparece en la factura.' },
+            { id: '2', name: 'Modelo', description: 'Año del vehículo.' },
+            { id: '3', name: 'Línea', description: 'Línea o versión específica del vehículo.' },
+            { id: '4', name: 'Color', description: 'Color exterior del vehículo.' },
+            { id: '5', name: 'Número de Motor', description: 'Se encuentra en la factura o tarjeta de circulación.' },
+            { id: '6', name: 'Número de Serie (VIN)', description: 'Número de Identificación Vehicular.' },
+            { id: '7', name: 'Dirección', description: 'Dirección completa del propietario.' },
+            { id: '8', name: 'Estado', description: 'Solicita para Guerrero, EDOMEX o CDMX.' },
         ],
       },
     ],
@@ -219,12 +224,12 @@ export const servicesData: ServiceCategory[] = [
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             cost: 300,
             deliveryTime: "10 minutos",
-            imageUrl: 'https://picsum.photos/seed/study-certificate/600/400',
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/4134b22c-a251-4f3b-8515-5152865c3637.png',
             imageHint: 'school certificate',
              steps: [
                 { id: '1', title: 'Solicitar Trámite', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
-                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
-                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Identificación Oficial', description: 'Tu INE o Pasaporte.' },
@@ -239,12 +244,12 @@ export const servicesData: ServiceCategory[] = [
             description: 'Genera una receta médica certificada por un profesional de la salud.',
             cost: 120,
             deliveryTime: "10 minutos",
-            imageUrl: 'https://picsum.photos/seed/prescription/600/400',
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/51296cc6-13a8-450f-a391-72a3e5e18237.png',
             imageHint: 'medical prescription',
             steps: [
                 { id: '1', title: 'Solicitar Trámite', content: 'Ten una teleconsulta con un médico certificado.' },
-                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
-                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Historial Médico Breve', description: 'Síntomas y padecimientos actuales.' },
@@ -258,12 +263,12 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén un justificante de incapacidad médica para tu trabajo o escuela.',
             cost: 220,
             deliveryTime: "10 minutos",
-            imageUrl: 'https://picsum.photos/seed/medical-leave/600/400',
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/d32f50d1-d250-4fe7-9130-31626f21c561.png',
             imageHint: 'doctor note',
             steps: [
                 { id: '1', title: 'Solicitar Trámite', content: 'Un médico evaluará tu condición de salud.' },
-                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
-                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
@@ -285,6 +290,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
