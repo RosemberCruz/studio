@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import AppLayout from '@/app/(app)/layout';
 
 // This is a simulated admin check. In a real app, this would be based on custom claims.
 function useIsAdmin() {
@@ -42,6 +43,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // If the user is a verified admin, render the children within this layout.
-  return <>{children}</>;
+  // If the user is a verified admin, render the children within the main AppLayout.
+  return <AppLayout>{children}</AppLayout>;
 }
