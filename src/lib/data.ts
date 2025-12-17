@@ -52,7 +52,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-original',
         name: 'Constancia de Situación Fiscal Original',
         description: 'Obtén tu Registro Federal de Contribuyentes por primera vez.',
-        cost: 250,
+        cost: 100,
         steps: [
           { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
           { id: '2', title: 'Paso 2: Agenda una cita', content: 'Agenda una cita en la oficina del SAT más cercana.' },
@@ -61,8 +61,6 @@ export const servicesData: ServiceCategory[] = [
         ],
         documents: [
           { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
-          { id: '2', name: 'Comprobante de Domicilio', description: 'No mayor a 3 meses.' },
-          { id: '3', name: 'Identificación Oficial', description: 'INE o Pasaporte vigente.' },
         ],
       },
       {
