@@ -166,7 +166,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'poliza-seguro',
         name: 'Póliza de Seguro Vehicular',
         description: 'Contrata o renueva la póliza de seguro para tu vehículo.',
-        cost: 1500,
+        cost: 130,
         deliveryTime: "10 minutos",
         imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
         imageHint: 'car insurance',
@@ -176,9 +176,13 @@ export const servicesData: ServiceCategory[] = [
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
-            { id: '1', name: 'Tarjeta de Circulación', description: 'Datos del vehículo a asegurar.' },
-            { id: '2', name: 'Identificación Oficial del Contratante', description: 'Tu INE o Pasaporte.' },
-            { id: '3', name: 'Licencia de Conducir', description: 'Licencia vigente del conductor habitual.' },
+            { id: '1', name: 'Nombre del Conductor', description: 'Nombre completo del conductor habitual.' },
+            { id: '2', name: 'Número de Serie', description: 'También conocido como VIN.' },
+            { id: '3', name: 'Número de Motor', description: 'Se encuentra en la tarjeta de circulación.' },
+            { id: '4', name: 'Placas', description: 'Número de placas del vehículo.' },
+            { id: '5', name: 'Domicilio', description: 'Dirección completa del contratante.' },
+            { id: '6', name: 'Modelo', description: 'Año del vehículo.' },
+            { id: '7', name: 'Marca', description: 'Marca del vehículo.' },
         ],
       },
       {
@@ -281,6 +285,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
