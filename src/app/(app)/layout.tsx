@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -24,6 +23,7 @@ import {
   Wallet,
   Landmark,
   LogOut,
+  ShieldCheck,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppHeader } from '@/components/AppHeader';
@@ -95,9 +95,18 @@ function LogoutButton() {
     )
 }
 
+// Temp function to simulate admin check. Replace with real logic.
+function useIsAdmin() {
+    // In a real app, you would get this from the user's custom claims.
+    // For now, we'll let everyone be an admin for demonstration.
+    return true; 
+}
+
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isActive = (path: string) => pathname.startsWith(path);
+  const isAdmin = useIsAdmin();
 
   return (
     <SidebarProvider>
@@ -118,6 +127,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {isAdmin && (
+               <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive('/admin')}>
+                  <Link href="/admin">
+                    <ShieldCheck />
+                    Admin
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={isActive('/servicios')}>
                 <Link href="/servicios">
