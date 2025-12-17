@@ -40,11 +40,6 @@ export default function LoginPage() {
   };
 
   const createFirestoreUserDocument = async (user: User) => {
-    // Update the user's profile in Firebase Auth first
-    await updateProfile(user, {
-      displayName: `${signupFirstName} ${signupLastName}`,
-    });
-
     // Then, create the user document in Firestore
     const userRef = doc(firestore, 'users', user.uid);
     const userData = {
@@ -56,7 +51,7 @@ export default function LoginPage() {
       creationDate: new Date().toISOString(),
       balance: 500, // Initial balance for new users
     };
-
+    
     // Use setDoc and await it to ensure the document is created before proceeding.
     await setDoc(userRef, userData, { merge: true });
   };
@@ -64,10 +59,19 @@ export default function LoginPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // 1. Create the user in Firebase Auth
       const userCredential = await initiateEmailSignUp(auth, signupEmail, signupPassword);
-      if (userCredential && userCredential.user) {
-        // Now we are sure the user is created in Auth, let's create the Firestore doc.
-        await createFirestoreUserDocument(userCredential.user);
+      const user = userCredential?.user;
+
+      if (user) {
+        // 2. Update the user's profile in Firebase Auth
+        await updateProfile(user, {
+          displayName: `${signupFirstName} ${signupLastName}`,
+        });
+
+        // 3. Create the user document in Firestore
+        await createFirestoreUserDocument(user);
+        
         // The onAuthStateChanged listener in the provider will handle the redirect.
       }
     } catch (error) {
@@ -75,6 +79,7 @@ export default function LoginPage() {
       // Optionally, display an error to the user here.
     }
   };
+
 
   return (
     <Tabs defaultValue="login" className="w-full">
