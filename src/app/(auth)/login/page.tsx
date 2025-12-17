@@ -46,7 +46,7 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Error al Iniciar Sesión",
-        description: error.message || "Ocurrió un error."
+        description: "Credenciales incorrectas. Por favor, verifica tu email y contraseña."
       });
     }
   };
@@ -85,11 +85,19 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.error("Sign-up Error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Error al Crear Cuenta",
-        description: error.message || "No se pudo completar el registro."
-      });
+      if (error.code === 'auth/email-already-in-use') {
+        toast({
+            variant: "destructive",
+            title: "Correo ya registrado",
+            description: "Este correo electrónico ya está en uso. Intenta iniciar sesión."
+        });
+      } else {
+        toast({
+            variant: "destructive",
+            title: "Error al Crear Cuenta",
+            description: error.message || "No se pudo completar el registro."
+        });
+      }
     }
   };
 
