@@ -57,7 +57,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
-        imageUrl: 'https://picsum.photos/seed/sat-logo/600/400',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
@@ -75,7 +75,7 @@ export const servicesData: ServiceCategory[] = [
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/sat-logo/600/400',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
@@ -93,8 +93,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/sat-logo/600/400',
-        imageHint: 'tax logo',
+        imageUrl: 'https://picsum.photos/seed/tax-id/600/400',
+        imageHint: 'tax document',
         steps: [
             { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -277,6 +277,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
