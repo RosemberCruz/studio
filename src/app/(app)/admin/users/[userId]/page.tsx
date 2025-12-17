@@ -48,10 +48,20 @@ export default function UserDetailPage() {
         );
     }
 
-    if (!user) {
+    if (!isUserLoading && !user) {
         notFound();
     }
     
+    // We need to ensure user exists before proceeding
+    if (!user) {
+        // This is a fallback, the above notFound() should catch it.
+        return (
+             <div className="flex h-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        )
+    }
+
     const creationDate = user.creationDate ? new Date(user.creationDate) : new Date();
 
     const handleRequestClick = (requestId: string) => {
