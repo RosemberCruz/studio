@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
     const { data: users, isLoading } = useCollection(usersQuery);
 
     const handleUserClick = (userId: string) => {
-        router.push(`/admin/${userId}`);
+        router.push(`/admin/users/${userId}`);
     }
 
     return (
