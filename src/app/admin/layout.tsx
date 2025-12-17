@@ -18,16 +18,9 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
-  LayoutDashboard,
-  Bot,
-  ClipboardCheck,
-  ListChecks,
-  Settings,
-  Wallet,
-  Landmark,
+  Home,
   LogOut,
   ShieldCheck,
-  Home,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -84,7 +77,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isAdmin = useIsAdmin();
   const router = useRouter();
   const pathname = usePathname();
-  const isActive = (path: string) => pathname.startsWith(path);
 
   React.useEffect(() => {
     if (!isUserLoading) {
@@ -104,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // This layout is now self-contained and does NOT use AppLayout
+  // This layout is self-contained and does NOT use AppLayout
   return (
      <SidebarProvider>
       <Sidebar>
