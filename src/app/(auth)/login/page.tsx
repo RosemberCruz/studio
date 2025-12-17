@@ -13,15 +13,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import {
   initiateEmailSignIn,
   initiateEmailSignUp,
 } from '@/firebase/non-blocking-login';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, User } from 'firebase/auth';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -41,41 +40,46 @@ export default function LoginPage() {
     initiateEmailSignIn(auth, loginEmail, loginPassword);
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // First, create the user in Firebase Auth
-      initiateEmailSignUp(auth, signupEmail, signupPassword);
+  const createFirestoreUserDocument = async (user: User) => {
+    // Update the user's profile in Firebase Auth first
+    await updateProfile(user, {
+      displayName: `${signupFirstName} ${signupLastName}`,
+    });
 
-      // We need to listen for the user creation to get the UID
-      const unsubscribe = auth.onAuthStateChanged(async (user) => {
-        if (user) {
-          unsubscribe(); // Stop listening once we have the user
+    // Then, create the user document in Firestore
+    const userRef = doc(firestore, 'users', user.uid);
+    const userData = {
+      id: user.uid,
+      email: signupEmail,
+      firstName: signupFirstName,
+      lastName: signupLastName,
+      phoneNumber: signupPhone,
+      creationDate: new Date().toISOString(),
+      balance: 500, // Initial balance for new users
+    };
 
-          // Update the user's profile in Firebase Auth
-          await updateProfile(user, {
-            displayName: `${signupFirstName} ${signupLastName}`,
-          });
-
-          // Then, create the user document in Firestore
-          const userRef = doc(firestore, 'users', user.uid);
-          const userData = {
-            id: user.uid,
-            email: signupEmail,
-            firstName: signupFirstName,
-            lastName: signupLastName,
-            phoneNumber: signupPhone,
-            creationDate: new Date().toISOString(),
-            balance: 500, // Initial balance for new users
-          };
-
-          setDocumentNonBlocking(userRef, userData, { merge: true });
-        }
-      });
-    } catch (error) {
-      console.error('Error during sign up:', error);
-    }
+    setDocumentNonBlocking(userRef, userData, { merge: true });
   };
+
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
+    initiateEmailSignUp(auth, signupEmail, signupPassword);
+  };
+
+  // We need to listen for the user creation to get the UID
+  // and check if it's a new user.
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user && user.metadata.creationTime === user.metadata.lastSignInTime) {
+         // This is likely a new user sign-up
+         if (signupFirstName && signupLastName && signupEmail) {
+            await createFirestoreUserDocument(user);
+         }
+      }
+    });
+    return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, signupFirstName, signupLastName, signupEmail]);
 
   return (
     <Tabs defaultValue="login" className="w-full">
