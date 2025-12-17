@@ -117,8 +117,8 @@ export const servicesData: ServiceCategory[] = [
             slug: 'antecedentes-no-penales',
             name: 'Certificado de Antecedentes No Penales',
             description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
-            cost: 180,
-            deliveryTime: "10 minutos",
+            cost: 100,
+            deliveryTime: "20 minutos",
             imageUrl: 'https://picsum.photos/seed/police-record/600/400',
             imageHint: 'legal document',
              steps: [
@@ -128,7 +128,10 @@ export const servicesData: ServiceCategory[] = [
             ],
             documents: [
                 { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
-                { id: '2', name: 'Comprobante de Pago', description: 'Recibo del pago de derechos.' },
+                { id: '2', name: 'Identificación Oficial (INE)', description: 'Se requiere la clave de elector.' },
+                { id: '3', name: 'Nombre Completo', description: 'Tal como aparece en tu identificación.' },
+                { id: '4', name: 'Fecha de Nacimiento', description: 'Tu fecha de nacimiento completa.' },
+                { id: '5', name: 'Domicilio', description: 'Tu dirección de residencia actual.' },
             ],
         },
         {
@@ -277,6 +280,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
