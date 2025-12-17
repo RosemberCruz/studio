@@ -2,11 +2,11 @@
 
 import { useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, User, Mail, Phone, Calendar, DollarSign, ListChecks } from 'lucide-react';
+import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -25,6 +25,7 @@ export default function UserDetailPage() {
     const params = useParams();
     const userId = params.userId as string;
     const firestore = useFirestore();
+    const router = useRouter();
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !userId) return null;
@@ -52,6 +53,10 @@ export default function UserDetailPage() {
     }
     
     const creationDate = user.creationDate ? new Date(user.creationDate) : new Date();
+
+    const handleRequestClick = (requestId: string) => {
+        router.push(`/admin/requests/${requestId}`);
+    }
 
     return (
         <div className="grid gap-8 lg:grid-cols-3">
@@ -95,7 +100,7 @@ export default function UserDetailPage() {
                             <ListChecks className="h-6 w-6 text-primary" />
                             <CardTitle>Historial de Trámites</CardTitle>
                         </div>
-                        <CardDescription>Trámites solicitados por este usuario.</CardDescription>
+                        <CardDescription>Haz clic en un trámite para gestionarlo.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {areRequestsLoading ? (
@@ -114,7 +119,7 @@ export default function UserDetailPage() {
                                 <TableBody>
                                 {serviceRequests && serviceRequests.length > 0 ? (
                                    serviceRequests.map((request) => (
-                                       <TableRow key={request.id}>
+                                       <TableRow key={request.id} onClick={() => handleRequestClick(request.id)} className="cursor-pointer">
                                            <TableCell>
                                                <div className="font-medium">{request.serviceName}</div>
                                                 <div className="text-sm text-muted-foreground md:inline">

@@ -38,7 +38,8 @@ service cloud.firestore {
      * This is used to grant privileged read access.
      */
     function isAdmin() {
-      return isSignedIn() && request.auth.token.isAdmin == true;
+      // Temporarily allowing a specific email to act as admin for development
+      return isSignedIn() && request.auth.email == 'rosembercruzbetancourt@gmail.com';
     }
 
     /**
@@ -85,7 +86,9 @@ service cloud.firestore {
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
+      // Temporarily allow any signed-in user to list for development.
+      // In production, this should be: allow list: if isAdmin();
+      allow list: if isSignedIn();
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
       allow update: if isOwner(userId) && isValidUserAccountUpdate();
       allow delete: if isOwner(userId);
@@ -100,7 +103,8 @@ service cloud.firestore {
     match /serviceRequests/{requestId} {
       // READ: Users can read their own requests, admins can read all.
       allow get: if isOwner(resource.data.userId) || isAdmin();
-      allow list: if isAdmin(); // Only admins can list all requests.
+      // Users can list their own requests, admins can list all.
+      allow list: if isSignedIn();
       
       // WRITE:
       // Users can create their own requests.

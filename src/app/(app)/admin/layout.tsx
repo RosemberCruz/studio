@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 
 function useIsAdmin() {
     const { user } = useUser();
-    // This should be replaced with a more secure method like custom claims
+    // This should be replaced with a more secure method like custom claims in production
     const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
     return user?.email === ADMIN_EMAIL;
 }
