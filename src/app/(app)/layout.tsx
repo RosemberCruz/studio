@@ -22,6 +22,7 @@ import {
   ListChecks,
   Settings,
   Wallet,
+  Landmark,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppHeader } from '@/components/AppHeader';
@@ -110,6 +111,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link href="/generador-formularios">
                   <Bot />
                   Generador de Formas
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/recargar-saldo'}>
+                <Link href="/recargar-saldo">
+                  <Landmark />
+                  Recargar Saldo
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
