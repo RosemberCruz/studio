@@ -60,7 +60,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
-          { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
+          { id: '1', title: 'Solicitar Trámite', content: 'CSF 100% ORIGINAL' },
           { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
           { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -78,7 +78,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
-          { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
+          { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
           { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
           { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -96,7 +96,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://picsum.photos/seed/tax-id/600/400',
         imageHint: 'tax document',
         steps: [
-            { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación para que puedas descargar tu constancia desde la plataforma.' },
         ],
@@ -122,7 +122,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/police-record/600/400',
             imageHint: 'legal document',
              steps: [
-                { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -145,7 +145,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/civil-registry/600/400',
             imageHint: 'birth certificate',
             steps: [
-                { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos de la persona para buscar el acta.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -171,7 +171,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
         imageHint: 'car insurance',
         steps: [
-            { id: '1', title: 'Paso 1: Cotización', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -195,7 +195,7 @@ export const servicesData: ServiceCategory[] = [
         imageUrl: 'https://picsum.photos/seed/no-plates-permit/600/400',
         imageHint: 'temporary permit',
         steps: [
-            { id: '1', title: 'Paso 1: Presentar Documentos', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
             { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -222,7 +222,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/study-certificate/600/400',
             imageHint: 'school certificate',
              steps: [
-                { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -242,7 +242,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/prescription/600/400',
             imageHint: 'medical prescription',
             steps: [
-                { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ten una teleconsulta con un médico certificado.' },
                 { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -261,7 +261,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/medical-leave/600/400',
             imageHint: 'doctor note',
             steps: [
-                { id: '1', title: 'Paso 1: Valoración Médica', content: 'Un médico evaluará tu condición de salud.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Un médico evaluará tu condición de salud.' },
                 { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -285,6 +285,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
