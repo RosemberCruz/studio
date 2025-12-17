@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Landmark, Loader2, Clipboard, AlertCircle, Bank, Banknote } from 'lucide-react';
+import { Landmark, Loader2, Clipboard, AlertCircle, Banknote } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -163,7 +163,7 @@ export default function AddBalancePage() {
                 <div className="space-y-2">
                     <Label htmlFor="sourceBank">Banco de Origen</Label>
                     <div className="relative">
-                        <Bank className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input id="sourceBank" type="text" placeholder="Ej: BBVA, Santander, Banorte" value={sourceBank} onChange={e => setSourceBank(e.target.value)} required disabled={isPending} className="pl-9"/>
                     </div>
                 </div>
