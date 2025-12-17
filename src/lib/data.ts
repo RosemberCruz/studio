@@ -83,14 +83,14 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situación Fiscal (CIF)',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         steps: [
-            { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu contraseña del SAT (antes CIEC) o e.firma para iniciar.' },
+            { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
             { id: '3', title: 'Paso 3: Carga de Documento', content: 'Un administrador subirá el documento PDF a tu cuenta.' },
             { id: '4', title: 'Paso 4: Descarga', content: 'Recibirás una notificación para que puedas descargar tu constancia desde la plataforma.' },
         ],
         documents: [
             { id: '1', name: 'RFC', description: 'Tu Registro Federal de Contribuyentes.' },
-            { id: '2', name: 'Contraseña del SAT (CIEC) o e.firma', description: 'Necesaria para que podamos acceder al portal del SAT en tu nombre.' },
+            { id: '2', name: 'ID CIF', description: 'El identificador de tu Cédula de Identificación Fiscal.' },
         ],
       },
     ],
