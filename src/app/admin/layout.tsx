@@ -1,11 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useUser } from '@/firebase';
-import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Loader2, Home, LogOut, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarProvider,
@@ -17,15 +15,10 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import {
-  Home,
-  LogOut,
-  ShieldCheck,
-} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
 import { AppLogo } from '@/components/AppLogo';
-import { useAuth } from '@/firebase';
+import { useUser, useAuth } from '@/firebase'; // Corrected: useUser is available from the main barrel file
 import { signOut } from 'firebase/auth';
 
 function useIsAdmin() {
@@ -96,7 +89,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // This layout is self-contained and does NOT use AppLayout
   return (
      <SidebarProvider>
       <Sidebar>
@@ -109,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
+              <SidebarMenuButton asChild>
                 <Link href="/dashboard">
                   <Home />
                   Volver al App
