@@ -68,7 +68,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: 'rfc-clon',
         slug: 'rfc-clon',
-        name: 'Reimpresión de Constancia RFC (Clon)',
+        name: 'Constancia de Situacion Fiscal Generica',
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
         steps: [
@@ -245,4 +245,5 @@ export const progressData: ProgressItem[] = [
     { id: 'P004', serviceName: 'Permiso de Construcción', status: 'Rechazado', currentStep: 2, totalSteps: 5, submittedDate: '2024-03-01', lastUpdate: '2024-03-15' },
 ];
 
+    
     
