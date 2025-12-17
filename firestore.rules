@@ -84,7 +84,8 @@ service cloud.firestore {
     match /users/{userId} {
       // READ: Admins can read any user and list all users. Regular users can only read their own.
       allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
+      // TEMPORARY: Allow any signed-in user to list users for admin panel development.
+      allow list: if isSignedIn();
 
       // WRITE: Only the user who owns the document can write to it. Admins cannot.
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
