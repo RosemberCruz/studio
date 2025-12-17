@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import { Building, Briefcase, Car, GraduationCap, Home, FileText, HeartPulse, ShieldCheck } from 'lucide-react';
 
@@ -69,7 +70,7 @@ export const servicesData: ServiceCategory[] = [
         slug: 'rfc-clon',
         name: 'Reimpresión de Constancia RFC (Clon)',
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
-        cost: 150,
+        cost: 50,
         steps: [
           { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
           { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
