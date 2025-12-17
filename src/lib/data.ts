@@ -182,7 +182,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Certificado de Estudios',
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             steps: [
-                { id: '1, title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
+                { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
                 { id: '3', title: 'Paso 3: Entrega', content: 'Recoge tu certificado en la fecha indicada.' },
             ],
@@ -198,7 +198,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Receta Médica Digital',
             description: 'Genera una receta médica certificada por un profesional de la salud.',
             steps: [
-                { id: '1, title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
+                { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
                 { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
                 { id: '3', title: 'Paso 3: Recepción', content: 'Recibe la receta en tu correo o app para surtirla en farmacias.' },
             ],
