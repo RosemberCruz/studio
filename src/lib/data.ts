@@ -18,6 +18,8 @@ export type Service = {
   deliveryTime?: string;
   steps: Step[];
   documents: Document[];
+  imageUrl: string;
+  imageHint: string;
 };
 
 export type Step = {
@@ -55,6 +57,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
+        imageUrl: 'https://picsum.photos/seed/fiscal-document/600/400',
+        imageHint: 'tax document',
         steps: [
           { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
           { id: '2', title: 'Verificar status de trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -71,6 +75,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
         deliveryTime: "10 minutos",
+        imageUrl: 'https://picsum.photos/seed/generic-document/600/400',
+        imageHint: 'form document',
         steps: [
           { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
           { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -87,6 +93,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
         deliveryTime: "10 minutos",
+        imageUrl: 'https://picsum.photos/seed/id-card/600/400',
+        imageHint: 'official ID',
         steps: [
             { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -111,6 +119,8 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
             cost: 180,
             deliveryTime: "10 minutos",
+            imageUrl: 'https://picsum.photos/seed/police-record/600/400',
+            imageHint: 'legal document',
              steps: [
                 { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa al portal de tu estado y llena la solicitud.' },
                 { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago correspondiente en línea o en bancos.' },
@@ -128,6 +138,8 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
             cost: 120,
             deliveryTime: "10 minutos",
+            imageUrl: 'https://picsum.photos/seed/civil-registry/600/400',
+            imageHint: 'birth certificate',
             steps: [
                 { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
                 { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago en línea.' },
@@ -152,6 +164,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Contrata o renueva la póliza de seguro para tu vehículo.',
         cost: 1500,
         deliveryTime: "10 minutos",
+        imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
+        imageHint: 'car insurance',
         steps: [
             { id: '1', title: 'Paso 1: Cotización', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
             { id: '2', title: 'Paso 2: Elección de Cobertura', content: 'Elige la cobertura que mejor se adapte a tus necesidades.' },
@@ -170,6 +184,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén un permiso temporal para circular mientras realizas el trámite de placas.',
         cost: 350,
         deliveryTime: "10 minutos",
+        imageUrl: 'https://picsum.photos/seed/no-plates-permit/600/400',
+        imageHint: 'temporary permit',
         steps: [
             { id: '1', title: 'Paso 1: Presentar Documentos', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
             { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Realiza el pago por la expedición del permiso.' },
@@ -195,6 +211,8 @@ export const servicesData: ServiceCategory[] = [
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             cost: 300,
             deliveryTime: "10 minutos",
+            imageUrl: 'https://picsum.photos/seed/study-certificate/600/400',
+            imageHint: 'school certificate',
              steps: [
                 { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
@@ -213,6 +231,8 @@ export const servicesData: ServiceCategory[] = [
             description: 'Genera una receta médica certificada por un profesional de la salud.',
             cost: 120,
             deliveryTime: "10 minutos",
+            imageUrl: 'https://picsum.photos/seed/prescription/600/400',
+            imageHint: 'medical prescription',
             steps: [
                 { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
                 { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
@@ -230,6 +250,8 @@ export const servicesData: ServiceCategory[] = [
             description: 'Obtén un justificante de incapacidad médica para tu trabajo o escuela.',
             cost: 220,
             deliveryTime: "10 minutos",
+            imageUrl: 'https://picsum.photos/seed/medical-leave/600/400',
+            imageHint: 'doctor note',
             steps: [
                 { id: '1', title: 'Paso 1: Valoración Médica', content: 'Un médico evaluará tu condición de salud.' },
                 { id: '2', title: 'Paso 2: Emisión del Justificante', content: 'El médico expide el documento con los días de incapacidad.' },
@@ -255,6 +277,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 

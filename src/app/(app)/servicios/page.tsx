@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ServicesDirectoryPage() {
   return (
@@ -29,13 +30,24 @@ export default function ServicesDirectoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.services.map((service) => (
                 <Link href={`/servicios/${service.slug}`} key={service.id} className="group">
-                  <Card className="h-full hover:border-primary transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-                    <CardHeader>
-                      <CardTitle>{service.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription>{service.description}</CardDescription>
-                    </CardContent>
+                  <Card className="h-full hover:border-primary transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1 flex flex-col overflow-hidden">
+                    <div className="relative aspect-video w-full">
+                        <Image 
+                            src={service.imageUrl} 
+                            alt={service.name} 
+                            fill
+                            className="object-cover"
+                            data-ai-hint={service.imageHint}
+                        />
+                    </div>
+                    <div className="flex flex-col flex-grow">
+                      <CardHeader>
+                        <CardTitle>{service.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <CardDescription>{service.description}</CardDescription>
+                      </CardContent>
+                    </div>
                   </Card>
                 </Link>
               ))}
