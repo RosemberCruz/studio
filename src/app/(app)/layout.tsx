@@ -111,7 +111,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => pathname.startsWith(path);
   const isAdmin = useIsAdmin();
 
-  const phoneNumber = "5215512345678"; // Replace with your number
+  const phoneNumber = "529621934078"; // Replace with your number
   const message = "Hola, he encontrado un error en la aplicación y necesito ayuda.";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
