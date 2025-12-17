@@ -23,12 +23,14 @@ import {
   Settings,
   Wallet,
   Landmark,
+  LogOut,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AppHeader } from '@/components/AppHeader';
 import { AppLogo } from '@/components/AppLogo';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 
 
 function UserProfile() {
@@ -73,6 +75,21 @@ function UserProfile() {
         </SidebarMenuItem>
     </>
   )
+}
+
+function LogoutButton() {
+    const auth = useAuth();
+    const handleSignOut = () => {
+        signOut(auth);
+    }
+    return (
+        <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleSignOut}>
+                <LogOut />
+                Cerrar Sesión
+            </SidebarMenuButton>
+        </SidebarMenuItem>
+    )
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -140,7 +157,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 Configuración
               </SidebarMenuButton>
             </SidebarMenuItem>
-             <UserProfile />
+            <UserProfile />
+            <LogoutButton />
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
