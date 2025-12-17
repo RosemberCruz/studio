@@ -83,14 +83,14 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situación Fiscal (CIF)',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         steps: [
-            { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y e.firma o contraseña del SAT para iniciar el trámite.' },
+            { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu contraseña del SAT (antes CIEC) o e.firma para iniciar.' },
             { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
             { id: '3', title: 'Paso 3: Carga de Documento', content: 'Un administrador subirá el documento PDF a tu cuenta.' },
             { id: '4', title: 'Paso 4: Descarga', content: 'Recibirás una notificación para que puedas descargar tu constancia desde la plataforma.' },
         ],
         documents: [
             { id: '1', name: 'RFC', description: 'Tu Registro Federal de Contribuyentes.' },
-            { id: '2', name: 'e.firma o Contraseña del SAT', description: 'Necesaria para que podamos acceder al portal del SAT en tu nombre.' },
+            { id: '2', name: 'Contraseña del SAT (CIEC) o e.firma', description: 'Necesaria para que podamos acceder al portal del SAT en tu nombre.' },
         ],
       },
     ],
@@ -182,7 +182,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Certificado de Estudios',
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             steps: [
-                { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
+                { id: '1, title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
                 { id: '3', title: 'Paso 3: Entrega', content: 'Recoge tu certificado en la fecha indicada.' },
             ],
@@ -198,7 +198,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Receta Médica Digital',
             description: 'Genera una receta médica certificada por un profesional de la salud.',
             steps: [
-                { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
+                { id: '1, title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
                 { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
                 { id: '3', title: 'Paso 3: Recepción', content: 'Recibe la receta en tu correo o app para surtirla en farmacias.' },
             ],
