@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -68,7 +68,7 @@ export default function LoginPage() {
 
   // We need to listen for the user creation to get the UID
   // and check if it's a new user.
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user && user.metadata.creationTime === user.metadata.lastSignInTime) {
          // This is likely a new user sign-up
