@@ -1,28 +1,32 @@
 'use client';
 
+import { useState } from 'react';
 import { servicesData } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Bot, FileCheck2, ShoppingCart, Clock } from 'lucide-react';
+import { Bot, FileCheck2, ShoppingCart, Clock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, collection } from 'firebase/firestore';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
   const { user } = useUser();
   const firestore = useFirestore();
+  const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<{[key: string]: string}>({});
 
   const userDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -39,16 +43,30 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
     notFound();
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
+
   const handleRequestService = () => {
     if (!userData || !user || !firestore) {
         toast({ title: "Error", description: "Debes iniciar sesión para solicitar un trámite.", variant: "destructive"});
         return;
     }
 
-    if (userData.balance < service.cost) {
-        toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo para solicitar este trámite. Necesitas $${service.cost}.`, variant: "destructive"});
+    // Validate that all required fields are filled
+    const missingDocs = service.documents.filter(doc => !formData[doc.id] || formData[doc.id].trim() === '');
+    if (missingDocs.length > 0) {
+        toast({ title: "Campos Requeridos", description: `Por favor, completa los siguientes campos: ${missingDocs.map(d => d.name).join(', ')}`, variant: "destructive" });
         return;
     }
+
+    if (userData.balance < service.cost) {
+        toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo para solicitar este trámite. Necesitas $${service.cost.toFixed(2)}.`, variant: "destructive"});
+        return;
+    }
+
+    setIsSubmitting(true);
 
     // 1. Deduct balance (non-blocking)
     const newBalance = userData.balance - service.cost;
@@ -63,11 +81,18 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
         status: 'Solicitado',
         requestDate: new Date().toISOString(),
         fileUrl: null,
+        formData: formData,
     };
-    addDocumentNonBlocking(requestsColRef, newRequest);
-
-    // 3. Show success toast
-    toast({ title: "¡Trámite Solicitado!", description: `Se han descontado $${service.cost} de tu saldo. Pronto un administrador revisará tu solicitud.`});
+    addDocumentNonBlocking(requestsColRef, newRequest).then(() => {
+      toast({ title: "¡Trámite Solicitado!", description: `Se han descontado $${service.cost.toFixed(2)} de tu saldo. Pronto un administrador revisará tu solicitud.`});
+      setIsSubmitting(false);
+      router.push('/seguimiento');
+    }).catch(() => {
+      // Revert balance if request creation fails (simplified approach)
+      updateDocumentNonBlocking(userDocRef, { balance: userData.balance });
+      toast({ title: "Error", description: "No se pudo crear la solicitud. Inténtalo de nuevo.", variant: "destructive"});
+      setIsSubmitting(false);
+    })
   }
 
   return (
@@ -78,7 +103,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
             <p className="text-lg text-muted-foreground mt-2">{service.description}</p>
         </div>
         <Card className="p-4 text-center">
-            <div className="text-lg font-bold text-primary">${service.cost} MXN</div>
+            <div className="text-lg font-bold text-primary">${service.cost.toFixed(2)} MXN</div>
             {service.deliveryTime && (
                 <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-1">
                     <Clock className="h-4 w-4" />
@@ -93,17 +118,38 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
         <div className="md:col-span-2 space-y-6">
             <Card>
                 <CardHeader>
-                <CardTitle>Comprar Trámite</CardTitle>
-                <CardDescription>
-                    Al hacer clic en el botón, se descontará el costo del trámite de tu saldo y un administrador se encargará de tu solicitud.
-                </CardDescription>
+                  <CardTitle>Realizar Trámite</CardTitle>
+                  <CardDescription>
+                      Completa los siguientes campos con la información requerida para tu trámite.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                <Button size="lg" className="w-full" onClick={handleRequestService} disabled={!user}>
-                    <ShoppingCart className="mr-2"/>
-                    Solicitar Trámite
-                </Button>
+                <CardContent className="space-y-4">
+                  {service.documents.map((doc) => (
+                    <div key={doc.id} className="space-y-2">
+                        <Label htmlFor={doc.id} className="font-semibold">
+                            {doc.name}
+                        </Label>
+                         <Input 
+                            id={doc.id} 
+                            name={doc.id}
+                            placeholder={doc.description}
+                            onChange={handleInputChange}
+                            required 
+                            disabled={!user || isSubmitting}
+                        />
+                    </div>
+                  ))}
                 </CardContent>
+                <CardFooter>
+                  <Button size="lg" className="w-full" onClick={handleRequestService} disabled={!user || isSubmitting}>
+                      {isSubmitting ? (
+                          <Loader2 className="mr-2 animate-spin"/>
+                      ) : (
+                          <ShoppingCart className="mr-2"/>
+                      )}
+                      {isSubmitting ? 'Enviando Solicitud...' : 'Solicitar Trámite'}
+                  </Button>
+                </CardFooter>
             </Card>
           <Card>
             <CardHeader>
@@ -128,25 +174,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
         </div>
 
         <div className="md:col-span-1 space-y-6">
-            <Card className="sticky top-24">
-                <CardHeader>
-                <CardTitle>Documentos Requeridos</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                {service.documents.map((doc) => (
-                    <div key={doc.id} className="flex items-start space-x-3">
-                        <Checkbox id={doc.id} className="mt-1" />
-                        <div className="grid gap-1.5 leading-none">
-                            <Label htmlFor={doc.id} className="font-semibold cursor-pointer">
-                                {doc.name}
-                            </Label>
-                            <p className="text-sm text-muted-foreground">{doc.description}</p>
-                        </div>
-                    </div>
-                ))}
-                </CardContent>
-            </Card>
-             <Card className="bg-secondary border-dashed">
+            <Card className="sticky top-24 bg-secondary border-dashed">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-primary">
                         <Bot className="h-6 w-6" />

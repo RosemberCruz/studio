@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Save, FileText, User, Calendar, LinkIcon } from 'lucide-react';
+import { Loader2, Save, FileText, User, Calendar, LinkIcon, FileJson } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -89,74 +89,99 @@ export default function ManageRequestPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Gestionar Trámite</CardTitle>
-            <CardDescription>Actualiza el estado y añade el documento final para la solicitud.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
-                <FileText className="h-5 w-5 text-muted-foreground" />
-                <span className="font-semibold">{request.serviceName}</span>
-            </div>
-             <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <span className="font-semibold">ID de Usuario: {request.userId}</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <span className="font-semibold">Solicitado el: {format(new Date(request.requestDate), 'dd/MM/yyyy HH:mm')}</span>
-            </div>
+    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div>
+          <form onSubmit={handleSubmit}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestionar Trámite</CardTitle>
+                <CardDescription>Actualiza el estado y añade el documento final para la solicitud.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-semibold">{request.serviceName}</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-semibold">ID de Usuario: {request.userId}</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-secondary/50 rounded-md">
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                    <span className="font-semibold">Solicitado el: {format(new Date(request.requestDate), 'dd/MM/yyyy HH:mm')}</span>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="status">Estado del Trámite</Label>
-              <Select value={status} onValueChange={setStatus} required disabled={isPending}>
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="Selecciona un estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map(s => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="fileUrl">URL del Documento PDF Final</Label>
-              <div className='relative'>
-                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                    id="fileUrl" 
-                    type="url" 
-                    placeholder="https://ejemplo.com/documento.pdf" 
-                    value={fileUrl}
-                    onChange={e => setFileUrl(e.target.value)}
-                    disabled={isPending}
-                    className="pl-9"
-                />
-              </div>
-               <p className="text-xs text-muted-foreground">
-                Sube el archivo a un servicio de almacenamiento (Google Drive, etc.) y pega aquí el enlace público.
-              </p>
-            </div>
-          </CardContent>
-          <CardFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={() => router.back()} disabled={isPending}>
-              Cancelar
-            </Button>
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <div className="space-y-2">
+                  <Label htmlFor="status">Estado del Trámite</Label>
+                  <Select value={status} onValueChange={setStatus} required disabled={isPending}>
+                    <SelectTrigger id="status">
+                      <SelectValue placeholder="Selecciona un estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fileUrl">URL del Documento PDF Final</Label>
+                  <div className='relative'>
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                        id="fileUrl" 
+                        type="url" 
+                        placeholder="https://ejemplo.com/documento.pdf" 
+                        value={fileUrl}
+                        onChange={e => setFileUrl(e.target.value)}
+                        disabled={isPending}
+                        className="pl-9"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Sube el archivo a un servicio de almacenamiento (Google Drive, etc.) y pega aquí el enlace público.
+                  </p>
+                </div>
+              </CardContent>
+              <CardFooter className="gap-2">
+                <Button type="button" variant="outline" onClick={() => router.back()} disabled={isPending}>
+                  Cancelar
+                </Button>
+                <Button type="submit" className="w-full" disabled={isPending}>
+                  {isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Guardar Cambios
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
+        </div>
+        <div>
+          <Card>
+            <CardHeader>
+                <div className="flex items-center gap-2">
+                    <FileJson className="h-5 w-5 text-primary" />
+                    <CardTitle>Información Proporcionada</CardTitle>
+                </div>
+              <CardDescription>Estos son los datos que el usuario envió con su solicitud.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {request.formData && Object.keys(request.formData).length > 0 ? (
+                Object.entries(request.formData).map(([key, value]) => (
+                  <div key={key} className="space-y-1">
+                    <Label className="text-sm text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</Label>
+                    <p className="p-2 bg-secondary/50 rounded-md text-sm font-mono">{value as string}</p>
+                  </div>
+                ))
               ) : (
-                <Save className="mr-2 h-4 w-4" />
+                <p className="text-sm text-muted-foreground text-center p-4">No se proporcionó información adicional con esta solicitud.</p>
               )}
-              Guardar Cambios
-            </Button>
-          </CardFooter>
-        </Card>
-      </form>
+            </CardContent>
+          </Card>
+        </div>
     </div>
   );
 }
