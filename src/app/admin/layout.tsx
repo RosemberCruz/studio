@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import AppLayout from '../(app)/layout';
 
 function useIsAdmin() {
     const { user } = useUser();
@@ -35,5 +36,5 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  return <>{children}</>;
+  return <AppLayout>{children}</AppLayout>;
 }
