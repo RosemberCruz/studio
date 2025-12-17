@@ -61,7 +61,7 @@ export const servicesData: ServiceCategory[] = [
         imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
-          { id: '2', title: 'Verificar status de trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+          { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
           { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
@@ -122,9 +122,9 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://picsum.photos/seed/police-record/600/400',
             imageHint: 'legal document',
              steps: [
-                { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa al portal de tu estado y llena la solicitud.' },
-                { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago correspondiente en línea o en bancos.' },
-                { id: '3', title: 'Paso 3: Descarga', content: 'Descarga tu certificado oficial.' },
+                { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
@@ -145,8 +145,8 @@ export const servicesData: ServiceCategory[] = [
             imageHint: 'birth certificate',
             steps: [
                 { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
-                { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago en línea.' },
-                { id: '3', title: 'Paso 3: Descarga', content: 'Descarga tu acta certificada en formato PDF.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Datos del Registrado', description: 'Nombre completo, fecha y lugar de registro.' },
@@ -171,8 +171,8 @@ export const servicesData: ServiceCategory[] = [
         imageHint: 'car insurance',
         steps: [
             { id: '1', title: 'Paso 1: Cotización', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
-            { id: '2', title: 'Paso 2: Elección de Cobertura', content: 'Elige la cobertura que mejor se adapte a tus necesidades.' },
-            { id: '3', title: 'Paso 3: Contratación', content: 'Realiza el pago y emite tu póliza.' },
+            { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+            { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
             { id: '1', name: 'Tarjeta de Circulación', description: 'Datos del vehículo a asegurar.' },
@@ -191,8 +191,8 @@ export const servicesData: ServiceCategory[] = [
         imageHint: 'temporary permit',
         steps: [
             { id: '1', title: 'Paso 1: Presentar Documentos', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
-            { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Realiza el pago por la expedición del permiso.' },
-            { id: '3', title: 'Paso 3: Recepción de Permiso', content: 'Recibe el permiso temporal con vigencia definida.' },
+            { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+            { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
             { id: '1', name: 'Factura o Carta Factura del Vehículo', description: 'Debe estar a tu nombre.' },
@@ -218,8 +218,8 @@ export const servicesData: ServiceCategory[] = [
             imageHint: 'school certificate',
              steps: [
                 { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
-                { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
-                { id: '3', title: 'Paso 3: Entrega', content: 'Recoge tu certificado en la fecha indicada.' },
+                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Identificación Oficial', description: 'Tu INE o Pasaporte.' },
@@ -238,8 +238,8 @@ export const servicesData: ServiceCategory[] = [
             imageHint: 'medical prescription',
             steps: [
                 { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
-                { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
-                { id: '3', title: 'Paso 3: Recepción', content: 'Recibe la receta en tu correo o app para surtirla en farmacias.' },
+                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Historial Médico Breve', description: 'Síntomas y padecimientos actuales.' },
@@ -257,12 +257,12 @@ export const servicesData: ServiceCategory[] = [
             imageHint: 'doctor note',
             steps: [
                 { id: '1', title: 'Paso 1: Valoración Médica', content: 'Un médico evaluará tu condición de salud.' },
-                { id: '2', title: 'Paso 2: Emisión del Justificante', content: 'El médico expide el documento con los días de incapacidad.' },
-                { id: '3', title: 'Paso 3: Envío', content: 'Recibe el justificante para presentarlo donde corresponda.' },
+                { id: '2', 'title': 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', 'title': 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
-                { id_2: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
+                { id: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
             ],
         },
     ]
@@ -280,6 +280,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
