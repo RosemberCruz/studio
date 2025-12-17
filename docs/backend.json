@@ -46,6 +46,48 @@
         "creationDate",
         "balance"
       ]
+    },
+    "ServiceRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ServiceRequest",
+      "type": "object",
+      "description": "Represents a service request made by a user.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who made the request."
+        },
+        "serviceId": {
+          "type": "string",
+          "description": "The ID of the requested service."
+        },
+        "serviceName": {
+          "type": "string",
+          "description": "The name of the requested service."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the request.",
+          "enum": ["Solicitado", "En Proceso", "Completado", "Rechazado"]
+        },
+        "requestDate": {
+          "type": "string",
+          "description": "The date the request was made.",
+          "format": "date-time"
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "URL of the completed document PDF uploaded by the admin.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "userId",
+        "serviceId",
+        "serviceName",
+        "status",
+        "requestDate"
+      ]
     }
   },
   "auth": {
@@ -71,8 +113,24 @@
             }
           ]
         }
+      },
+       {
+        "path": "/serviceRequests/{requestId}",
+        "definition": {
+          "entityName": "ServiceRequest",
+          "schema": {
+            "$ref": "#/backend/entities/ServiceRequest"
+          },
+          "description": "Stores all service requests from users. Admins can read/write all, users can only read their own.",
+          "params": [
+            {
+              "name": "requestId",
+              "description": "The unique identifier for the service request."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and future expansion for service directories, procedure guides, and other features. The primary goal is to ensure secure and scalable data management while adhering to the principles of Authorization Independence and Structural Segregation. Path-based ownership for user accounts ensures straightforward security rules.  Since there are no collaborative features in the requirements, only user-owned data structures are built.  If collaborative features were added (e.g. shared checklists) a membership-map approach would be required. Authorization Independence is achieved without denormalization at the moment.  If a subcollection of a user required knowledge of user properties (e.g. isPremium) that data would need to be denormalized."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and service requests. The primary goal is to ensure secure and scalable data management. Path-based ownership for user accounts ensures straightforward security rules. The serviceRequests collection stores all transaction-like data, allowing admins to manage them while users can only view their own."
   }
 }

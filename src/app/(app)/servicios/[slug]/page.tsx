@@ -15,8 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Bot, FileCheck2, ShoppingCart, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc, collection, serverTimestamp } from 'firebase/firestore';
+import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
@@ -40,7 +40,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
   }
 
   const handleRequestService = () => {
-    if (!userData || !user) {
+    if (!userData || !user || !firestore) {
         toast({ title: "Error", description: "Debes iniciar sesión para solicitar un trámite.", variant: "destructive"});
         return;
     }
@@ -50,13 +50,24 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
         return;
     }
 
+    // 1. Deduct balance (non-blocking)
     const newBalance = userData.balance - service.cost;
-    const userRef = doc(firestore, 'users', user.uid);
-    updateDocumentNonBlocking(userRef, { balance: newBalance });
+    updateDocumentNonBlocking(userDocRef, { balance: newBalance });
 
+    // 2. Create service request document (non-blocking)
+    const requestsColRef = collection(firestore, 'serviceRequests');
+    const newRequest = {
+        userId: user.uid,
+        serviceId: service.id,
+        serviceName: service.name,
+        status: 'Solicitado',
+        requestDate: new Date().toISOString(),
+        fileUrl: null,
+    };
+    addDocumentNonBlocking(requestsColRef, newRequest);
+
+    // 3. Show success toast
     toast({ title: "¡Trámite Solicitado!", description: `Se han descontado $${service.cost} de tu saldo. Pronto un administrador revisará tu solicitud.`});
-    // Here you would typically create a new document in a 'requests' collection
-    // to track the user's service request.
   }
 
   return (
@@ -88,7 +99,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                <Button size="lg" className="w-full" onClick={handleRequestService}>
+                <Button size="lg" className="w-full" onClick={handleRequestService} disabled={!user}>
                     <ShoppingCart className="mr-2"/>
                     Solicitar Trámite
                 </Button>

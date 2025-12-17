@@ -66,31 +66,47 @@ service cloud.firestore {
       return incomingData.id == existingData.id;
     }
 
+    /**
+     * Validates the data for a new service request.
+     */
+    function isValidServiceRequestCreate() {
+      let data = request.resource.data;
+      return isOwner(data.userId) &&
+             data.status == 'Solicitado' &&
+             data.fileUrl == null;
+    }
+    
     // ----------------------------------------------------------------------
     // Collection Rules
     // ----------------------------------------------------------------------
 
     /**
      * @description Manages UserAccount documents.
-     *   - Regular users can only CUD their own account. They can only read their own document.
-     *   - Admins can read any user document and list all users.
-     * @path /users/{userId}
-     * @allow An admin can (list) all documents in `/users`.
-     * @allow A user 'user123' can (get) their own document at `/users/user123`.
-     * @allow An admin can (get) any document, e.g., `/users/user456`.
-     * @deny A user 'user456' is denied from (get)ing `/users/user123`.
-     * @deny A non-admin user is denied from (list)ing `/users`.
      */
     match /users/{userId} {
-      // READ: Admins can read any user and list all users. Regular users can only read their own.
       allow get: if isOwner(userId) || isAdmin();
-      // TEMPORARY: Allow any signed-in user to list users for admin panel development.
-      allow list: if isSignedIn();
-
-      // WRITE: Only the user who owns the document can write to it. Admins cannot.
+      allow list: if isAdmin();
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
       allow update: if isOwner(userId) && isValidUserAccountUpdate();
       allow delete: if isOwner(userId);
+    }
+    
+    /**
+     * @description Manages ServiceRequest documents.
+     *   - Users can create their own requests.
+     *   - Users can read their own requests.
+     *   - Admins can read and write any request.
+     */
+    match /serviceRequests/{requestId} {
+      // READ: Users can read their own requests, admins can read all.
+      allow get: if isOwner(resource.data.userId) || isAdmin();
+      allow list: if isAdmin(); // Only admins can list all requests.
+      
+      // WRITE:
+      // Users can create their own requests.
+      allow create: if isValidServiceRequestCreate();
+      // Only admins can update (e.g., change status, add fileUrl) or delete.
+      allow update, delete: if isAdmin();
     }
   }
 }

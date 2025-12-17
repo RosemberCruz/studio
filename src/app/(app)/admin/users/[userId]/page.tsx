@@ -1,7 +1,7 @@
 'use client';
 
-import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
+import { doc, collection, query, where } from 'firebase/firestore';
 import { notFound, useParams } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,16 +11,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-// Datos de ejemplo para el historial
-const recentOrders = [
-    { id: "#3210", service: "Reimpresión de Constancia RFC", status: "Completado", date: "2024-05-20" },
-    { id: "#3209", service: "Póliza de Seguro Vehicular", status: "En Proceso", date: "2024-05-15" },
-];
-
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
     switch (status) {
         case "Completado": return "default";
         case "En Proceso": return "secondary";
+        case "Solicitado": return "secondary";
+        case "Rechazado": return "destructive";
         default: return "outline";
     }
 }
@@ -35,9 +31,15 @@ export default function UserDetailPage() {
         return doc(firestore, 'users', userId);
     }, [firestore, userId]);
 
-    const { data: user, isLoading } = useDoc(userDocRef);
+    const requestsQuery = useMemoFirebase(() => {
+        if (!firestore || !userId) return null;
+        return query(collection(firestore, 'serviceRequests'), where('userId', '==', userId));
+    }, [firestore, userId]);
 
-    if (isLoading) {
+    const { data: user, isLoading: isUserLoading } = useDoc(userDocRef);
+    const { data: serviceRequests, isLoading: areRequestsLoading } = useCollection(requestsQuery);
+
+    if (isUserLoading) {
         return (
             <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -96,31 +98,45 @@ export default function UserDetailPage() {
                         <CardDescription>Trámites solicitados por este usuario.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Servicio</TableHead>
-                                    <TableHead>Estado</TableHead>
-                                    <TableHead className="text-right">Fecha</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                               {recentOrders.map((order) => (
-                                   <TableRow key={order.id}>
-                                       <TableCell>
-                                           <div className="font-medium">{order.service}</div>
-                                            <div className="text-sm text-muted-foreground md:inline">
-                                                {order.id}
-                                            </div>
-                                       </TableCell>
-                                       <TableCell>
-                                            <Badge variant={getStatusBadgeVariant(order.status)}>{order.status}</Badge>
-                                       </TableCell>
-                                        <TableCell className="text-right">{format(new Date(order.date), "dd/MM/yyyy")}</TableCell>
-                                   </TableRow>
-                               ))}
-                            </TableBody>
-                        </Table>
+                        {areRequestsLoading ? (
+                             <div className="flex justify-center items-center h-40">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            </div>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Servicio</TableHead>
+                                        <TableHead>Estado</TableHead>
+                                        <TableHead className="text-right">Fecha</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                {serviceRequests && serviceRequests.length > 0 ? (
+                                   serviceRequests.map((request) => (
+                                       <TableRow key={request.id}>
+                                           <TableCell>
+                                               <div className="font-medium">{request.serviceName}</div>
+                                                <div className="text-sm text-muted-foreground md:inline">
+                                                    ID: {request.id}
+                                                </div>
+                                           </TableCell>
+                                           <TableCell>
+                                                <Badge variant={getStatusBadgeVariant(request.status)}>{request.status}</Badge>
+                                           </TableCell>
+                                            <TableCell className="text-right">{format(new Date(request.requestDate), "dd/MM/yyyy")}</TableCell>
+                                       </TableRow>
+                                   ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} className="text-center">
+                                            Este usuario no ha solicitado trámites.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                                </TableBody>
+                            </Table>
+                        )}
                     </CardContent>
                 </Card>
             </div>
