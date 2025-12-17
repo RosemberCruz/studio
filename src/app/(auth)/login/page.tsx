@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,8 +19,7 @@ import {
   initiateEmailSignUp,
 } from '@/firebase/non-blocking-login';
 import { updateProfile, User } from 'firebase/auth';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { doc } from 'firebase/firestore';
+import { setDoc, doc } from 'firebase/firestore';
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -58,7 +57,8 @@ export default function LoginPage() {
       balance: 500, // Initial balance for new users
     };
 
-    setDocumentNonBlocking(userRef, userData, { merge: true });
+    // Use setDoc and await it to ensure the document is created before proceeding.
+    await setDoc(userRef, userData, { merge: true });
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -66,10 +66,13 @@ export default function LoginPage() {
     try {
       const userCredential = await initiateEmailSignUp(auth, signupEmail, signupPassword);
       if (userCredential && userCredential.user) {
+        // Now we are sure the user is created in Auth, let's create the Firestore doc.
         await createFirestoreUserDocument(userCredential.user);
+        // The onAuthStateChanged listener in the provider will handle the redirect.
       }
     } catch (error) {
       console.error("Error during sign-up: ", error);
+      // Optionally, display an error to the user here.
     }
   };
 
