@@ -1,0 +1,107 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All data
+ * is organized under a top-level `/users` collection, where each user's
+ * document is keyed by their authentication UID. A user has full control
+ * over their own data but has no access to anyone else's.
+ *
+ * Data Structure: The primary data structure is `/users/{userId}`, which stores
+ * individual UserAccount documents. This flat structure is simple and secure.
+ *
+ * Key Security Decisions:
+ * - User Enumeration Disabled: Listing the entire `/users` collection is
+ *   explicitly forbidden to protect user privacy and prevent data scraping.
+ * - Strict Ownership: All operations (read, write, delete) are gated by a
+ *   check that ensures the authenticated user's UID matches the `userId` in
+ *   the document path.
+ * - Default Deny: Access is denied by default; rules only grant permissions
+ *   explicitly.
+ *
+ * Denormalization for Authorization: In this simple model, denormalization is
+ * not required. The user's UID in the path is sufficient for all authorization
+ * decisions. If subcollections were added that required user-level properties
+ * (e.g., a user's role or subscription status) for their own security rules,
+ * those properties would need to be denormalized onto the documents within
+ * those subcollections.
+ *
+ * Structural Segregation: The current model only contains private user data.
+ * If public-facing data were introduced (e.g., public user profiles), it would
+ * be best practice to create a separate top-level collection (e.g., `/profiles`)
+ * rather than mixing public and private data in the same collection with a
+ * status flag. This provides stronger security and more performant queries.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the requesting user's UID matches the provided userId.
+     * This is the foundation of the user-ownership model.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if a document exists and if the requester is the owner.
+     * Used for safe update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates required authorization fields during UserAccount creation.
+     * In prototyping mode, we only validate fields essential for relational
+     * integrity, ensuring the document's internal ID matches its path.
+     */
+    function isValidUserAccountCreate(userId) {
+      let data = request.resource.data;
+      return data.id == userId;
+    }
+
+    /**
+     * Validates that critical authorization fields are not changed during an update.
+     * The document's internal `id` must remain immutable to preserve the link
+     * between the document and its owner.
+     */
+    function isValidUserAccountUpdate() {
+      let incomingData = request.resource.data;
+      let existingData = resource.data;
+      return incomingData.id == existingData.id;
+    }
+
+    // ----------------------------------------------------------------------
+    // Collection Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Manages UserAccount documents. Ensures a user can only create,
+     *   read, update, and delete their own account information.
+     * @path /users/{userId}
+     * @allow A signed-in user with UID 'user123' can (create) their own document at `/users/user123`.
+     * @deny A signed-in user with UID 'user456' is denied from trying to (get) the document at `/users/user123`.
+     * @principle Restricts access to a user's own data tree (Path-based Ownership).
+     */
+    match /users/{userId} {
+      // READ: A user can only get their own document. Listing all users is forbidden.
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      // WRITE: A user can create, update, and delete their own document.
+      allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
+      allow update: if isExistingOwner(userId) && isValidUserAccountUpdate();
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

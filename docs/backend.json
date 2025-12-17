@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "UserAccount": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAccount",
+      "type": "object",
+      "description": "Stores user account information for the TramitesFacil app.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserAccount entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address for login and communication.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "User's phone number.",
+          "format": "string"
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "Date and time when the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "creationDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserAccount",
+          "schema": {
+            "$ref": "#/backend/entities/UserAccount"
+          },
+          "description": "Stores user account information. Path-based ownership ensures that only the user can access their own data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and future expansion for service directories, procedure guides, and other features. The primary goal is to ensure secure and scalable data management while adhering to the principles of Authorization Independence and Structural Segregation. Path-based ownership for user accounts ensures straightforward security rules.  Since there are no collaborative features in the requirements, only user-owned data structures are built.  If collaborative features were added (e.g. shared checklists) a membership-map approach would be required. Authorization Independence is achieved without denormalization at the moment.  If a subcollection of a user required knowledge of user properties (e.g. isPremium) that data would need to be denormalized."
+  }
+}
