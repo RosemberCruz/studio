@@ -84,7 +84,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: 'rfc-idcif',
         slug: 'rfc-idcif',
-        name: 'Constancia de Situación Fiscal Generica',
+        name: 'Constancia de Situación Fiscal IDCIF',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 200,
         steps: [
@@ -191,7 +191,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Certificado de Estudios',
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             cost: 300,
-            steps: [
+             steps: [
                 { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
                 { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
                 { id: '3', title: 'Paso 3: Entrega', content: 'Recoge tu certificado en la fecha indicada.' },
@@ -244,3 +244,5 @@ export const progressData: ProgressItem[] = [
     { id: 'P003', serviceName: 'Registro de Negocio', status: 'Iniciado', currentStep: 1, totalSteps: 4, submittedDate: '2024-05-22', lastUpdate: '2024-05-22' },
     { id: 'P004', serviceName: 'Permiso de Construcción', status: 'Rechazado', currentStep: 2, totalSteps: 5, submittedDate: '2024-03-01', lastUpdate: '2024-03-15' },
 ];
+
+    
