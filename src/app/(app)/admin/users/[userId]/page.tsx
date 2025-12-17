@@ -37,7 +37,7 @@ export default function UserDetailPage() {
         return query(collection(firestore, 'serviceRequests'), where('userId', '==', userId));
     }, [firestore, userId]);
 
-    const { data: user, isLoading: isUserLoading } = useDoc(userDocRef);
+    const { data: userProfile, isLoading: isUserLoading } = useDoc(userDocRef);
     const { data: serviceRequests, isLoading: areRequestsLoading } = useCollection(requestsQuery);
 
     if (isUserLoading) {
@@ -48,13 +48,13 @@ export default function UserDetailPage() {
         );
     }
 
-    if (!isUserLoading && !user) {
+    if (!isUserLoading && !userProfile) {
         notFound();
     }
     
-    // We need to ensure user exists before proceeding
-    if (!user) {
-        // This is a fallback, the above notFound() should catch it.
+    // We need to ensure userProfile exists before proceeding
+    if (!userProfile) {
+        // This is a fallback while loading, the above notFound() will catch it if loading is finished.
         return (
              <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -62,7 +62,7 @@ export default function UserDetailPage() {
         )
     }
 
-    const creationDate = user.creationDate ? new Date(user.creationDate) : new Date();
+    const creationDate = userProfile.creationDate ? new Date(userProfile.creationDate) : new Date();
 
     const handleRequestClick = (requestId: string) => {
         router.push(`/admin/requests/${requestId}`);
@@ -74,20 +74,20 @@ export default function UserDetailPage() {
                 <Card>
                     <CardHeader className="items-center text-center">
                         <Avatar className="h-24 w-24 mb-4">
-                            <AvatarImage src={`https://picsum.photos/seed/${user.id}/200/200`} alt="Avatar" />
-                            <AvatarFallback>{user.firstName?.charAt(0)}{user.lastName?.charAt(0)}</AvatarFallback>
+                            <AvatarImage src={`https://picsum.photos/seed/${userProfile.id}/200/200`} alt="Avatar" />
+                            <AvatarFallback>{userProfile.firstName?.charAt(0)}{userProfile.lastName?.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <CardTitle className="text-2xl">{user.firstName} {user.lastName}</CardTitle>
-                        <CardDescription>ID de Usuario: {user.id}</CardDescription>
+                        <CardTitle className="text-2xl">{userProfile.firstName} {userProfile.lastName}</CardTitle>
+                        <CardDescription>ID de Usuario: {userProfile.id}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex items-center gap-3">
                             <Mail className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm">{user.email}</span>
+                            <span className="text-sm">{userProfile.email}</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <Phone className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm">{user.phoneNumber || 'No especificado'}</span>
+                            <span className="text-sm">{userProfile.phoneNumber || 'No especificado'}</span>
                         </div>
                          <div className="flex items-center gap-3">
                             <Calendar className="h-5 w-5 text-muted-foreground" />
@@ -98,7 +98,7 @@ export default function UserDetailPage() {
                         <div className="flex items-center gap-3 pt-2">
                             <DollarSign className="h-5 w-5 text-muted-foreground" />
                             <span className="text-sm">Saldo Actual:</span>
-                            <Badge variant="secondary" className="text-base">${user.balance.toFixed(2)}</Badge>
+                            <Badge variant="secondary" className="text-base">${userProfile.balance.toFixed(2)}</Badge>
                         </div>
                     </CardContent>
                 </Card>
