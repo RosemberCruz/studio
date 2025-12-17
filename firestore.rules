@@ -1,33 +1,22 @@
+
 /**
- * Core Philosophy: This ruleset enforces a strict user-ownership model. All data
- * is organized under a top-level `/users` collection, where each user's
- * document is keyed by their authentication UID. A user has full control
- * over their own data but has no access to anyone else's.
+ * Core Philosophy: This ruleset enforces a strict user-ownership model, with an
+ * override for administrators. Regular users can only access their own data.
+ * Administrators, identified by a custom claim, have read access to all user data.
  *
  * Data Structure: The primary data structure is `/users/{userId}`, which stores
- * individual UserAccount documents. This flat structure is simple and secure.
+ * individual UserAccount documents.
  *
  * Key Security Decisions:
- * - User Enumeration Disabled: Listing the entire `/users` collection is
- *   explicitly forbidden to protect user privacy and prevent data scraping.
- * - Strict Ownership: All operations (read, write, delete) are gated by a
- *   check that ensures the authenticated user's UID matches the `userId` in
- *   the document path.
- * - Default Deny: Access is denied by default; rules only grant permissions
- *   explicitly.
- *
- * Denormalization for Authorization: In this simple model, denormalization is
- * not required. The user's UID in the path is sufficient for all authorization
- * decisions. If subcollections were added that required user-level properties
- * (e.g., a user's role or subscription status) for their own security rules,
- * those properties would need to be denormalized onto the documents within
- * those subcollections.
- *
- * Structural Segregation: The current model only contains private user data.
- * If public-facing data were introduced (e.g., public user profiles), it would
- * be best practice to create a separate top-level collection (e.g., `/profiles`)
- * rather than mixing public and private data in the same collection with a
- * status flag. This provides stronger security and more performant queries.
+ * - Admin Override: A new `isAdmin()` function checks for a custom auth token
+ *   claim (`isAdmin: true`). This allows admins to bypass standard ownership rules
+ *   for reading data, which is essential for management tasks.
+ * - User Enumeration Restricted: Listing the entire `/users` collection is
+ *   only allowed for administrators, protecting general user privacy.
+ * - Strict Ownership for Writes: All write operations (create, update, delete)
+ *   remain strictly gated by user ownership. Admins cannot write to user documents
+ *   on their behalf through the client SDK. This is a critical security boundary.
+ * - Default Deny: Access is denied by default.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -45,25 +34,23 @@ service cloud.firestore {
     }
 
     /**
+     * Checks if the requesting user has the 'isAdmin' custom claim.
+     * This is used to grant privileged read access.
+     */
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.isAdmin == true;
+    }
+
+    /**
      * Checks if the requesting user's UID matches the provided userId.
-     * This is the foundation of the user-ownership model.
+     * This is the foundation of the user-ownership model for non-admins.
      */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
     /**
-     * Checks if a document exists and if the requester is the owner.
-     * Used for safe update and delete operations.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /**
      * Validates required authorization fields during UserAccount creation.
-     * In prototyping mode, we only validate fields essential for relational
-     * integrity, ensuring the document's internal ID matches its path.
      */
     function isValidUserAccountCreate(userId) {
       let data = request.resource.data;
@@ -72,8 +59,6 @@ service cloud.firestore {
 
     /**
      * Validates that critical authorization fields are not changed during an update.
-     * The document's internal `id` must remain immutable to preserve the link
-     * between the document and its owner.
      */
     function isValidUserAccountUpdate() {
       let incomingData = request.resource.data;
@@ -86,22 +71,25 @@ service cloud.firestore {
     // ----------------------------------------------------------------------
 
     /**
-     * @description Manages UserAccount documents. Ensures a user can only create,
-     *   read, update, and delete their own account information.
+     * @description Manages UserAccount documents.
+     *   - Regular users can only CUD their own account. They can only read their own document.
+     *   - Admins can read any user document and list all users.
      * @path /users/{userId}
-     * @allow A signed-in user with UID 'user123' can (create) their own document at `/users/user123`.
-     * @deny A signed-in user with UID 'user456' is denied from trying to (get) the document at `/users/user123`.
-     * @principle Restricts access to a user's own data tree (Path-based Ownership).
+     * @allow An admin can (list) all documents in `/users`.
+     * @allow A user 'user123' can (get) their own document at `/users/user123`.
+     * @allow An admin can (get) any document, e.g., `/users/user456`.
+     * @deny A user 'user456' is denied from (get)ing `/users/user123`.
+     * @deny A non-admin user is denied from (list)ing `/users`.
      */
     match /users/{userId} {
-      // READ: A user can only get their own document. Listing all users is forbidden.
-      allow get: if isOwner(userId);
-      allow list: if false;
+      // READ: Admins can read any user and list all users. Regular users can only read their own.
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
 
-      // WRITE: A user can create, update, and delete their own document.
+      // WRITE: Only the user who owns the document can write to it. Admins cannot.
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
-      allow update: if isExistingOwner(userId) && isValidUserAccountUpdate();
-      allow delete: if isExistingOwner(userId);
+      allow update: if isOwner(userId) && isValidUserAccountUpdate();
+      allow delete: if isOwner(userId);
     }
   }
 }
