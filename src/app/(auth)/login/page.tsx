@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,15 +15,17 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth, useFirestore } from '@/firebase';
 import {
-  initiateEmailSignIn,
-  initiateEmailSignUp,
-} from '@/firebase/non-blocking-login';
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { updateProfile, User } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const auth = useAuth();
   const firestore = useFirestore();
+  const { toast } = useToast();
 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -34,13 +36,22 @@ export default function LoginPage() {
   const [signupPhone, setSignupPhone] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    initiateEmailSignIn(auth, loginEmail, loginPassword);
+    try {
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      // onAuthStateChanged will handle the redirect
+    } catch (error: any) {
+      console.error("Login Error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Error al Iniciar Sesión",
+        description: error.message || "Ocurrió un error."
+      });
+    }
   };
 
   const createFirestoreUserDocument = async (user: User) => {
-    // Then, create the user document in Firestore
     const userRef = doc(firestore, 'users', user.uid);
     const userData = {
       id: user.uid,
@@ -51,8 +62,6 @@ export default function LoginPage() {
       creationDate: new Date().toISOString(),
       balance: 500, // Initial balance for new users
     };
-    
-    // Use setDoc and await it to ensure the document is created before proceeding.
     await setDoc(userRef, userData, { merge: true });
   };
 
@@ -60,8 +69,8 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       // 1. Create the user in Firebase Auth
-      const userCredential = await initiateEmailSignUp(auth, signupEmail, signupPassword);
-      const user = userCredential?.user;
+      const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
+      const user = userCredential.user;
 
       if (user) {
         // 2. Update the user's profile in Firebase Auth
@@ -74,9 +83,13 @@ export default function LoginPage() {
         
         // The onAuthStateChanged listener in the provider will handle the redirect.
       }
-    } catch (error) {
-      console.error("Error during sign-up: ", error);
-      // Optionally, display an error to the user here.
+    } catch (error: any) {
+      console.error("Sign-up Error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Error al Crear Cuenta",
+        description: error.message || "No se pudo completar el registro."
+      });
     }
   };
 
