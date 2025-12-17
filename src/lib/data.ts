@@ -54,7 +54,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situación Fiscal Original',
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
-        deliveryTime: "10 minutos",
+        deliveryTime: "1 a 4 HRAS",
         steps: [
           { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
           { id: '2', title: 'Paso 2: Agenda una cita', content: 'Agenda una cita en la oficina del SAT más cercana.' },
