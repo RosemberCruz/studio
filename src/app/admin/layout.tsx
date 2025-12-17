@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -8,7 +9,6 @@ import AppLayout from '../(app)/layout';
 
 function useIsAdmin() {
     const { user } = useUser();
-    // This should be replaced with a more secure method like custom claims in production
     const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
     return user?.email === ADMIN_EMAIL;
 }
@@ -30,11 +30,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isUserLoading || !user || !isAdmin) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-screen w-screen items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
   }
 
+  // Use the main AppLayout to provide the sidebar and header
   return <AppLayout>{children}</AppLayout>;
 }
