@@ -8,11 +8,10 @@
  * individual UserAccount documents.
  *
  * Key Security Decisions:
- * - Admin Override: A new `isAdmin()` function checks for a custom auth token
- *   claim (`isAdmin: true`). This allows admins to bypass standard ownership rules
- *   for reading data, which is essential for management tasks.
+ * - Admin Override: A new `isAdmin()` function checks for a specific email. 
+ *   This allows admins to bypass standard ownership rules for reading and listing data.
  * - User Enumeration Restricted: Listing the entire `/users` collection is
- *   only allowed for administrators, protecting general user privacy.
+ *   only allowed for administrators, protecting user privacy.
  * - Strict Ownership for Writes: All write operations (create, update, delete)
  *   remain strictly gated by user ownership. Admins cannot write to user documents
  *   on their behalf through the client SDK. This is a critical security boundary.
@@ -84,19 +83,16 @@ service cloud.firestore {
 
     /**
      * @description Manages UserAccount documents.
+     *   - Admins can get any user and list all users.
+     *   - Users can only get their own document.
+     *   - Writes are restricted to the owner.
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
       allow update: if isOwner(userId) && isValidUserAccountUpdate();
       allow delete: if isOwner(userId);
-    }
-
-    /**
-     * @description Allow admins to list all users.
-     */
-    match /users {
-      allow list: if isAdmin();
     }
     
     /**
