@@ -27,7 +27,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { AppHeader } from '@/components/AppHeader';
+import { ClientAppHeader } from '@/components/ClientAppHeader';
 import { AppLogo } from '@/components/AppLogo';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
@@ -98,6 +98,7 @@ function LogoutButton() {
 
 function useIsAdmin() {
     const { user } = useUser();
+    // This should be replaced with a more secure method like custom claims
     const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
     return user?.email === ADMIN_EMAIL;
 }
@@ -185,7 +186,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <AppHeader />
+        <ClientAppHeader />
         <main className="p-4 lg:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
