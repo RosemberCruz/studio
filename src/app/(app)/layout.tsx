@@ -18,7 +18,6 @@ import {
 import {
   LayoutDashboard,
   Bot,
-  Calendar,
   ClipboardCheck,
   ListChecks,
   Settings,
@@ -120,14 +119,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link href="/recargar-saldo">
                   <Landmark />
                   Recargar Saldo
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/citas'}>
-                <Link href="/citas">
-                  <Calendar />
-                  Agendar Cita
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

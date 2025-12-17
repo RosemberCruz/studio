@@ -10,9 +10,7 @@ import {
   Activity,
   ArrowUpRight,
   Bot,
-  Calendar,
   ClipboardCheck,
-  CreditCard,
   DollarSign,
   ListChecks,
   Users,
@@ -30,7 +28,6 @@ import { Badge } from "@/components/ui/badge"
 
 const quickActions = [
     { title: "Ver Servicios", href: "/servicios", icon: ListChecks, description: "Explora todos los trámites." },
-    { title: "Agendar Cita", href: "/citas", icon: Calendar, description: "Reserva tu próxima cita." },
     { title: "Generador IA", href: "/generador-formularios", icon: Bot, description: "Rellena formas con IA." },
     { title: "Mis Órdenes", href: "/seguimiento", icon: ClipboardCheck, description: "Revisa tus solicitudes." },
 ]
@@ -65,7 +62,7 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-headline font-bold tracking-tight">¡Hola, bienvenido de nuevo!</h1>
         <p className="text-muted-foreground">Aquí tienes un resumen de tu actividad reciente y accesos rápidos.</p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Trámites Completados</CardTitle>
@@ -84,16 +81,6 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">3</div>
             <p className="text-xs text-muted-foreground">+1 esta semana</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Citas Programadas</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1</div>
-            <p className="text-xs text-muted-foreground">Próxima en 5 días</p>
           </CardContent>
         </Card>
         <Card>
