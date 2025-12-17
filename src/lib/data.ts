@@ -46,9 +46,26 @@ export const servicesData: ServiceCategory[] = [
     icon: FileText,
     services: [
       {
+        id: 'rfc-original',
+        slug: 'rfc-original',
+        name: 'Inscripción al RFC (Original)',
+        description: 'Obtén tu Registro Federal de Contribuyentes por primera vez.',
+        steps: [
+          { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
+          { id: '2', title: 'Paso 2: Agenda una cita', content: 'Agenda una cita en la oficina del SAT más cercana.' },
+          { id: '3', title: 'Paso 3: Acude a tu cita', content: 'Presenta tu documentación oficial para concluir el trámite.' },
+          { id: '4', title: 'Paso 4: Obtén tu Acuse', content: 'Recibirás tu Acuse Único de Inscripción al RFC.' },
+        ],
+        documents: [
+          { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+          { id: '2', name: 'Comprobante de Domicilio', description: 'No mayor a 3 meses.' },
+          { id: '3', name: 'Identificación Oficial', description: 'INE o Pasaporte vigente.' },
+        ],
+      },
+      {
         id: 'rfc-clon',
         slug: 'rfc-clon',
-        name: 'RFC (Clon)',
+        name: 'Reimpresión de Constancia RFC (Clon)',
         description: 'Obtén una réplica de tu Registro Federal de Contribuyentes.',
         steps: [
           { id: '1', title: 'Paso 1: Proporcionar Datos', content: 'Ingresa tu RFC y datos personales para generar el documento.' },
