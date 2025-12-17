@@ -22,7 +22,7 @@ import { Bell, Home, LogOut, Search } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import React from 'react';
 import { useAuth, useUser } from '@/firebase';
@@ -31,9 +31,11 @@ import { signOut } from 'firebase/auth';
 function UserNav() {
   const { user } = useUser();
   const auth = useAuth();
+  const router = useRouter();
 
-  const handleSignOut = () => {
-    signOut(auth);
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
   }
 
   if (!user) return null;

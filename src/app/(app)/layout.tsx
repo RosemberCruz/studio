@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Sidebar,
@@ -79,8 +79,11 @@ function UserProfile() {
 
 function LogoutButton() {
     const auth = useAuth();
-    const handleSignOut = () => {
-        signOut(auth);
+    const router = useRouter();
+
+    const handleSignOut = async () => {
+        await signOut(auth);
+        router.push('/login');
     }
     return (
         <SidebarMenuItem>
