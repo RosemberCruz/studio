@@ -57,10 +57,10 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
-        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
-          { id: '1', title: 'Solicitar Trámite', content: 'CSF 100% ORIGINAL' },
+          { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
           { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
           { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -75,10 +75,10 @@ export const servicesData: ServiceCategory[] = [
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
         steps: [
-          { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
+          { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
           { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
           { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
@@ -93,12 +93,12 @@ export const servicesData: ServiceCategory[] = [
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
+        imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
         imageHint: 'tax document',
         steps: [
-            { id: '1', title: 'Solicitar Trámite', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
+            { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
-            { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación para que puedas descargar tu constancia desde la plataforma.' },
+            { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
             { id: '1', name: 'RFC', description: 'Tu Registro Federal de Contribuyentes.' },
@@ -145,13 +145,32 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/b0f19ac5-c6e3-40f4-8a4b-e8533b379965.png',
             imageHint: 'birth certificate',
             steps: [
-                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos de la persona para buscar el acta.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
                 { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población de la persona registrada.' },
                 { id: '2', name: 'Tipo de Acta', description: 'Nacimiento, Matrimonio, Divorcio o Defunción.' },
+            ],
+        },
+        {
+            id: 'semanas-cotizadas',
+            slug: 'semanas-cotizadas',
+            name: 'Semanas Cotizadas',
+            description: 'Consulta y obtén tu constancia de semanas cotizadas ante el IMSS.',
+            cost: 80,
+            deliveryTime: "15 minutos",
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
+            imageHint: 'social security',
+            steps: [
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+            ],
+            documents: [
+                { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+                { id: '2', name: 'Número de Seguridad Social (NSS)', description: 'Tu número de afiliación al IMSS.' },
             ],
         },
     ]
@@ -227,7 +246,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/4134b22c-a251-4f3b-8515-5152865c3637.png',
             imageHint: 'school certificate',
              steps: [
-                { id: '1', title: 'Solicitar Trámite', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -247,7 +266,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/51296cc6-13a8-450f-a391-72a3e5e18237.png',
             imageHint: 'medical prescription',
             steps: [
-                { id: '1', title: 'Solicitar Trámite', content: 'Ten una teleconsulta con un médico certificado.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -266,7 +285,7 @@ export const servicesData: ServiceCategory[] = [
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/d32f50d1-d250-4fe7-9130-31626f21c561.png',
             imageHint: 'doctor note',
             steps: [
-                { id: '1', title: 'Solicitar Trámite', content: 'Un médico evaluará tu condición de salud.' },
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
                 { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
@@ -290,6 +309,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
