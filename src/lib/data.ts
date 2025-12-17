@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { Building, Briefcase, Car, GraduationCap, Home, FileText } from 'lucide-react';
+import { Building, Briefcase, Car, GraduationCap, Home, FileText, HeartPulse, ShieldCheck } from 'lucide-react';
 
 export type ServiceCategory = {
   id: string;
@@ -41,29 +41,79 @@ export type ProgressItem = {
 
 export const servicesData: ServiceCategory[] = [
   {
-    id: 'identidad',
-    name: 'Identidad y Pasaportes',
+    id: 'tramites-fiscales',
+    name: 'Trámites Fiscales (RFC)',
     icon: FileText,
     services: [
       {
-        id: 'renovacion-pasaporte',
-        slug: 'renovacion-pasaporte',
-        name: 'Renovación de Pasaporte',
-        description: 'Guía completa para renovar tu pasaporte de manera eficiente.',
+        id: 'rfc-clon',
+        slug: 'rfc-clon',
+        name: 'RFC (Clon)',
+        description: 'Obtén una réplica de tu Registro Federal de Contribuyentes.',
         steps: [
-          { id: '1', title: 'Paso 1: Reunir Documentación', content: 'Junta tu pasaporte actual, una foto tamaño pasaporte reciente, y tu DNI.' },
-          { id: '2', title: 'Paso 2: Rellenar Formulario DS-82', content: 'Completa el formulario DS-82 online o a mano. Asegúrate de firmarlo.' },
-          { id: '3', title: 'Paso 3: Realizar el Pago', content: 'Paga la tarifa de renovación online o en una entidad bancaria autorizada.' },
-          { id: '4', title: 'Paso 4: Enviar Solicitud', content: 'Envía tu pasaporte actual, el formulario DS-82, la foto y el comprobante de pago por correo certificado.' },
+          { id: '1', title: 'Paso 1: Proporcionar Datos', content: 'Ingresa tu RFC y datos personales para generar el documento.' },
+          { id: '2', title: 'Paso 2: Verificación', content: 'Verificamos la información con los registros correspondientes.' },
+          { id: '3', title: 'Paso 3: Generación', content: 'Se genera una copia (clon) de tu constancia RFC.' },
+          { id: '4', title: 'Paso 4: Entrega', content: 'Recibe tu documento digitalmente.' },
         ],
         documents: [
-          { id: '1', name: 'Pasaporte Actual', description: 'Debe estar en buen estado.' },
-          { id: '2', name: 'Formulario DS-82', description: 'Completado y firmado.' },
-          { id: '3', name: 'Foto Tamaño Pasaporte', description: 'Fondo blanco, sin sonreír.' },
-          { id: '4', name: 'Comprobante de Pago', description: 'Recibo del pago de la tarifa.' },
+          { id: '1', name: 'Número de RFC', description: 'Tu Registro Federal de Contribuyentes.' },
+          { id: '2', name: 'Identificación Oficial', description: 'Para corroborar tu identidad.' },
+        ],
+      },
+      {
+        id: 'rfc-idcif',
+        slug: 'rfc-idcif',
+        name: 'Constancia de Situación Fiscal (CIF)',
+        description: 'Genera tu Cédula de Identificación Fiscal (CIF) oficial.',
+        steps: [
+            { id: '1', title: 'Paso 1: Solicitud', content: 'Realiza la solicitud con tu e.firma o contraseña del SAT.' },
+            { id: '2', title: 'Paso 2: Generación', content: 'El sistema del SAT genera tu constancia actualizada.' },
+            { id: '3', title: 'Paso 3: Descarga', content: 'Descarga el documento oficial en formato PDF.' },
+        ],
+        documents: [
+            { id: '1', name: 'e.firma o Contraseña del SAT', description: 'Necesaria para acceder al portal del SAT.' },
+            { id: '2', name: 'RFC', description: 'Tu Registro Federal de Contribuyentes.' },
         ],
       },
     ],
+  },
+  {
+    id: 'documentos-personales',
+    name: 'Documentos Personales',
+    icon: Briefcase,
+    services: [
+        {
+            id: 'antecedentes-no-penales',
+            slug: 'antecedentes-no-penales',
+            name: 'Certificado de Antecedentes No Penales',
+            description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
+             steps: [
+                { id: '1', title: 'Paso 1: Solicitud en línea', content: 'Ingresa al portal de tu estado y llena la solicitud.' },
+                { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago correspondiente en línea o en bancos.' },
+                { id: '3', title: 'Paso 3: Descarga', content: 'Descarga tu certificado oficial.' },
+            ],
+            documents: [
+                { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+                { id: '2', name: 'Comprobante de Pago', description: 'Recibo del pago de derechos.' },
+            ],
+        },
+        {
+            id: 'actas-registro-civil',
+            slug: 'actas-registro-civil',
+            name: 'Actas del Registro Civil',
+            description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
+            steps: [
+                { id: '1', title: 'Paso 1: Búsqueda', content: 'Ingresa los datos de la persona para buscar el acta.' },
+                { id: '2', title: 'Paso 2: Pago de derechos', content: 'Realiza el pago en línea.' },
+                { id: '3', title: 'Paso 3: Descarga', content: 'Descarga tu acta certificada en formato PDF.' },
+            ],
+            documents: [
+                { id: '1', name: 'Datos del Registrado', description: 'Nombre completo, fecha y lugar de registro.' },
+                { id: '2', name: 'Tipo de Acta', description: 'Nacimiento, Matrimonio, Divorcio o Defunción.' },
+            ],
+        },
+    ]
   },
   {
     id: 'vehiculos',
@@ -71,46 +121,88 @@ export const servicesData: ServiceCategory[] = [
     icon: Car,
     services: [
       {
-        id: 'licencia-conducir',
-        slug: 'licencia-conducir',
-        name: 'Obtener Licencia de Conducir por Primera Vez',
-        description: 'Pasos para obtener tu licencia de conducir.',
+        id: 'poliza-seguro',
+        slug: 'poliza-seguro',
+        name: 'Póliza de Seguro Vehicular',
+        description: 'Contrata o renueva la póliza de seguro para tu vehículo.',
         steps: [
-            { id: '1', title: 'Paso 1: Curso de Conducción', content: 'Completa un curso de conducción teórico y práctico en una escuela autorizada.' },
-            { id: '2', title: 'Paso 2: Examen Médico', content: 'Realiza un examen médico para certificar tu aptitud física y mental.' },
-            { id: '3', title: 'Paso 3: Examen Teórico', content: 'Aprueba el examen teórico sobre las reglas de tránsito.' },
-            { id: '4', title: 'Paso 4: Examen Práctico', content: 'Supera el examen práctico de manejo en el circuito oficial.' },
+            { id: '1', title: 'Paso 1: Cotización', content: 'Proporciona los datos de tu vehículo para obtener una cotización.' },
+            { id: '2', title: 'Paso 2: Elección de Cobertura', content: 'Elige la cobertura que mejor se adapte a tus necesidades.' },
+            { id: '3', title: 'Paso 3: Contratación', content: 'Realiza el pago y emite tu póliza.' },
         ],
         documents: [
-            { id: '1', name: 'DNI o Carnet de Extranjería', description: 'Documento de identidad vigente.' },
-            { id: '2', name: 'Certificado de Curso de Conducción', description: 'Emitido por una escuela autorizada.' },
-            { id: '3', name: 'Certificado de Examen Médico', description: 'De un centro médico autorizado.' },
-            { id: '4', name: 'Comprobante de Pago', description: 'Por los derechos de examen y emisión.' },
+            { id: '1', name: 'Tarjeta de Circulación', description: 'Datos del vehículo a asegurar.' },
+            { id: '2', name: 'Identificación Oficial del Contratante', description: 'Tu INE o Pasaporte.' },
+            { id: '3', name: 'Licencia de Conducir', description: 'Licencia vigente del conductor habitual.' },
+        ],
+      },
+      {
+        id: 'permiso-circular-sin-placas',
+        slug: 'permiso-circular-sin-placas',
+        name: 'Permiso para Circular sin Placas',
+        description: 'Obtén un permiso temporal para circular mientras realizas el trámite de placas.',
+        steps: [
+            { id: '1', title: 'Paso 1: Presentar Documentos', content: 'Acude a la oficina de tránsito con la factura del vehículo y tu identificación.' },
+            { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Realiza el pago por la expedición del permiso.' },
+            { id: '3', title: 'Paso 3: Recepción de Permiso', content: 'Recibe el permiso temporal con vigencia definida.' },
+        ],
+        documents: [
+            { id: '1', name: 'Factura o Carta Factura del Vehículo', description: 'Debe estar a tu nombre.' },
+            { id: '2', name: 'Identificación Oficial', description: 'INE o Pasaporte vigente.' },
+            { id: '3', name: 'Comprobante de Domicilio', description: 'No mayor a 3 meses.' },
         ],
       },
     ],
   },
-   {
-    id: 'negocios',
-    name: 'Negocios y Empresas',
-    icon: Briefcase,
+  {
+    id: 'educacion-salud',
+    name: 'Educación y Salud',
+    icon: HeartPulse,
     services: [
         {
-            id: 'registro-negocio',
-            slug: 'registro-negocio',
-            name: 'Registro de un Nuevo Negocio',
-            description: 'Guía para registrar formalmente tu emprendimiento.',
+            id: 'certificado-estudios',
+            slug: 'certificado-estudios',
+            name: 'Certificado de Estudios',
+            description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             steps: [
-                { id: '1', title: 'Paso 1: Elección de Estructura Legal', content: 'Decide si serás persona natural con negocio, EIRL, S.A.C., etc.' },
-                { id: '2', title: 'Paso 2: Búsqueda y Reserva de Nombre', content: 'Verifica la disponibilidad del nombre de tu empresa y resérvalo.' },
-                { id: '3', title: 'Paso 3: Elaboración de la Minuta', content: 'Redacta el acto constitutivo de la empresa con un abogado.' },
-                { id: '4', title: 'Paso 4: Inscripción en Registros Públicos', content: 'Eleva la minuta a escritura pública e inscríbela.' },
+                { id: '1', title: 'Paso 1: Solicitud', content: 'Llena el formato de solicitud en la institución educativa o en línea.' },
+                { id: '2', title: 'Paso 2: Pago de Derechos', content: 'Cubre la cuota por la expedición del certificado.' },
+                { id: '3', title: 'Paso 3: Entrega', content: 'Recoge tu certificado en la fecha indicada.' },
             ],
             documents: [
-                { id: '1', name: 'Formato de Reserva de Nombre', description: 'Aprobado por la entidad registral.' },
-                { id: '2', name: 'Minuta de Constitución', description: 'Firmada por los socios y el abogado.' },
-                { id: '3', name: 'DNI de los Socios', description: 'Copias de los documentos de identidad.' },
-                { id: '4', name: 'Comprobante de Depósito de Capital', description: 'Voucher del banco.' },
+                { id: '1', name: 'Identificación Oficial', description: 'Tu INE o Pasaporte.' },
+                { id: '2', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+                { id: '3', name: 'Antecedente Académico', description: 'Certificado del nivel anterior, si aplica.' },
+            ],
+        },
+        {
+            id: 'receta-medica',
+            slug: 'receta-medica',
+            name: 'Receta Médica Digital',
+            description: 'Genera una receta médica certificada por un profesional de la salud.',
+            steps: [
+                { id: '1', title: 'Paso 1: Consulta Virtual', content: 'Ten una teleconsulta con un médico certificado.' },
+                { id: '2', title: 'Paso 2: Emisión de Receta', content: 'El médico emite la receta con firma digital.' },
+                { id: '3', title: 'Paso 3: Recepción', content: 'Recibe la receta en tu correo o app para surtirla en farmacias.' },
+            ],
+            documents: [
+                { id: '1', name: 'Historial Médico Breve', description: 'Síntomas y padecimientos actuales.' },
+                { id: '2', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
+            ],
+        },
+        {
+            id: 'incapacidad-medica',
+            slug: 'incapacidad-medica',
+            name: 'Justificante de Incapacidad Médica',
+            description: 'Obtén un justificante de incapacidad médica para tu trabajo o escuela.',
+            steps: [
+                { id: '1', title: 'Paso 1: Valoración Médica', content: 'Un médico evaluará tu condición de salud.' },
+                { id: '2', title: 'Paso 2: Emisión del Justificante', content: 'El médico expide el documento con los días de incapacidad.' },
+                { id: '3', title: 'Paso 3: Envío', content: 'Recibe el justificante para presentarlo donde corresponda.' },
+            ],
+            documents: [
+                { id: '1', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
+                { id: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
             ],
         },
     ]
