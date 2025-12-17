@@ -173,6 +173,25 @@ export const servicesData: ServiceCategory[] = [
                 { id: '2', name: 'Número de Seguridad Social (NSS)', description: 'Tu número de afiliación al IMSS.' },
             ],
         },
+        {
+            id: 'vigencia-derechos-nss',
+            slug: 'vigencia-derechos-nss',
+            name: 'Constancia de Vigencia de Derecho NSS',
+            description: 'Obtén tu constancia de vigencia de derechos del IMSS usando tu CURP.',
+            cost: 40,
+            deliveryTime: "15 minutos",
+            imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
+            imageHint: 'social security document',
+            steps: [
+                { id: '1', title: 'Solicitar Trámite', content: 'Ingresa los datos requeridos para iniciar tu solicitud.' },
+                { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+                { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+            ],
+            documents: [
+                { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+                { id: '2', name: 'Número de Seguridad Social (NSS)', description: 'Tu número de afiliación al IMSS.' },
+            ],
+        },
     ]
   },
   {
@@ -290,8 +309,8 @@ export const servicesData: ServiceCategory[] = [
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
-                { id: '1', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
-                { id: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
+                { id: '1,', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
+                { id: '2,', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
             ],
         },
     ]
@@ -309,6 +328,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
