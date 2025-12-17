@@ -9,7 +9,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Landmark, Loader2, Clipboard } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useEffect } from 'react';
 
 const banks = [
@@ -33,12 +35,20 @@ const bankDetails = {
 
 export default function AddBalancePage() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [email, setEmail] = useState('');
   const [amount, setAmount] = useState('');
   const [trackingKey, setTrackingKey] = useState('');
   const [bank, setBank] = useState('');
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
+
+  const { data: userData } = useDoc(userDocRef);
 
   useEffect(() => {
     if (user?.email) {
@@ -57,6 +67,15 @@ export default function AddBalancePage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(() => {
+        if (!user || !userData) {
+             toast({
+                title: "Error",
+                description: "Debes iniciar sesión para recargar saldo.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         if (!email || !amount || !trackingKey || !bank) {
             toast({
                 title: "Campos Incompletos",
@@ -66,17 +85,32 @@ export default function AddBalancePage() {
             return;
         }
 
-        // Simulate API call
-        setTimeout(() => {
-            toast({
-                title: "Reporte Enviado",
-                description: "Tu reporte de depósito ha sido enviado. El saldo se reflejará en tu cuenta una vez que sea verificado por un administrador."
+        const rechargeAmount = parseFloat(amount);
+        if (isNaN(rechargeAmount) || rechargeAmount <= 0) {
+             toast({
+                title: "Monto Inválido",
+                description: "Por favor, ingresa un monto válido.",
+                variant: "destructive"
             });
-            // Reset form
-            setAmount('');
-            setTrackingKey('');
-            setBank('');
-        }, 1000);
+            return;
+        }
+
+        const newBalance = userData.balance + rechargeAmount;
+        
+        // Non-blocking update. The UI will update reactively from useDoc
+        if (userDocRef) {
+            updateDocumentNonBlocking(userDocRef, { balance: newBalance });
+        }
+
+        toast({
+            title: "¡Recarga Exitosa!",
+            description: `Se han añadido $${rechargeAmount.toFixed(2)} a tu saldo. Nuevo saldo: $${newBalance.toFixed(2)}.`
+        });
+
+        // Reset form
+        setAmount('');
+        setTrackingKey('');
+        setBank('');
     });
   }
 
@@ -124,7 +158,7 @@ export default function AddBalancePage() {
             <CardHeader>
             <CardTitle>Reportar Depósito</CardTitle>
             <CardDescription>
-                Llena el formulario con los datos de tu transferencia. La recarga será procesada por un administrador.
+                Llena el formulario con los datos de tu transferencia. La recarga se aplicará automáticamente a tu saldo.
             </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
