@@ -85,6 +85,16 @@ export default function AddBalancePage() {
             return;
         }
 
+        // SIMULATED: Check if the transfer was "successful"
+        if (!trackingKey.toLowerCase().includes('exitoso')) {
+            toast({
+                title: "Transferencia Rechazada",
+                description: "La clave de rastreo no es válida o la transferencia no fue exitosa. Verifica tus datos.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         const rechargeAmount = parseFloat(amount);
         if (isNaN(rechargeAmount) || rechargeAmount <= 0) {
              toast({
@@ -158,7 +168,7 @@ export default function AddBalancePage() {
             <CardHeader>
             <CardTitle>Reportar Depósito</CardTitle>
             <CardDescription>
-                Llena el formulario con los datos de tu transferencia. La recarga se aplicará automáticamente a tu saldo.
+                Llena el formulario con los datos de tu transferencia. La recarga se aplicará automáticamente a tu saldo si la clave de rastreo es válida.
             </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -173,7 +183,7 @@ export default function AddBalancePage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="trackingKey">Clave de Rastreo</Label>
-                        <Input id="trackingKey" type="text" placeholder="Clave de 18 dígitos" value={trackingKey} onChange={e => setTrackingKey(e.target.value)} required disabled={isPending} />
+                        <Input id="trackingKey" type="text" placeholder="Incluye 'exitoso' para simular éxito" value={trackingKey} onChange={e => setTrackingKey(e.target.value)} required disabled={isPending} />
                     </div>
                 </div>
                 <div className="space-y-2">
