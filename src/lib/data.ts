@@ -178,7 +178,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'vigencia-derechos-nss',
             name: 'Constancia de Vigencia de Derecho NSS',
             description: 'Obtén tu constancia de vigencia de derechos del IMSS usando tu CURP.',
-            cost: 40,
+            cost: 30,
             deliveryTime: "15 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
             imageHint: 'social security document',
@@ -328,6 +328,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
