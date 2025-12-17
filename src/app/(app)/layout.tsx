@@ -1,0 +1,115 @@
+'use client';
+
+import * as React from 'react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarInset,
+  SidebarFooter,
+} from '@/components/ui/sidebar';
+import {
+  LayoutDashboard,
+  Bot,
+  Calendar,
+  ClipboardCheck,
+  ListChecks,
+  Settings,
+} from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AppHeader } from '@/components/AppHeader';
+import { AppLogo } from '@/components/AppLogo';
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname.startsWith(path);
+
+  return (
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader>
+          <div className="flex items-center gap-2 p-2">
+            <AppLogo />
+            <h1 className="text-xl font-semibold font-headline">TramitesFacil</h1>
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
+                <Link href="/dashboard">
+                  <LayoutDashboard />
+                  Dashboard
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={isActive('/servicios')}>
+                <Link href="/servicios">
+                  <ListChecks />
+                  Directorio de Servicios
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/generador-formularios'}>
+                <Link href="/generador-formularios">
+                  <Bot />
+                  Generador de Formas
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/citas'}>
+                <Link href="/citas">
+                  <Calendar />
+                  Agendar Cita
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/seguimiento'}>
+                <Link href="/seguimiento">
+                  <ClipboardCheck />
+                  Seguimiento
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <Settings />
+                Configuración
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <div className="flex items-center gap-3 p-2">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="Usuario" />
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="font-semibold">Usuario</span>
+                  <span className="text-xs text-muted-foreground">usuario@email.com</span>
+                </div>
+              </div>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <AppHeader />
+        <main className="p-4 lg:p-6">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
