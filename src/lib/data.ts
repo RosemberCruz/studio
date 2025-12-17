@@ -127,11 +127,12 @@ export const servicesData: ServiceCategory[] = [
                 { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
             ],
             documents: [
-                { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
-                { id: '2', name: 'Identificación Oficial (INE)', description: 'Se requiere la clave de elector.' },
-                { id: '3', name: 'Nombre Completo', description: 'Tal como aparece en tu identificación.' },
-                { id: '4', name: 'Fecha de Nacimiento', description: 'Tu fecha de nacimiento completa.' },
-                { id: '5', name: 'Domicilio', description: 'Tu dirección de residencia actual.' },
+                { id: '1', name: 'Nombre Completo', description: 'Tal como aparece en tu identificación.' },
+                { id: '2', name: 'CURP', description: 'Clave Única de Registro de Población.' },
+                { id: '3', name: 'Fecha de Nacimiento', description: 'Tu fecha de nacimiento completa.' },
+                { id: '4', name: 'Domicilio', description: 'Tu dirección de residencia actual.' },
+                { id: '5', name: 'Identificación Oficial (INE)', description: 'Se requiere la clave de elector.' },
+                { id: '6', name: 'Estado', description: 'El estado en el que solicitarás el antecedente no penal.' },
             ],
         },
         {
@@ -280,6 +281,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
