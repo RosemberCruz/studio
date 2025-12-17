@@ -22,7 +22,8 @@ export default function AdminDashboardPage() {
     const { data: users, isLoading } = useCollection(usersQuery);
 
     const handleUserClick = (userId: string) => {
-        router.push(`/admin/users/${userId}`);
+        // Corrected path to be relative
+        router.push(`admin/users/${userId}`);
     }
 
     return (
