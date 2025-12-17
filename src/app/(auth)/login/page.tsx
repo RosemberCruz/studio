@@ -143,7 +143,7 @@ export default function LoginPage() {
 
 
   return (
-    <>
+    <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
     <Tabs defaultValue="login" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
@@ -173,13 +173,13 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                     <Label htmlFor="login-password">Contraseña</Label>
-                    <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                    
                         <DialogTrigger asChild>
                              <Button variant="link" type="button" className="p-0 h-auto text-xs">
                                 ¿Olvidaste tu contraseña?
                             </Button>
                         </DialogTrigger>
-                    </Dialog>
+                    
                 </div>
                 <Input
                   id="login-password"
@@ -291,6 +291,6 @@ export default function LoginPage() {
           <Button onClick={handlePasswordReset}>Enviar Correo</Button>
         </DialogFooter>
       </DialogContent>
-    </>
+    </Dialog>
   );
 }
