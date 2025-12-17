@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Landmark, Loader2, Clipboard, AlertCircle } from 'lucide-react';
+import { Landmark, Loader2, Clipboard, AlertCircle, Bank, Banknote } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -18,7 +18,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 const bankDetails = {
     accountHolder: 'ROSEMBER CRUZ BETANCOURT',
     bankName: 'BBVA BANCOMER',
-    clabe: '4152314027398869' // Changed from accountNumber to clabe
+    clabe: '4152314027398869'
 };
 
 export default function AddBalancePage() {
@@ -28,6 +28,7 @@ export default function AddBalancePage() {
   const [isPending, startTransition] = useTransition();
   const [amount, setAmount] = useState('');
   const [trackingKey, setTrackingKey] = useState('');
+  const [sourceBank, setSourceBank] = useState('');
   const [email, setEmail] = useState('');
 
 
@@ -64,17 +65,16 @@ export default function AddBalancePage() {
             return;
         }
 
-        if (!amount || !trackingKey) {
+        if (!amount || !trackingKey || !sourceBank) {
             toast({
                 title: "Campos Incompletos",
-                description: "Por favor, ingresa el monto y la clave de rastreo de tu transferencia.",
+                description: "Por favor, completa todos los campos para reportar tu transferencia.",
                 variant: "destructive"
             });
             return;
         }
 
         // SIMULATED: We are not calling a real bank API. We check if the tracking key is "valid".
-        // For this simulation, we consider it "valid" if it's not empty. A real app would verify this with a bank service.
         if (trackingKey.trim() === '') {
             toast({
                 title: "Transferencia no encontrada",
@@ -96,7 +96,6 @@ export default function AddBalancePage() {
 
         const newBalance = userData.balance + rechargeAmount;
         
-        // Non-blocking update. The UI will update reactively from useDoc
         if (userDocRef) {
             updateDocumentNonBlocking(userDocRef, { balance: newBalance });
         }
@@ -109,6 +108,7 @@ export default function AddBalancePage() {
         // Reset form
         setAmount('');
         setTrackingKey('');
+        setSourceBank('');
     });
   }
 
@@ -160,10 +160,20 @@ export default function AddBalancePage() {
             </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+                <div className="space-y-2">
+                    <Label htmlFor="sourceBank">Banco de Origen</Label>
+                    <div className="relative">
+                        <Bank className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input id="sourceBank" type="text" placeholder="Ej: BBVA, Santander, Banorte" value={sourceBank} onChange={e => setSourceBank(e.target.value)} required disabled={isPending} className="pl-9"/>
+                    </div>
+                </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="amount">Monto Enviado (MXN)</Label>
-                        <Input id="amount" type="number" placeholder="Ej: 500.00" value={amount} onChange={e => setAmount(e.target.value)} required disabled={isPending}/>
+                        <div className="relative">
+                            <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input id="amount" type="number" placeholder="Ej: 500.00" value={amount} onChange={e => setAmount(e.target.value)} required disabled={isPending} className="pl-9"/>
+                        </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="trackingKey">Clave de Rastreo</Label>
