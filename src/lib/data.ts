@@ -57,8 +57,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
-        imageUrl: 'https://picsum.photos/seed/sat-office/600/400',
-        imageHint: 'tax office',
+        imageUrl: 'https://picsum.photos/seed/sat-logo/600/400',
+        imageHint: 'tax logo',
         steps: [
           { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
           { id: '2', title: 'Verificar status de trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -93,8 +93,8 @@ export const servicesData: ServiceCategory[] = [
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
         deliveryTime: "10 minutos",
-        imageUrl: 'https://picsum.photos/seed/sat-document/600/400',
-        imageHint: 'tax form',
+        imageUrl: 'https://picsum.photos/seed/sat-logo/600/400',
+        imageHint: 'tax logo',
         steps: [
             { id: '1', title: 'Paso 1: Proporciona tus datos', content: 'Ingresa tu RFC y tu ID CIF para iniciar.' },
             { id: '2', title: 'Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
@@ -277,6 +277,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
