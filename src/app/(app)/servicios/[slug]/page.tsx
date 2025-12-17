@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useState } from 'react';
 import { servicesData } from '@/lib/data';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound, useRouter, useParams } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +21,9 @@ import { doc, collection } from 'firebase/firestore';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+export default function ServiceDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
   const { user } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
@@ -37,7 +40,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
 
   const service = servicesData
     .flatMap((category) => category.services)
-    .find((s) => s.slug === params.slug);
+    .find((s) => s.slug === slug);
 
   if (!service) {
     notFound();
@@ -70,7 +73,9 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
 
     // 1. Deduct balance (non-blocking)
     const newBalance = userData.balance - service.cost;
-    updateDocumentNonBlocking(userDocRef, { balance: newBalance });
+    if(userDocRef) {
+      updateDocumentNonBlocking(userDocRef, { balance: newBalance });
+    }
 
     // 2. Create service request document (non-blocking)
     const requestsColRef = collection(firestore, 'serviceRequests');
@@ -89,7 +94,9 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
       router.push('/seguimiento');
     }).catch(() => {
       // Revert balance if request creation fails (simplified approach)
-      updateDocumentNonBlocking(userDocRef, { balance: userData.balance });
+      if (userDocRef) {
+        updateDocumentNonBlocking(userDocRef, { balance: userData.balance });
+      }
       toast({ title: "Error", description: "No se pudo crear la solicitud. Inténtalo de nuevo.", variant: "destructive"});
       setIsSubmitting(false);
     })
@@ -195,3 +202,5 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
     </div>
   );
 }
+
+    
