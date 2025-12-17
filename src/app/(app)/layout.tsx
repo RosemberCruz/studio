@@ -83,6 +83,7 @@ function LogoutButton() {
     const router = useRouter();
 
     const handleSignOut = async () => {
+        if (!auth) return;
         await signOut(auth);
         router.push('/login');
     }
@@ -98,9 +99,9 @@ function LogoutButton() {
 
 function useIsAdmin() {
     const { user } = useUser();
-    // This should be replaced with a more secure method like custom claims
-    const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
-    return user?.email === ADMIN_EMAIL;
+    // In production, this should be replaced with custom claims verification.
+    // For now, we check if the sign-in provider is 'password'.
+    return user?.providerData.some(p => p.providerId === 'password');
 }
 
 

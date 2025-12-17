@@ -33,12 +33,12 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the requesting user has the 'isAdmin' custom claim.
-     * This is used to grant privileged read access.
+     * Checks if the requesting user has the 'isAdmin' custom claim
+     * or is logged in via password (temporary solution for development).
      */
     function isAdmin() {
-      // Temporarily allowing a specific email to act as admin for development
-      return isSignedIn() && request.auth.email == 'rosembercruzbetancourt@gmail.com';
+      return isSignedIn() && 
+             (request.auth.token.admin == true || request.auth.token.firebase.sign_in_provider == 'password');
     }
 
     /**

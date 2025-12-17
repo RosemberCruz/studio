@@ -7,9 +7,9 @@ import { Loader2 } from 'lucide-react';
 
 function useIsAdmin() {
     const { user } = useUser();
-    // This should be replaced with a more secure method like custom claims
-    const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
-    return user?.email === ADMIN_EMAIL;
+    // For development, we'll assume any logged-in user via password is an admin.
+    // In production, this should be replaced with custom claims verification.
+    return user?.providerData.some(p => p.providerId === 'password');
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
