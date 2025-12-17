@@ -120,7 +120,7 @@ export default function UserDetailPage() {
                                         <TableCell className="text-right">{format(new Date(order.date), "dd/MM/yyyy")}</TableCell>
                                    </TableRow>
                                ))}
-                            </TableBody>
+                            </Body>
                         </Table>
                     </CardContent>
                 </Card>

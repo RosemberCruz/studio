@@ -5,18 +5,12 @@ import * as React from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import AppLayout from '@/app/(app)/layout';
 
-// Temp function to simulate admin check. Replace with real logic.
+// This is a simulated admin check. In a real app, this would be based on custom claims.
 function useIsAdmin() {
     const { user } = useUser();
-    // In a real app, you'd get this from custom claims.
-    // For now, we'll check against a specific email for a more realistic simulation.
-    // IMPORTANT: Replace with your actual admin email address.
+    // This email is treated as the admin user for demonstration purposes.
     const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
-
-    // The user's token needs to be refreshed to get the latest custom claims.
-    // This is a complex topic, so for this simulation, we rely on the email.
     return user?.email === ADMIN_EMAIL;
 }
 
@@ -27,26 +21,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
 
   React.useEffect(() => {
+    // Wait until the user's auth state is resolved.
     if (!isUserLoading) {
       if (!user) {
-        // If not logged in, redirect to login
+        // If not logged in, redirect to the login page.
         router.replace('/login');
       } else if (!isAdmin) {
-        // If logged in but not an admin, redirect to access denied
+        // If logged in but not an admin, redirect to an access denied page.
         router.replace('/access-denied');
       }
     }
   }, [user, isUserLoading, isAdmin, router]);
 
+  // While we're checking the user's status, show a loading spinner.
   if (isUserLoading || !user || !isAdmin) {
-    // Show a loading screen while we verify auth and admin status
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen w-full items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
   }
 
-  // If user is an admin, render the admin layout which includes the main app layout
-  return <AppLayout>{children}</AppLayout>;
+  // If the user is a verified admin, render the children within this layout.
+  return <>{children}</>;
 }
