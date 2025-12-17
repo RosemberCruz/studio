@@ -31,6 +31,8 @@ import { AppLogo } from '@/components/AppLogo';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useAuth } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { WhatsappIcon } from '@/components/WhatsappIcon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 function UserProfile() {
@@ -109,6 +111,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => pathname.startsWith(path);
   const isAdmin = useIsAdmin();
 
+  const phoneNumber = "5215512345678"; // Replace with your number
+  const message = "Hola, he encontrado un error en la aplicación y necesito ayuda.";
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -180,6 +186,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <ClientAppHeader />
         <main className="p-4 lg:p-6">{children}</main>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-transform hover:scale-110"
+                        >
+                        <WhatsappIcon className="h-7 w-7" />
+                        <span className="sr-only">Reportar un error por WhatsApp</span>
+                    </a>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                    <p>¿Necesitas ayuda? ¡Contáctanos!</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
       </SidebarInset>
     </SidebarProvider>
   );
