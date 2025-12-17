@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -97,9 +98,15 @@ function LogoutButton() {
 
 // Temp function to simulate admin check. Replace with real logic.
 function useIsAdmin() {
-    // In a real app, you would get this from the user's custom claims.
-    // For now, we'll let everyone be an admin for demonstration.
-    return true; 
+    const { user } = useUser();
+    // In a real app, you'd get this from custom claims.
+    // For now, we'll check against a specific email for a more realistic simulation.
+    // IMPORTANT: Replace with your actual admin email address.
+    const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com';
+
+    // The user's token needs to be refreshed to get the latest custom claims.
+    // This is a complex topic, so for this simulation, we rely on the email.
+    return user?.email === ADMIN_EMAIL;
 }
 
 
