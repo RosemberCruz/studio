@@ -51,7 +51,7 @@ export const servicesData: ServiceCategory[] = [
         id: 'rfc-original',
         slug: 'rfc-original',
         name: 'Constancia de Situación Fiscal Original',
-        description: 'Obtén tu Registro Federal de Contribuyentes por primera vez.',
+        description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
         steps: [
           { id: '1', title: 'Paso 1: Pre-inscripción en línea', content: 'Realiza tu pre-inscripción en el portal del SAT.' },
@@ -229,7 +229,7 @@ export const servicesData: ServiceCategory[] = [
             ],
             documents: [
                 { id: '1', name: 'Identificación Oficial', description: 'Para verificar tu identidad.' },
-                { id: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
+                { id_2: '2', name: 'Descripción de Síntomas', description: 'Detalla tu malestar al médico.' },
             ],
         },
     ]
