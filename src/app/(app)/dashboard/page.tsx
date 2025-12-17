@@ -9,7 +9,6 @@ import {
 import {
   Activity,
   ArrowUpRight,
-  Bot,
   ClipboardCheck,
   DollarSign,
   ListChecks,
@@ -28,7 +27,6 @@ import { Badge } from "@/components/ui/badge"
 
 const quickActions = [
     { title: "Ver Servicios", href: "/servicios", icon: ListChecks, description: "Explora todos los trámites." },
-    { title: "Generador IA", href: "/generador-formularios", icon: Bot, description: "Rellena formas con IA." },
     { title: "Mis Órdenes", href: "/seguimiento", icon: ClipboardCheck, description: "Revisa tus solicitudes." },
 ]
 

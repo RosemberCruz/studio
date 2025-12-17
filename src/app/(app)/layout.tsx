@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
-  Bot,
   ClipboardCheck,
   ListChecks,
   Settings,
@@ -144,14 +143,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link href="/servicios">
                   <ListChecks />
                   Directorio de Servicios
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/generador-formularios'}>
-                <Link href="/generador-formularios">
-                  <Bot />
-                  Generador de Formas
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

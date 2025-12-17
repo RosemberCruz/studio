@@ -14,8 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Bot, FileCheck2, ShoppingCart, Clock, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { FileCheck2, ShoppingCart, Clock, Loader2 } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -122,7 +121,7 @@ export default function ServiceDetailPage() {
 
 
       <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-6">
+        <div className="md:col-span-3 space-y-6">
             <Card>
                 <CardHeader>
                   <CardTitle>Realizar Trámite</CardTitle>
@@ -178,25 +177,6 @@ export default function ServiceDetailPage() {
                 </Accordion>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="md:col-span-1 space-y-6">
-            <Card className="sticky top-24 bg-secondary border-dashed">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-primary">
-                        <Bot className="h-6 w-6" />
-                        ¿Necesitas Ayuda?
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground mb-4">Usa nuestra herramienta de IA para rellenar tu formulario.</p>
-                    <Button asChild className="w-full">
-                        <Link href="/generador-formularios">
-                            Ir al Generador de Formas
-                        </Link>
-                    </Button>
-                </CardContent>
-            </Card>
         </div>
       </div>
     </div>
