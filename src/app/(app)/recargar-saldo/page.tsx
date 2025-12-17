@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Landmark, Loader2 } from 'lucide-react';
+import { Landmark, Loader2, Clipboard } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { useEffect } from 'react';
 
@@ -25,6 +25,12 @@ const banks = [
     "Otro"
 ];
 
+const bankDetails = {
+    accountHolder: 'Tu Nombre Completo',
+    bankName: 'Nombre de tu Banco',
+    accountNumber: '123-456-7890'
+};
+
 export default function AddBalancePage() {
   const { user } = useUser();
   const { toast } = useToast();
@@ -39,6 +45,14 @@ export default function AddBalancePage() {
       setEmail(user.email);
     }
   }, [user]);
+
+    const copyToClipboard = (text: string, field: string) => {
+        navigator.clipboard.writeText(text);
+        toast({
+            title: "Copiado",
+            description: `El ${field} ha sido copiado al portapapeles.`
+        });
+    }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,6 +88,36 @@ export default function AddBalancePage() {
           Reporta aquí tu depósito o transferencia para añadir saldo a tu cuenta.
         </p>
       </div>
+
+       <Card className="max-w-2xl mx-auto border-primary/50">
+        <CardHeader>
+            <CardTitle>Datos para la Transferencia</CardTitle>
+            <CardDescription>Realiza tu depósito a la siguiente cuenta y luego repórtalo en el formulario de abajo.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-md">
+                <div>
+                    <Label className="text-xs">Titular de la cuenta</Label>
+                    <p className="font-semibold">{bankDetails.accountHolder}</p>
+                </div>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-md">
+                <div>
+                    <Label className="text-xs">Banco</Label>
+                    <p className="font-semibold">{bankDetails.bankName}</p>
+                </div>
+            </div>
+             <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-md">
+                <div>
+                    <Label className="text-xs">Número de Cuenta / CLABE</Label>
+                    <p className="font-semibold">{bankDetails.accountNumber}</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => copyToClipboard(bankDetails.accountNumber, 'número de cuenta')}>
+                    <Clipboard className="h-4 w-4" />
+                </Button>
+            </div>
+        </CardContent>
+       </Card>
 
       <Card className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit}>
