@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -31,19 +32,19 @@ const quickActions = [
     { title: "Ver Servicios", href: "/servicios", icon: ListChecks, description: "Explora todos los trámites." },
     { title: "Agendar Cita", href: "/citas", icon: Calendar, description: "Reserva tu próxima cita." },
     { title: "Generador IA", href: "/generador-formularios", icon: Bot, description: "Rellena formas con IA." },
-    { title: "Mi Progreso", href: "/seguimiento", icon: ClipboardCheck, description: "Revisa tus solicitudes." },
+    { title: "Mis Órdenes", href: "/seguimiento", icon: ClipboardCheck, description: "Revisa tus solicitudes." },
 ]
 
-const recentApplications = [
-    { id: "#3210", service: "Renovación de Pasaporte", status: "Aprobado", date: "Hace 2 días" },
-    { id: "#3209", service: "Licencia de Conducir", status: "En Proceso", date: "Hace 1 semana" },
-    { id: "#3208", service: "Registro de Negocio", status: "Requiere Acción", date: "Hace 2 semanas" },
-    { id: "#3207", service: "Permiso de Construcción", status: "Rechazado", date: "Hace 1 mes" },
+const recentOrders = [
+    { id: "#3210", service: "Reimpresión de Constancia RFC", status: "Completado", date: "Hace 2 días" },
+    { id: "#3209", service: "Póliza de Seguro Vehicular", status: "En Proceso", date: "Hace 1 semana" },
+    { id: "#3208", service: "Acta de Nacimiento", status: "Requiere Acción", date: "Hace 2 semanas" },
+    { id: "#3207", service: "Certificado de Antecedentes No Penales", status: "Rechazado", date: "Hace 1 mes" },
 ]
 
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
     switch (status) {
-        case "Aprobado":
+        case "Completado":
             return "default";
         case "En Proceso":
             return "secondary";
@@ -110,7 +111,7 @@ export default function DashboardPage() {
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <Card className="lg:col-span-4">
           <CardHeader>
-            <CardTitle>Solicitudes Recientes</CardTitle>
+            <CardTitle>Órdenes Recientes</CardTitle>
             <CardDescription>
               Un vistazo a tus últimos 4 trámites.
             </CardDescription>
@@ -125,7 +126,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentApplications.map((app) => (
+                {recentOrders.map((app) => (
                     <TableRow key={app.id}>
                         <TableCell>
                             <div className="font-medium">{app.service}</div>

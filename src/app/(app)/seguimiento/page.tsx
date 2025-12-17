@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { progressData } from '@/lib/data';
@@ -23,7 +24,7 @@ export default function ProgressTrackerPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline">Seguimiento de Trámites</h1>
+        <h1 className="text-3xl font-bold font-headline">Mis Órdenes</h1>
         <p className="text-muted-foreground mt-2">
           Revisa el estado actual de todas tus solicitudes en un solo lugar.
         </p>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -134,7 +135,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarMenuButton asChild isActive={pathname === '/seguimiento'}>
                 <Link href="/seguimiento">
                   <ClipboardCheck />
-                  Seguimiento
+                  Mis Órdenes
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
