@@ -84,7 +84,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: 'rfc-idcif',
         slug: 'rfc-idcif',
-        name: 'Constancia de Situación Fiscal (CIF)',
+        name: 'Constancia de Situación Fiscal Generica',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 200,
         steps: [
