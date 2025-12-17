@@ -50,7 +50,7 @@ export const servicesData: ServiceCategory[] = [
       {
         id: 'rfc-original',
         slug: 'rfc-original',
-        name: 'Inscripción al RFC (Original)',
+        name: 'Constancia de Situación Fiscal Original',
         description: 'Obtén tu Registro Federal de Contribuyentes por primera vez.',
         cost: 250,
         steps: [
