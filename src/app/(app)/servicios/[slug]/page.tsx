@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Bot, FileCheck2, ShoppingCart } from 'lucide-react';
+import { Bot, FileCheck2, ShoppingCart, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
@@ -66,8 +66,14 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
             <h1 className="text-4xl font-bold font-headline">{service.name}</h1>
             <p className="text-lg text-muted-foreground mt-2">{service.description}</p>
         </div>
-        <Card className="p-4">
+        <Card className="p-4 text-center">
             <div className="text-lg font-bold text-primary">${service.cost} MXN</div>
+            {service.deliveryTime && (
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-1">
+                    <Clock className="h-4 w-4" />
+                    <span>{service.deliveryTime}</span>
+                </div>
+            )}
         </Card>
       </div>
 
