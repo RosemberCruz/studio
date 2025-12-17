@@ -89,10 +89,13 @@ service cloud.firestore {
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
-      allow list: if isAdmin();
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
       allow update: if isOwner(userId) && isValidUserAccountUpdate();
       allow delete: if isOwner(userId);
+    }
+
+    match /users/{document=**} {
+      allow list: if isAdmin();
     }
     
     /**
