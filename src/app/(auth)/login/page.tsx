@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -36,6 +37,7 @@ export default function LoginPage() {
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -53,7 +55,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      // onAuthStateChanged will handle the redirect
+      router.push('/dashboard'); // Redirección forzada
     } catch (error: any) {
       console.error("Login Error: ", error);
       toast({
@@ -75,7 +77,7 @@ export default function LoginPage() {
       creationDate: new Date().toISOString(),
       balance: 500, // Initial balance for new users
     };
-    await setDoc(userRef, userData, { merge: true });
+    await setDoc(userRef, userData);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -94,7 +96,7 @@ export default function LoginPage() {
         // 3. Create the user document in Firestore
         await createFirestoreUserDocument(user);
         
-        // The onAuthStateChanged listener in the provider will handle the redirect.
+        router.push('/dashboard');
       }
     } catch (error: any) {
       console.error("Sign-up Error: ", error);
@@ -144,132 +146,131 @@ export default function LoginPage() {
 
   return (
     <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
-    <Tabs defaultValue="login" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-        <TabsTrigger value="signup">Crear Cuenta</TabsTrigger>
-      </TabsList>
-      <TabsContent value="login">
-        <Card>
-          <CardHeader>
-            <CardTitle>Iniciar Sesión</CardTitle>
-            <CardDescription>
-              Ingresa a tu cuenta para continuar.
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleLogin}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
-                <Input
-                  id="login-email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  required
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="login-password">Contraseña</Label>
-                    
-                        <DialogTrigger asChild>
-                             <Button variant="link" type="button" className="p-0 h-auto text-xs">
-                                ¿Olvidaste tu contraseña?
-                            </Button>
-                        </DialogTrigger>
-                    
-                </div>
-                <Input
-                  id="login-password"
-                  type="password"
-                  required
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full">
-                Iniciar Sesión
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-      </TabsContent>
-      <TabsContent value="signup">
-        <Card>
-          <CardHeader>
-            <CardTitle>Crear una Cuenta</CardTitle>
-            <CardDescription>
-              Completa el formulario para registrarte.
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSignUp}>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+      <Tabs defaultValue="login" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+          <TabsTrigger value="signup">Crear Cuenta</TabsTrigger>
+        </TabsList>
+        <TabsContent value="login">
+          <Card>
+            <CardHeader>
+              <CardTitle>Iniciar Sesión</CardTitle>
+              <CardDescription>
+                Ingresa a tu cuenta para continuar.
+              </CardDescription>
+            </CardHeader>
+            <form onSubmit={handleLogin}>
+              <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first-name">Nombres</Label>
+                  <Label htmlFor="login-email">Email</Label>
                   <Input
-                    id="first-name"
+                    id="login-email"
+                    type="email"
+                    placeholder="tu@email.com"
                     required
-                    value={signupFirstName}
-                    onChange={(e) => setSignupFirstName(e.target.value)}
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="last-name">Apellidos</Label>
+                  <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password">Contraseña</Label>
+                      
+                          <DialogTrigger asChild>
+                              <Button variant="link" type="button" className="p-0 h-auto text-xs">
+                                  ¿Olvidaste tu contraseña?
+                              </Button>
+                          </DialogTrigger>
+                      
+                  </div>
                   <Input
-                    id="last-name"
+                    id="login-password"
+                    type="password"
                     required
-                    value={signupLastName}
-                    onChange={(e) => setSignupLastName(e.target.value)}
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  required
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                />
-              </div>
-               <div className="space-y-2">
-                <Label htmlFor="phone-number">Número de Teléfono</Label>
-                <Input
-                  id="phone-number"
-                  type="tel"
-                  value={signupPhone}
-                  onChange={(e) => setSignupPhone(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Contraseña</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  required
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full">
-                Crear Cuenta
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-      </TabsContent>
-    </Tabs>
-
-     <DialogContent>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full">
+                  Iniciar Sesión
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </TabsContent>
+        <TabsContent value="signup">
+          <Card>
+            <CardHeader>
+              <CardTitle>Crear una Cuenta</CardTitle>
+              <CardDescription>
+                Completa el formulario para registrarte.
+              </CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSignUp}>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first-name">Nombres</Label>
+                    <Input
+                      id="first-name"
+                      required
+                      value={signupFirstName}
+                      onChange={(e) => setSignupFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last-name">Apellidos</Label>
+                    <Input
+                      id="last-name"
+                      required
+                      value={signupLastName}
+                      onChange={(e) => setSignupLastName(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="tu@email.com"
+                    required
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone-number">Número de Teléfono</Label>
+                  <Input
+                    id="phone-number"
+                    type="tel"
+                    value={signupPhone}
+                    onChange={(e) => setSignupPhone(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Contraseña</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    required
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full">
+                  Crear Cuenta
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </TabsContent>
+      </Tabs>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Restablecer Contraseña</DialogTitle>
           <DialogDescription>
