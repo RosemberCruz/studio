@@ -18,7 +18,7 @@ import {
   initiateEmailSignIn,
   initiateEmailSignUp,
 } from '@/firebase/non-blocking-login';
-import { updateProfile, User } from 'firebase/auth';
+import { updateProfile, User, UserCredential } from 'firebase/auth';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 
@@ -61,25 +61,17 @@ export default function LoginPage() {
     setDocumentNonBlocking(userRef, userData, { merge: true });
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    initiateEmailSignUp(auth, signupEmail, signupPassword);
-  };
-
-  // We need to listen for the user creation to get the UID
-  // and check if it's a new user.
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user && user.metadata.creationTime === user.metadata.lastSignInTime) {
-         // This is likely a new user sign-up
-         if (signupFirstName && signupLastName && signupEmail) {
-            await createFirestoreUserDocument(user);
-         }
+    try {
+      const userCredential = await initiateEmailSignUp(auth, signupEmail, signupPassword);
+      if (userCredential && userCredential.user) {
+        await createFirestoreUserDocument(userCredential.user);
       }
-    });
-    return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, signupFirstName, signupLastName, signupEmail]);
+    } catch (error) {
+      console.error("Error during sign-up: ", error);
+    }
+  };
 
   return (
     <Tabs defaultValue="login" className="w-full">
