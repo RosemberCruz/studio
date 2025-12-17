@@ -159,7 +159,7 @@ export const servicesData: ServiceCategory[] = [
             slug: 'semanas-cotizadas',
             name: 'Semanas Cotizadas',
             description: 'Consulta y obtén tu constancia de semanas cotizadas ante el IMSS.',
-            cost: 80,
+            cost: 30,
             deliveryTime: "15 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
             imageHint: 'social security',
@@ -309,6 +309,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
