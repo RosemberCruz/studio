@@ -56,9 +56,9 @@ export const servicesData: ServiceCategory[] = [
         cost: 100,
         deliveryTime: "1 a 4 HRAS",
         steps: [
-          { id: '1', title: 'Paso 1: Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
-          { id: '2', title: 'Paso 2: Verificar status de trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
-          { id: '3', title: 'Paso 3: Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
+          { id: '1', title: 'Solicitud de RFC Original', content: 'CSF 100% ORIGINAL' },
+          { id: '2', title: 'Verificar status de trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+          { id: '3', title: 'Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
           { id: '1', name: 'CURP', description: 'Clave Única de Registro de Población.' },
@@ -73,9 +73,8 @@ export const servicesData: ServiceCategory[] = [
         deliveryTime: "10 minutos",
         steps: [
           { id: '1', title: 'Paso 1: Proporciona tu CURP', content: 'Ingresa tu Clave Única de Registro de Población para iniciar el trámite.' },
-          { id: '2', title: 'Paso 2: Procesamiento Interno', content: 'Nuestro equipo administrativo gestionará la solicitud para obtener tu constancia.' },
-          { id: '3', title: 'Paso 3: Carga de Documento', content: 'Un administrador subirá el documento PDF a tu cuenta.' },
-          { id: '4', title: 'Paso 4: Descarga', content: 'Recibirás una notificación para que puedas descargar tu constancia RFC desde la plataforma.' },
+          { id: '2', title: 'Paso 2: Verificar estatus del trámite', content: 'Un administrador revisará y procesará tu solicitud.' },
+          { id: '3', title: 'Paso 3: Descargar PDF', content: 'Recibirás una notificación cuando tu documento esté listo para descargar.' },
         ],
         documents: [
           { id: '1', name: 'CURP', description: 'Tu Clave Única de Registro de Población, la usaremos para encontrar tu RFC.' },
@@ -257,6 +256,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
