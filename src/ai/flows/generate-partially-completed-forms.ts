@@ -12,8 +12,11 @@ import {z} from 'genkit';
 
 const GeneratePartiallyCompletedFormInputSchema = z.object({
   formName: z.string().describe('The name of the government form to be completed.'),
-  userInput: z.string().describe('The user provided information to fill the form.'),
+  userInput: z.string().optional().describe('The user provided information to fill the form.'),
   officialInstructions: z.string().optional().describe('Official instructions for filling out the form.'),
+  curp: z.string().optional().describe('The user\'s CURP (Clave Única de Registro de Población).'),
+  rfc: z.string().optional().describe('The user\'s RFC (Registro Federal de Contribuyentes).'),
+  idCif: z.string().optional().describe('The user\'s ID CIF (Identificador de Cédula de Identificación Fiscal).'),
 });
 export type GeneratePartiallyCompletedFormInput = z.infer<typeof GeneratePartiallyCompletedFormInputSchema>;
 
@@ -34,8 +37,14 @@ const prompt = ai.definePrompt({
 
   Based on the user provided information and the official instructions, generate a partially completed section of the form.
   Form Name: {{{formName}}}
-  User Input: {{{userInput}}}
-  Official Instructions: {{{officialInstructions}}}
+  
+  User Data:
+  {{#if curp}}CURP: {{{curp}}}{{/if}}
+  {{#if rfc}}RFC: {{{rfc}}}{{/if}}
+  {{#if idCif}}ID CIF: {{{idCif}}}{{/if}}
+  {{#if userInput}}Other Information: {{{userInput}}}{{/if}}
+
+  {{#if officialInstructions}}Official Instructions: {{{officialInstructions}}}{{/if}}
 
   Partially Completed Form Section:
   `,

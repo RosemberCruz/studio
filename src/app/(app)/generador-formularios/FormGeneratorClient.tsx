@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2, Wand2, Sparkles, Clipboard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import React from 'react';
 
 type FormState = {
   completedFormSection?: string;
@@ -20,6 +21,9 @@ async function generateAction(prevState: FormState, formData: FormData): Promise
     formName: formData.get('formName') as string,
     userInput: formData.get('userInput') as string,
     officialInstructions: formData.get('officialInstructions') as string,
+    curp: formData.get('curp') as string,
+    rfc: formData.get('rfc') as string,
+    idCif: formData.get('idCif') as string,
   };
 
   try {
@@ -82,17 +86,30 @@ export function FormGeneratorClient() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="formName">Nombre del Formulario</Label>
-              <Input id="formName" name="formName" placeholder="Ej: Formulario I-130, Petición de Familiar Extranjero" required disabled={isPending} />
+              <Label htmlFor="formName">Nombre del Formulario o Trámite</Label>
+              <Input id="formName" name="formName" placeholder="Ej: RFC Clon, Constancia de Situación Fiscal" required disabled={isPending} />
+            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="space-y-2">
+                  <Label htmlFor="curp">CURP</Label>
+                  <Input id="curp" name="curp" placeholder="Ingresa tu CURP" disabled={isPending} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="rfc">RFC</Label>
+                  <Input id="rfc" name="rfc" placeholder="Ingresa tu RFC" disabled={isPending} />
+                </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="idCif">ID CIF (si aplica)</Label>
+              <Input id="idCif" name="idCif" placeholder="Ingresa tu ID CIF" disabled={isPending} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="userInput">Tu Información (en lenguaje natural)</Label>
+              <Label htmlFor="userInput">Otra Información (en lenguaje natural)</Label>
               <Textarea
                 id="userInput"
                 name="userInput"
-                placeholder="Ej: Mi nombre es Juan Pérez, nací el 15 de marzo de 1985 en Lima, Perú. Mi esposa es María García, ciudadana estadounidense..."
-                className="min-h-[150px]"
-                required
+                placeholder="Ej: Mi nombre es Juan Pérez, nací el 15 de marzo de 1985..."
+                className="min-h-[100px]"
                 disabled={isPending}
               />
             </div>
