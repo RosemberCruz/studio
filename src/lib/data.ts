@@ -165,7 +165,7 @@ export const servicesData: ServiceCategory[] = [
         id: 'poliza-seguro',
         slug: 'poliza-seguro',
         name: 'Póliza de Seguro Vehicular',
-        description: 'Contrata o renueva la póliza de seguro para tu vehículo.',
+        description: 'POLIZA DE SEGURO ADMINISTRATIVO POR 1 AÑO',
         cost: 130,
         deliveryTime: "10 minutos",
         imageUrl: 'https://picsum.photos/seed/car-insurance/600/400',
@@ -285,6 +285,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
