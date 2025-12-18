@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton
 } from '@/components/ui/sidebar';
-import { Users, Banknote, ListChecks } from 'lucide-react';
+import { Users, Banknote, ListChecks, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import AdminAuthGuard from './AdminAuthGuard';
 
@@ -18,6 +18,7 @@ const adminNavItems = [
     { href: '/admin/users', icon: Users, label: 'Usuarios' },
     { href: '/admin/deposits', icon: Banknote, label: 'Depósitos' },
     { href: '/seguimiento', icon: ListChecks, label: 'Trámites' },
+    { href: '/admin/ingresos', icon: DollarSign, label: 'Ingresos' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
