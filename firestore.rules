@@ -20,7 +20,7 @@ service cloud.firestore {
      */
     function isAdmin() {
       // --- ¡IMPORTANTE! ---
-      // Cambia 'admin@example.com' por tu correo de administrador.
+      // ¡Cambia 'admin@example.com' por tu correo de administrador!
       // Este debe ser el mismo correo que está en src/hooks/useIsAdmin.ts
       return isSignedIn() && request.auth.token.email == 'admin@example.com';
     }
