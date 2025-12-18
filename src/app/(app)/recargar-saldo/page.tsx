@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -14,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Landmark, Loader2, Clipboard, AlertCircle, Banknote, Send } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, doc } from 'firebase/firestore';
+import { collection, doc, query, where, getDocs } from 'firebase/firestore';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const bankDetails = {
@@ -60,12 +59,27 @@ export default function AddBalancePage() {
   }
 
   const onSubmit: SubmitHandler<DepositRequestFormValues> = (data) => {
-    startTransition(() => {
+    startTransition(async () => {
       if (!user || !firestore || !userData) {
         toast({ title: "Error", description: "Debes iniciar sesión para solicitar una recarga.", variant: "destructive" });
         return;
       }
+      
       const requestsColRef = collection(firestore, 'depositRequests');
+
+      // Check if tracking key already exists
+      const q = query(requestsColRef, where("trackingKey", "==", data.trackingKey));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        toast({
+          title: "Clave de Rastreo Duplicada",
+          description: "Esta clave de rastreo ya ha sido utilizada o está expirada. Por favor, verifica tus datos.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const newRequest = {
         ...data,
         userId: user.uid,
