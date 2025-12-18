@@ -15,14 +15,13 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the requesting user has the admin UID.
+     * Checks if the requesting user has the admin email.
      * This is the primary mechanism for granting admin privileges.
      */
     function isAdmin() {
       // --- ¡IMPORTANTE! ---
-      // ¡Cambia 'CAMBIA_ESTO_POR_TU_UID' por tu User UID de Firebase Authentication!
-      // Este debe ser el mismo UID que está en src/hooks/useIsAdmin.ts
-      return isSignedIn() && request.auth.uid == 'CAMBIA_ESTO_POR_TU_UID';
+      // El administrador es identificado por el correo 'admin@example.com'.
+      return isSignedIn() && request.auth.token.email == 'admin@example.com';
     }
 
     /**

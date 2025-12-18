@@ -3,12 +3,12 @@
 import { useUser } from '@/firebase';
 
 // --- ¡IMPORTANTE! ---
-// Este es el UID (User ID) del usuario que se considerará como administrador.
-// Para encontrar tu UID: Inicia sesión en la app, ve a la consola de Firebase -> Authentication -> Users, y copia el "User UID" de tu cuenta.
-const ADMIN_UID = 'CAMBIA_ESTO_POR_TU_UID'; 
+// Este es el CORREO del usuario que se considerará como administrador.
+// Para obtener privilegios de administrador, crea o utiliza una cuenta con este correo exacto.
+const ADMIN_EMAIL = 'admin@example.com'; 
 
 export function useIsAdmin() {
     const { user } = useUser();
-    // La lógica comprueba si el UID del usuario conectado coincide con el del administrador.
-    return user?.uid === ADMIN_UID;
+    // La lógica comprueba si el email del usuario conectado coincide con el del administrador.
+    return user?.email === ADMIN_EMAIL;
 }
