@@ -10,9 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Save, FileText, User, Calendar, LinkIcon, FileJson } from 'lucide-react';
+import { Loader2, Save, FileText, User, Calendar, LinkIcon, FileJson, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { Textarea } from '@/components/ui/textarea';
 
 const statusOptions = ["Solicitado", "En Proceso", "Completado", "Rechazado"];
 
@@ -27,6 +28,7 @@ export default function ManageRequestPage() {
   // State for form fields
   const [status, setStatus] = useState('');
   const [fileUrl, setFileUrl] = useState('');
+  const [adminNotes, setAdminNotes] = useState('');
   
   const requestDocRef = useMemoFirebase(() => {
     if (!firestore || !requestId) return null;
@@ -40,6 +42,7 @@ export default function ManageRequestPage() {
     if (request) {
       setStatus(request.status);
       setFileUrl(request.fileUrl || '');
+      setAdminNotes(request.adminNotes || '');
     }
   }, [request]);
 
@@ -54,6 +57,7 @@ export default function ManageRequestPage() {
       const updatedData = {
         status,
         fileUrl: fileUrl.trim() === '' ? null : fileUrl.trim(),
+        adminNotes: adminNotes.trim() === '' ? null : adminNotes.trim(),
       };
 
       updateDocumentNonBlocking(requestDocRef, updatedData);
@@ -141,6 +145,21 @@ export default function ManageRequestPage() {
                   <p className="text-xs text-muted-foreground">
                     Sube el archivo a un servicio de almacenamiento (Google Drive, etc.) y pega aquí el enlace público.
                   </p>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="adminNotes">Comentarios del Administrador</Label>
+                     <div className='relative'>
+                        <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Textarea 
+                            id="adminNotes"
+                            placeholder="Ej: Se necesita una copia más clara de la identificación."
+                            value={adminNotes}
+                            onChange={(e) => setAdminNotes(e.target.value)}
+                            disabled={isPending}
+                            className="pl-9"
+                            rows={3}
+                        />
+                    </div>
                 </div>
               </CardContent>
               <CardFooter className="gap-2">

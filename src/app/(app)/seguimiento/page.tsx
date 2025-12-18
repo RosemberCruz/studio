@@ -3,13 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, CircleDot, Clock, Download, Loader2, XCircle, FileWarning, ArrowRight } from 'lucide-react';
+import { CheckCircle, CircleDot, Clock, Download, Loader2, XCircle, FileWarning, ArrowRight, MessageSquare } from 'lucide-react';
 import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { collection, query, where, orderBy } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
 
 function getStatusInfo(status: string) {
   switch (status) {
@@ -109,6 +111,7 @@ function AdminServiceRequestList() {
 function UserServiceRequestList() {
     const { user } = useUser();
     const firestore = useFirestore();
+    const router = useRouter();
 
     const requestsQuery = useMemoFirebase(() => {
         if (!firestore || !user) return null;
@@ -130,6 +133,8 @@ function UserServiceRequestList() {
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {serviceRequests.map((item) => {
                 const statusInfo = getStatusInfo(item.status);
+                const hasNotes = item.adminNotes && item.adminNotes.trim() !== '';
+
                 return (
                     <Card key={item.id} className="flex flex-col">
                     <CardHeader>
@@ -141,7 +146,7 @@ function UserServiceRequestList() {
                         <Badge variant={statusInfo.badgeVariant}>{item.status}</Badge>
                         </div>
                     </CardHeader>
-                    <CardContent className="flex-grow flex flex-col justify-between">
+                    <CardContent className="flex-grow flex flex-col justify-between space-y-4">
                         <div>
                             <div className="flex items-center gap-3">
                                 <statusInfo.icon className={`h-5 w-5 ${statusInfo.color}`} />
@@ -152,7 +157,18 @@ function UserServiceRequestList() {
                             <div className="text-xs text-muted-foreground mt-2 flex justify-between">
                                 <span>Solicitado: {format(new Date(item.requestDate), "dd/MM/yy", { locale: es })}</span>
                             </div>
+
+                            {hasNotes && (
+                                <Alert variant={item.status === 'Rechazado' ? 'destructive' : 'default'} className="mt-4">
+                                    <MessageSquare className="h-4 w-4" />
+                                    <AlertTitle>Comentario del Administrador</AlertTitle>
+                                    <AlertDescription>
+                                        {item.adminNotes}
+                                    </AlertDescription>
+                                </Alert>
+                            )}
                         </div>
+
                         {item.status === 'Completado' && item.fileUrl && (
                             <Button asChild className="w-full mt-4">
                                 <a href={item.fileUrl} target="_blank" rel="noopener noreferrer">
@@ -175,7 +191,7 @@ function UserServiceRequestList() {
                 <FileWarning className="h-16 w-16 text-muted-foreground/50" />
                 <h3 className="text-xl font-semibold">No has solicitado ningún trámite</h3>
                 <p className="text-muted-foreground">Cuando solicites un servicio, podrás ver su estado y progreso aquí.</p>
-                <Button>Ver Servicios</Button>
+                <Button onClick={() => router.push('/servicios')}>Ver Servicios</Button>
             </CardContent>
         </Card>
     );
