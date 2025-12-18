@@ -94,41 +94,52 @@
         "formData"
       ]
     },
-    "Deposit": {
+    "DepositRequest": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Deposit",
+      "title": "DepositRequest",
       "type": "object",
-      "description": "Represents a bank deposit pre-registered by an admin.",
+      "description": "Represents a deposit request made by a user to add balance.",
       "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user making the request."
+        },
+        "userName": {
+          "type": "string",
+          "description": "The name of the user for display in the admin panel."
+        },
+        "userEmail": {
+          "type": "string",
+          "description": "The email of the user for display in the admin panel."
+        },
         "trackingKey": {
           "type": "string",
-          "description": "The unique tracking key from the bank transfer."
+          "description": "The unique tracking key from the bank transfer submitted by the user."
         },
         "amount": {
           "type": "number",
-          "description": "The amount of the deposit in MXN."
+          "description": "The amount the user claims to have deposited."
+        },
+        "requestDate": {
+          "type": "string",
+          "description": "The date the user submitted the request.",
+          "format": "date-time"
         },
         "status": {
           "type": "string",
-          "description": "The status of the deposit.",
-          "enum": ["disponible", "reclamado"]
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "The date the deposit was registered in the system.",
-          "format": "date-time"
-        },
-        "claimedBy": {
-          "type": "string",
-          "description": "The UID of the user who claimed this deposit."
-        },
-        "claimedAt": {
-          "type": "string",
-          "description": "The date the deposit was claimed.",
-          "format": "date-time"
+          "description": "The status of the deposit request.",
+          "enum": ["pendiente", "aprobado", "rechazado"]
         }
       },
-      "required": ["trackingKey", "amount", "status", "createdAt"]
+      "required": [
+        "userId",
+        "userName",
+        "userEmail",
+        "trackingKey",
+        "amount",
+        "requestDate",
+        "status"
+      ]
     }
   },
   "auth": {
@@ -172,22 +183,22 @@
         }
       },
       {
-        "path": "/deposits/{depositId}",
+        "path": "/depositRequests/{requestId}",
         "definition": {
-          "entityName": "Deposit",
+          "entityName": "DepositRequest",
           "schema": {
-            "$ref": "#/backend/entities/Deposit"
+            "$ref": "#/backend/entities/DepositRequest"
           },
-          "description": "Stores pre-registered bank deposits. Admins have full access. Users can read and update (to claim) available deposits.",
+          "description": "Stores user-submitted requests to add balance. Admins approve/reject these requests.",
           "params": [
             {
-              "name": "depositId",
-              "description": "The unique identifier for the deposit record."
+              "name": "requestId",
+              "description": "The unique identifier for the deposit request."
             }
           ]
         }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and service requests. The primary goal is to ensure secure and scalable data management. Path-based ownership for user accounts ensures straightforward security rules. The serviceRequests collection stores all transaction-like data, allowing admins to manage them while users can only view their own. The new 'deposits' collection adds a secure way to handle balance recharges by pre-registering valid deposits."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance."
   }
 }

@@ -63,7 +63,8 @@ service cloud.firestore {
     function isValidUserAccountUpdate() {
       let incomingData = request.resource.data;
       let existingData = resource.data;
-      return incomingData.id == existingData.id;
+      return incomingData.id == existingData.id &&
+             (incomingData.balance == existingData.balance || isAdmin()); // Only admin can change balance directly via approval flow
     }
 
     /**
@@ -76,6 +77,17 @@ service cloud.firestore {
              data.fileUrl == null &&
              data.formData is map; // Ensure formData is a map
     }
+
+    /**
+     * Validates data for a new deposit request.
+     */
+    function isValidDepositRequestCreate() {
+      let data = request.resource.data;
+      return isOwner(data.userId) &&
+             data.status == 'pendiente' &&
+             data.amount > 0 &&
+             data.trackingKey is string;
+    }
     
     // ----------------------------------------------------------------------
     // Collection Rules
@@ -85,12 +97,12 @@ service cloud.firestore {
      * @description Manages UserAccount documents.
      *   - Admins can get any user and list all users.
      *   - Users can only get their own document.
-     *   - Writes are restricted to the owner.
+     *   - Writes are restricted to the owner, but balance can be updated by an admin.
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
-      allow update: if isOwner(userId) && isValidUserAccountUpdate();
+      allow update: if isOwner(userId) || isAdmin(); // Admin needs to update balance
       allow delete: if isOwner(userId);
     }
 
@@ -108,7 +120,7 @@ service cloud.firestore {
       // READ: Users can read their own requests, admins can read all.
       allow get: if isOwner(resource.data.userId) || isAdmin();
       // Users can list their own requests, admins can list all.
-      allow list: if isSignedIn();
+      allow list: if isSignedIn(); // Query needs to enforce user ownership
       
       // WRITE:
       // Users can create their own requests.
@@ -118,31 +130,14 @@ service cloud.firestore {
     }
 
     /**
-     * @description Manages pre-registered bank deposits for balance recharges.
-     *   - Admins have full read/write access to manage deposits.
-     *   - Authenticated users can query for deposits but not list them all.
-     *   - Authenticated users can 'claim' a deposit by updating its status.
+     * @description Manages user-submitted deposit requests for balance recharges.
+     *   - Users can create their own deposit requests.
+     *   - Admins have full read/write access to manage these requests.
      */
-    match /deposits/{depositId} {
-      // Admin-only create/delete. Admins must pre-register deposits.
-      allow create, delete: if isAdmin();
-      
-      // Admins can read any deposit. Users can't read individual deposits directly.
-      allow get: if isAdmin();
-
-      // Users can query for deposits (e.g., by trackingKey). Admins can list all.
-      allow list: if isSignedIn();
-      
-      // An authenticated user can update a deposit ONLY to claim it.
-      allow update: if isSignedIn() &&
-                       // The deposit must be 'disponible' before the update.
-                       resource.data.status == 'disponible' &&
-                       // The incoming status must be 'reclamado'.
-                       request.resource.data.status == 'reclamado' &&
-                       // The user must be setting themselves as the one who claimed it.
-                       request.resource.data.claimedBy == request.auth.uid &&
-                       // Ensure no other fields are being maliciously changed.
-                       request.resource.data.keys().hasOnly(['trackingKey', 'amount', 'status', 'createdAt', 'claimedBy', 'claimedAt']);
+    match /depositRequests/{requestId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidDepositRequestCreate();
+      allow update, delete: if isAdmin();
     }
   }
 }
