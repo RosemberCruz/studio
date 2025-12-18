@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, writeBatch, doc } from 'firebase/firestore';
+import { collection, query, writeBatch, doc, getDoc } from 'firebase/firestore';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -46,26 +46,21 @@ export default function ManageDepositRequestsPage() {
 
       // 2. Update the user's balance
       const userRef = doc(firestore, 'users', request.userId);
-      // We need to get the user's current balance first. 
-      // For simplicity in this non-blocking example, we'll assume a function or rule handles this server-side.
-      // A more robust solution would use a transaction or a Cloud Function.
-      // Here, we'll just optimistically update. Let's assume we can read the user first.
-      // This part is tricky without a proper transaction. Let's simulate for now.
       
-      const userDoc = await doc(userRef).get();
-      if (userDoc.exists()) {
-          const currentBalance = userDoc.data().balance || 0;
-          const newBalance = currentBalance + request.amount;
-          batch.update(userRef, { balance: newBalance });
-          
-          try {
+      try {
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+            const currentBalance = userDoc.data().balance || 0;
+            const newBalance = currentBalance + request.amount;
+            batch.update(userRef, { balance: newBalance });
+            
             await batch.commit();
             toast({ title: "Solicitud Aprobada", description: `El saldo de ${request.userName} ha sido actualizado.` });
-          } catch(e) {
-             toast({ title: "Error", description: "No se pudo completar la operación.", variant: "destructive" });
-          }
-      } else {
-        toast({ title: "Error", description: "No se encontró al usuario para actualizar el saldo.", variant: "destructive" });
+        } else {
+          toast({ title: "Error", description: "No se encontró al usuario para actualizar el saldo.", variant: "destructive" });
+        }
+      } catch(e: any) {
+         toast({ title: "Error", description: `No se pudo completar la operación: ${e.message}`, variant: "destructive" });
       }
 
     });
@@ -122,11 +117,12 @@ export default function ManageDepositRequestsPage() {
                     <TableCell className="text-right space-x-2">
                       {request.status === 'pendiente' && (
                         <>
-                          <Button variant="outline" size="sm" onClick={() => handleReject(request.id)}>
+                          <Button variant="outline" size="sm" onClick={() => handleReject(request.id)} disabled={isPending}>
                             <XCircle className="mr-1 h-4 w-4" /> Rechazar
                           </Button>
-                           <Button variant="default" size="sm" onClick={() => handleApprove(request)}>
-                            <CheckCircle className="mr-1 h-4 w-4" /> Aprobar
+                           <Button variant="default" size="sm" onClick={() => handleApprove(request)} disabled={isPending}>
+                            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-1 h-4 w-4" />}
+                             Aprobar
                           </Button>
                         </>
                       )}
