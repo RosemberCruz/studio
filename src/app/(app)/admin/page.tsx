@@ -1,29 +1,25 @@
 'use client';
 
-import { useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
-import { useFirestore } from '@/firebase/provider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, ShieldCheck } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useRouter } from 'next/navigation';
+import { ShieldCheck, Banknote, ListChecks } from 'lucide-react';
+import Link from 'next/link';
+
+const adminActions = [
+    {
+        title: "Gestionar Depósitos",
+        href: "/admin/deposits",
+        icon: Banknote,
+        description: "Aprobar o rechazar solicitudes de recarga de saldo."
+    },
+    {
+        title: "Ver Solicitudes de Trámites",
+        href: "/seguimiento", // Admins can see all, this page will need logic to show all if admin
+        icon: ListChecks,
+        description: "Revisar y gestionar todas las solicitudes de servicios."
+    }
+]
 
 export default function AdminDashboardPage() {
-    const firestore = useFirestore();
-    const router = useRouter();
-
-    const usersQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(collection(firestore, 'users'));
-    }, [firestore]);
-
-    const { data: users, isLoading } = useCollection(usersQuery);
-
-    const handleUserClick = (userId: string) => {
-        router.push(`/admin/users/${userId}`);
-    }
 
     return (
         <div className="space-y-8">
@@ -34,53 +30,32 @@ export default function AdminDashboardPage() {
                 <div>
                     <h1 className="text-3xl font-bold font-headline">Panel de Administrador</h1>
                     <p className="text-muted-foreground mt-2">
-                        Gestiona usuarios, servicios y configuraciones de la aplicación.
+                        Gestiona depósitos, servicios y configuraciones de la aplicación.
                     </p>
                 </div>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Usuarios Registrados</CardTitle>
+                    <CardTitle>Acciones Principales</CardTitle>
                     <CardDescription>
-                        Esta es la lista de todos los usuarios en la plataforma. Haz clic en un usuario para ver sus detalles.
+                        Accede a las principales herramientas de gestión.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <div className="flex justify-center items-center h-40">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        </div>
-                    ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Usuario</TableHead>
-                                    <TableHead>Email</TableHead>
-                                    <TableHead className="text-right">Saldo</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {users?.map((user) => (
-                                    <TableRow key={user.id} onClick={() => handleUserClick(user.id)} className="cursor-pointer">
-                                        <TableCell>
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-9 w-9">
-                                                     <AvatarImage src={`https://picsum.photos/seed/${user.id}/100/100`} alt="Avatar" />
-                                                    <AvatarFallback>{user.firstName?.charAt(0)}{user.lastName?.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                                <div className="font-medium">{user.firstName} {user.lastName}</div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell className="text-right">
-                                            <Badge variant="secondary">${user.balance.toFixed(2)}</Badge>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    )}
+                <CardContent className="grid md:grid-cols-2 gap-4">
+                    {adminActions.map((action) => (
+                        <Link href={action.href} key={action.href} className="group block p-4 rounded-lg border hover:bg-secondary transition-colors">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-secondary p-3 rounded-lg">
+                                    <action.icon className="h-6 w-6 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-lg">{action.title}</p>
+                                    <p className="text-sm text-muted-foreground">{action.description}</p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
                 </CardContent>
             </Card>
         </div>
