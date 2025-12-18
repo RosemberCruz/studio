@@ -1,39 +1,57 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase/provider';
-import { Loader2 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton
+} from '@/components/ui/sidebar';
+import { Users, Banknote, ListChecks } from 'lucide-react';
+import Link from 'next/link';
+import AdminAuthGuard from './AdminAuthGuard';
 
-function useIsAdmin() {
-    const { user } = useUser();
-    // For development, we'll assume any logged-in user via password is an admin.
-    // In production, this should be replaced with custom claims verification.
-    return user?.providerData.some(p => p.providerId === 'password');
-}
+const adminNavItems = [
+    { href: '/admin/users', icon: Users, label: 'Usuarios' },
+    { href: '/admin/deposits', icon: Banknote, label: 'Depósitos' },
+    { href: '/seguimiento', icon: ListChecks, label: 'Trámites' },
+]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, isUserLoading } = useUser();
-  const isAdmin = useIsAdmin();
-  const router = useRouter();
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname.startsWith(path);
 
-  React.useEffect(() => {
-    if (!isUserLoading) {
-      if (!user) {
-        router.replace('/login');
-      } else if (!isAdmin) {
-        router.replace('/access-denied');
-      }
-    }
-  }, [user, isUserLoading, isAdmin, router]);
-
-  if (isUserLoading || !user || !isAdmin) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+  return (
+    <AdminAuthGuard>
+        <div className="grid md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] gap-6">
+            <div className="hidden md:block">
+                 <Sidebar>
+                    <SidebarHeader>
+                        <h2 className="text-lg font-semibold px-4">Admin Menu</h2>
+                    </SidebarHeader>
+                    <SidebarContent>
+                        <SidebarMenu>
+                             {adminNavItems.map((item) => (
+                                <SidebarMenuItem key={item.href}>
+                                    <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                                    <Link href={item.href}>
+                                        <item.icon />
+                                        {item.label}
+                                    </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarContent>
+                </Sidebar>
+            </div>
+            <main>
+                {children}
+            </main>
+        </div>
+    </AdminAuthGuard>
+  );
 }

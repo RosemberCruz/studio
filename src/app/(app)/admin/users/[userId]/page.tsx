@@ -127,7 +127,7 @@ export default function UserDetailPage() {
                                 <TableBody>
                                 {serviceRequests && serviceRequests.length > 0 ? (
                                    serviceRequests.map((request) => (
-                                       <TableRow key={request.id} onClick={() => handleRequestClick(request.id)} className="cursor-pointer">
+                                       <TableRow key={request.id} onClick={() => handleRequestClick(request.id)} className="cursor-pointer hover:bg-muted/50">
                                            <TableCell>
                                                <div className="font-medium">{request.serviceName}</div>
                                                 <div className="text-sm text-muted-foreground md:inline">
@@ -142,7 +142,7 @@ export default function UserDetailPage() {
                                    ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center">
+                                        <TableCell colSpan={3} className="text-center h-24">
                                             Este usuario no ha solicitado trámites.
                                         </TableCell>
                                     </TableRow>
