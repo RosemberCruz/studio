@@ -64,8 +64,10 @@ export default function ManageRequestPage() {
       
       batch.update(requestDocRef, updatedData);
       
+      let refundApplied = false;
+      let refundAmount = 0;
+
       // --- REFUND LOGIC ---
-      // If status is changing to "Rechazado" and it wasn't "Rechazado" before.
       if (status === 'Rechazado' && request.status !== 'Rechazado') {
         const service = servicesData.flatMap(c => c.services).find(s => s.id === request.serviceId);
         
@@ -77,10 +79,14 @@ export default function ManageRequestPage() {
               const currentBalance = userDoc.data().balance || 0;
               const newBalance = currentBalance + service.cost;
               batch.update(userRef, { balance: newBalance });
-              toast({ title: "Reembolso Aplicado", description: `Se han devuelto $${service.cost.toFixed(2)} al saldo del usuario.` });
+              refundApplied = true;
+              refundAmount = service.cost;
+            } else {
+              toast({ title: "Error en Reembolso", description: "No se encontró el usuario para devolver el saldo. La solicitud no fue actualizada.", variant: "destructive" });
+              return; // Stop the whole process if user is not found
             }
           } catch (refundError) {
-             toast({ title: "Error en Reembolso", description: "La solicitud fue actualizada, pero no se pudo devolver el saldo al usuario.", variant: "destructive" });
+             toast({ title: "Error en Reembolso", description: "La solicitud no fue actualizada, pero no se pudo devolver el saldo al usuario.", variant: "destructive" });
              return; // Stop if refund fails
           }
         }
@@ -93,6 +99,9 @@ export default function ManageRequestPage() {
           title: "Solicitud Actualizada",
           description: "Los cambios se han guardado correctamente.",
         });
+        if (refundApplied) {
+            toast({ title: "Reembolso Aplicado", description: `Se han devuelto $${refundAmount.toFixed(2)} al saldo del usuario.` });
+        }
         router.push('/seguimiento'); 
       } catch (commitError: any) {
         toast({ title: "Error al Guardar", description: `No se pudieron guardar los cambios: ${commitError.message}`, variant: "destructive" });
