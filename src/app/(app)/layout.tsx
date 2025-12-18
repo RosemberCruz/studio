@@ -24,6 +24,7 @@ import {
   Landmark,
   LogOut,
   ShieldCheck,
+  Banknote,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -140,6 +141,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Link href="/admin">
                     <ShieldCheck />
                     Admin
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
+             {isAdmin && (
+               <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive('/admin/deposits')}>
+                  <Link href="/admin/deposits">
+                    <Banknote />
+                    Gestionar Depósitos
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
