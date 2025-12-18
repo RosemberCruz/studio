@@ -68,7 +68,7 @@ function AdminServiceRequestList() {
                     <TableHeader>
                         <TableRow>
                         <TableHead>Servicio</TableHead>
-                        <TableHead>Usuario</TableHead>
+                        <TableHead>Usuario ID</TableHead>
                         <TableHead>Fecha</TableHead>
                         <TableHead>Estado</TableHead>
                         <TableHead className="text-right">Acción</TableHead>
@@ -83,8 +83,7 @@ function AdminServiceRequestList() {
                                     <div className="text-sm text-muted-foreground">{req.id}</div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="font-medium">{req.userName}</div>
-                                    <div className="text-xs text-muted-foreground">{req.userEmail}</div>
+                                    <div className="font-mono text-xs">{req.userId}</div>
                                 </TableCell>
                                 <TableCell>{format(new Date(req.requestDate), 'dd/MM/yy HH:mm')}</TableCell>
                                 <TableCell><Badge variant={getStatusInfo(req.status).badgeVariant}>{req.status}</Badge></TableCell>
