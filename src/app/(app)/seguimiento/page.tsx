@@ -39,7 +39,6 @@ function AdminServiceRequestList() {
 
     const allRequestsQuery = useMemoFirebase(() => {
         if (!firestore) return null;
-        // Fetch all service requests, ordered by date
         return query(collection(firestore, 'serviceRequests'), orderBy('requestDate', 'desc'));
     }, [firestore]);
 
