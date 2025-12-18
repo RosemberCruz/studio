@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -75,7 +76,7 @@ export default function LoginPage() {
       lastName: signupLastName,
       phoneNumber: signupPhone,
       creationDate: new Date().toISOString(),
-      balance: 500, // Initial balance for new users
+      balance: 0, // Initial balance for new users
     };
     await setDoc(userRef, userData);
   };
