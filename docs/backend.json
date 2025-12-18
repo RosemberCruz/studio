@@ -93,6 +93,42 @@
         "requestDate",
         "formData"
       ]
+    },
+    "Deposit": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Deposit",
+      "type": "object",
+      "description": "Represents a bank deposit pre-registered by an admin.",
+      "properties": {
+        "trackingKey": {
+          "type": "string",
+          "description": "The unique tracking key from the bank transfer."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the deposit in MXN."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the deposit.",
+          "enum": ["disponible", "reclamado"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date the deposit was registered in the system.",
+          "format": "date-time"
+        },
+        "claimedBy": {
+          "type": "string",
+          "description": "The UID of the user who claimed this deposit."
+        },
+        "claimedAt": {
+          "type": "string",
+          "description": "The date the deposit was claimed.",
+          "format": "date-time"
+        }
+      },
+      "required": ["trackingKey", "amount", "status", "createdAt"]
     }
   },
   "auth": {
@@ -119,7 +155,7 @@
           ]
         }
       },
-       {
+      {
         "path": "/serviceRequests/{requestId}",
         "definition": {
           "entityName": "ServiceRequest",
@@ -134,8 +170,24 @@
             }
           ]
         }
+      },
+      {
+        "path": "/deposits/{depositId}",
+        "definition": {
+          "entityName": "Deposit",
+          "schema": {
+            "$ref": "#/backend/entities/Deposit"
+          },
+          "description": "Stores pre-registered bank deposits. Admins have full access. Users can read and update (to claim) available deposits.",
+          "params": [
+            {
+              "name": "depositId",
+              "description": "The unique identifier for the deposit record."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and service requests. The primary goal is to ensure secure and scalable data management. Path-based ownership for user accounts ensures straightforward security rules. The serviceRequests collection stores all transaction-like data, allowing admins to manage them while users can only view their own."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app, focusing on user account management and service requests. The primary goal is to ensure secure and scalable data management. Path-based ownership for user accounts ensures straightforward security rules. The serviceRequests collection stores all transaction-like data, allowing admins to manage them while users can only view their own. The new 'deposits' collection adds a secure way to handle balance recharges by pre-registering valid deposits."
   }
 }

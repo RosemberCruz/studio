@@ -116,5 +116,33 @@ service cloud.firestore {
       // Only admins can update (e.g., change status, add fileUrl) or delete.
       allow update, delete: if isAdmin();
     }
+
+    /**
+     * @description Manages pre-registered bank deposits for balance recharges.
+     *   - Admins have full read/write access to manage deposits.
+     *   - Authenticated users can query for deposits but not list them all.
+     *   - Authenticated users can 'claim' a deposit by updating its status.
+     */
+    match /deposits/{depositId} {
+      // Admin-only create/delete. Admins must pre-register deposits.
+      allow create, delete: if isAdmin();
+      
+      // Admins can read any deposit. Users can't read individual deposits directly.
+      allow get: if isAdmin();
+
+      // Users can query for deposits (e.g., by trackingKey). Admins can list all.
+      allow list: if isSignedIn();
+      
+      // An authenticated user can update a deposit ONLY to claim it.
+      allow update: if isSignedIn() &&
+                       // The deposit must be 'disponible' before the update.
+                       resource.data.status == 'disponible' &&
+                       // The incoming status must be 'reclamado'.
+                       request.resource.data.status == 'reclamado' &&
+                       // The user must be setting themselves as the one who claimed it.
+                       request.resource.data.claimedBy == request.auth.uid &&
+                       // Ensure no other fields are being maliciously changed.
+                       request.resource.data.keys().hasOnly(['trackingKey', 'amount', 'status', 'createdAt', 'claimedBy', 'claimedAt']);
+    }
   }
 }

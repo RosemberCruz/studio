@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -7,13 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Landmark, Loader2, Clipboard, AlertCircle, Banknote } from 'lucide-react';
+import { Landmark, Loader2, Clipboard, AlertCircle, Banknote, Search } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { useEffect } from 'react';
+import { doc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-
 
 const bankDetails = {
     accountHolder: 'ROSEMBER CRUZ BETANCOURT',
@@ -26,11 +22,7 @@ export default function AddBalancePage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
-  const [amount, setAmount] = useState('');
   const [trackingKey, setTrackingKey] = useState('');
-  const [sourceBank, setSourceBank] = useState('');
-  const [email, setEmail] = useState('');
-
 
   const userDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -39,76 +31,91 @@ export default function AddBalancePage() {
 
   const { data: userData } = useDoc(userDocRef);
 
-   useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
-  }, [user]);
-
-    const copyToClipboard = (text: string, field: string) => {
-        navigator.clipboard.writeText(text);
-        toast({
-            title: "Copiado al portapapeles",
-            description: `El campo "${field}" ha sido copiado.`
-        });
-    }
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copiado al portapapeles",
+      description: `El campo "${field}" ha sido copiado.`
+    });
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    startTransition(() => {
-        if (!user || !userData) {
-             toast({
-                title: "Error",
-                description: "Debes iniciar sesión para reportar una recarga.",
-                variant: "destructive"
-            });
-            return;
+    if (!trackingKey.trim()) {
+      toast({
+        title: "Clave Requerida",
+        description: "Por favor, ingresa la clave de rastreo de tu transferencia.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    startTransition(async () => {
+      if (!user || !userData || !firestore) {
+        toast({
+          title: "Error de autenticación",
+          description: "Debes iniciar sesión para reclamar una recarga.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const depositsRef = collection(firestore, 'deposits');
+      const q = query(
+        depositsRef, 
+        where('trackingKey', '==', trackingKey.trim()), 
+        where('status', '==', 'disponible')
+      );
+
+      try {
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          toast({
+            title: "Transferencia no encontrada",
+            description: "No se encontró ninguna transferencia disponible con esa clave de rastreo. Verifica los datos o contacta a soporte.",
+            variant: "destructive"
+          });
+          return;
         }
 
-        if (!amount || !trackingKey || !sourceBank) {
-            toast({
-                title: "Campos Incompletos",
-                description: "Por favor, completa todos los campos para reportar tu transferencia.",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        // SIMULATED: We are not calling a real bank API. We check if the tracking key is "valid".
-        if (trackingKey.trim() === '') {
-            toast({
-                title: "Transferencia no encontrada",
-                description: "La clave de rastreo no es válida. Por favor, verifica tus datos.",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        const rechargeAmount = parseFloat(amount);
-        if (isNaN(rechargeAmount) || rechargeAmount <= 0) {
-             toast({
-                title: "Monto Inválido",
-                description: "Por favor, ingresa un monto válido y positivo.",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        const newBalance = userData.balance + rechargeAmount;
+        const batch = writeBatch(firestore);
+        const depositDoc = querySnapshot.docs[0];
+        const depositData = depositDoc.data();
+        const depositAmount = depositData.amount;
         
+        // 1. Update the deposit status to 'reclamado'
+        const depositRef = doc(firestore, 'deposits', depositDoc.id);
+        batch.update(depositRef, { 
+            status: 'reclamado',
+            claimedBy: user.uid,
+            claimedAt: new Date().toISOString(),
+        });
+        
+        // 2. Update the user's balance
+        const newBalance = userData.balance + depositAmount;
         if (userDocRef) {
-            updateDocumentNonBlocking(userDocRef, { balance: newBalance });
+            batch.update(userDocRef, { balance: newBalance });
         }
+        
+        // 3. Commit the batch
+        await batch.commit();
 
         toast({
-            title: "¡Reporte Recibido!",
-            description: `Se han añadido $${rechargeAmount.toFixed(2)} a tu saldo. Tu nuevo saldo es: $${newBalance.toFixed(2)}.`
+          title: "¡Saldo Acreditado!",
+          description: `Se han añadido $${depositAmount.toFixed(2)} a tu cuenta. Tu nuevo saldo es: $${newBalance.toFixed(2)}.`
         });
-
-        // Reset form
-        setAmount('');
+        
         setTrackingKey('');
-        setSourceBank('');
+
+      } catch (error) {
+        console.error("Error al reclamar depósito: ", error);
+        toast({
+          title: "Error en el Proceso",
+          description: "Ocurrió un error al intentar acreditar tu saldo. Por favor, intenta de nuevo.",
+          variant: "destructive"
+        });
+      }
     });
   }
 
@@ -123,8 +130,8 @@ export default function AddBalancePage() {
 
        <Card className="border-primary/50">
         <CardHeader>
-            <CardTitle>Paso 1: Realiza tu Transferencia</CardTitle>
-            <CardDescription>Usa tu app bancaria para enviar fondos a la siguiente cuenta. Guarda la clave de rastreo.</CardDescription>
+          <CardTitle>Paso 1: Realiza tu Transferencia</CardTitle>
+          <CardDescription>Usa tu app bancaria para enviar fondos a la siguiente cuenta. Un administrador registrará el depósito y podrás reclamarlo aquí.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-md">
@@ -153,51 +160,47 @@ export default function AddBalancePage() {
 
       <Card>
         <form onSubmit={handleSubmit}>
-            <CardHeader>
-            <CardTitle>Paso 2: Reporta tu Transferencia</CardTitle>
+          <CardHeader>
+            <CardTitle>Paso 2: Reclama tu Depósito</CardTitle>
             <CardDescription>
-                Una vez hecha la transferencia, ingresa los detalles aquí para que el saldo se acredite a tu cuenta.
+              Una vez que un administrador haya registrado tu transferencia, ingresa aquí la clave de rastreo para acreditar el saldo a tu cuenta.
             </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="space-y-2">
-                    <Label htmlFor="sourceBank">Banco de Origen</Label>
-                    <div className="relative">
-                        <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input id="sourceBank" type="text" placeholder="Ej: BBVA, Santander, Banorte" value={sourceBank} onChange={e => setSourceBank(e.target.value)} required disabled={isPending} className="pl-9"/>
-                    </div>
-                </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="amount">Monto Enviado (MXN)</Label>
-                        <div className="relative">
-                            <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input id="amount" type="number" placeholder="Ej: 500.00" value={amount} onChange={e => setAmount(e.target.value)} required disabled={isPending} className="pl-9"/>
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="trackingKey">Clave de Rastreo</Label>
-                        <Input id="trackingKey" type="text" placeholder="Clave de tu comprobante" value={trackingKey} onChange={e => setTrackingKey(e.target.value)} required disabled={isPending} />
-                    </div>
-                </div>
-                 <Alert variant="default" className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
-                    <AlertCircle className="h-4 w-4 text-blue-500" />
-                    <AlertTitle className="text-blue-700 dark:text-blue-300">Aviso Importante</AlertTitle>
-                    <AlertDescription className="text-blue-600 dark:text-blue-400">
-                        Esta es una simulación. No se procesan pagos reales. Ingresa cualquier clave de rastreo para probar.
-                    </AlertDescription>
-                </Alert>
-            </CardContent>
-            <CardFooter>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <div className="space-y-2">
+                  <Label htmlFor="trackingKey">Clave de Rastreo</Label>
+                   <div className="relative">
+                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                       <Input 
+                          id="trackingKey" 
+                          type="text" 
+                          placeholder="Ingresa la clave de tu comprobante" 
+                          value={trackingKey} 
+                          onChange={e => setTrackingKey(e.target.value)} 
+                          required 
+                          disabled={isPending} 
+                          className="pl-9"
+                      />
+                   </div>
+              </div>
+              <Alert variant="default" className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
+                <AlertCircle className="h-4 w-4 text-blue-500" />
+                <AlertTitle className="text-blue-700 dark:text-blue-300">Aviso Importante</AlertTitle>
+                <AlertDescription className="text-blue-600 dark:text-blue-400">
+                  Tu saldo se actualizará únicamente si la clave de rastreo es válida y está registrada por un administrador.
+                </AlertDescription>
+              </Alert>
+          </CardContent>
+          <CardFooter>
             <Button type="submit" className="w-full" disabled={isPending || !user}>
-                {isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                    <Landmark className="mr-2 h-4 w-4" />
-                )}
-                Acreditar Saldo
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Banknote className="mr-2 h-4 w-4" />
+              )}
+              Reclamar y Acreditar Saldo
             </Button>
-            </CardFooter>
+          </CardFooter>
         </form>
       </Card>
     </div>
