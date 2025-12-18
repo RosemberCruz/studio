@@ -51,11 +51,15 @@ service cloud.firestore {
 
     /**
      * Validates required authorization fields during UserAccount creation.
+     * Ensures that a user can only create their own document.
      */
     function isValidUserAccountCreate(userId) {
       let data = request.resource.data;
+      // The user creating the document must be the owner (isOwner check is also applied).
+      // The `id` field in the document must match the creator's UID.
       return data.id == userId;
     }
+
 
     /**
      * Validates that critical authorization fields are not changed during an update.
