@@ -4,13 +4,7 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase/provider';
 import { Loader2 } from 'lucide-react';
-
-function useIsAdmin() {
-    const { user } = useUser();
-    // For development, we'll assume any logged-in user via password is an admin.
-    // In production, this should be replaced with custom claims verification.
-    return user?.providerData.some(p => p.providerId === 'password');
-}
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();

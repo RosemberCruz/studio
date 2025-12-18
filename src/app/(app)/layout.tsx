@@ -24,7 +24,6 @@ import {
   Landmark,
   LogOut,
   ShieldCheck,
-  Users,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -34,6 +33,7 @@ import { doc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { WhatsappIcon } from '@/components/WhatsappIcon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 
 function UserProfile() {
@@ -99,14 +99,6 @@ function LogoutButton() {
     )
 }
 
-function useIsAdmin() {
-    const { user } = useUser();
-    // In production, this should be replaced with custom claims verification.
-    // For now, we check if the sign-in provider is 'password'.
-    return user?.providerData.some(p => p.providerId === 'password');
-}
-
-
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isActive = (path: string) => pathname.startsWith(path);
@@ -141,16 +133,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Link href="/admin">
                     <ShieldCheck />
                     Admin
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )}
-            {isAdmin && (
-               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/admin/users')}>
-                  <Link href="/admin/users">
-                    <Users />
-                    Gestionar Usuarios
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

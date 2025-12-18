@@ -11,7 +11,7 @@ import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 function getStatusInfo(status: string) {
   switch (status) {
@@ -26,11 +26,6 @@ function getStatusInfo(status: string) {
     default:
       return { icon: Clock, color: 'text-muted-foreground', badgeVariant: 'secondary' as const };
   }
-}
-
-function useIsAdmin() {
-    const { user } = useUser();
-    return user?.providerData.some(p => p.providerId === 'password');
 }
 
 function AdminServiceRequestList() {

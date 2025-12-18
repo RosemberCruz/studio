@@ -1,22 +1,4 @@
 
-/**
- * Core Philosophy: This ruleset enforces a strict user-ownership model, with an
- * override for administrators. Regular users can only access their own data.
- * Administrators, identified by a custom claim, have read access to all user data.
- *
- * Data Structure: The primary data structure is `/users/{userId}`, which stores
- * individual UserAccount documents.
- *
- * Key Security Decisions:
- * - Admin Override: A new `isAdmin()` function checks for a specific email. 
- *   This allows admins to bypass standard ownership rules for reading and listing data.
- * - User Enumeration Restricted: Listing the entire `/users` collection is
- *   only allowed for administrators, protecting user privacy.
- * - Strict Ownership for Writes: All write operations (create, update, delete)
- *   remain strictly gated by user ownership. Admins cannot write to user documents
- *   on their behalf through the client SDK. This is a critical security boundary.
- * - Default Deny: Access is denied by default.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -33,12 +15,14 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the requesting user has the 'isAdmin' custom claim
-     * or is logged in via password (temporary solution for development).
+     * Checks if the requesting user has the admin email address.
+     * This is the primary mechanism for granting admin privileges.
      */
     function isAdmin() {
-      return isSignedIn() && 
-             (request.auth.token.admin == true || request.auth.token.firebase.sign_in_provider == 'password');
+      // --- ¡IMPORTANTE! ---
+      // Cambia 'admin@example.com' por tu correo de administrador.
+      // Este debe ser el mismo correo que está en src/hooks/useIsAdmin.ts
+      return isSignedIn() && request.auth.token.email == 'admin@example.com';
     }
 
     /**
@@ -57,7 +41,9 @@ service cloud.firestore {
       let data = request.resource.data;
       // The user creating the document must be the owner (isOwner check is also applied).
       // The `id` field in the document must match the creator's UID.
-      return data.id == userId;
+      return isOwner(userId) &&
+             data.id == userId &&
+             data.balance == 0; // Ensure initial balance is 0
     }
 
 
@@ -67,8 +53,10 @@ service cloud.firestore {
     function isValidUserAccountUpdate() {
       let incomingData = request.resource.data;
       let existingData = resource.data;
+      // Users cannot change their own ID.
+      // Only an admin can change a user's balance. Regular users cannot.
       return incomingData.id == existingData.id &&
-             (incomingData.balance == existingData.balance || isAdmin()); // Only admin can change balance directly via approval flow
+             (incomingData.balance == existingData.balance || isAdmin());
     }
 
     /**
@@ -105,12 +93,9 @@ service cloud.firestore {
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && isValidUserAccountCreate(userId);
-      allow update: if isOwner(userId) || isAdmin(); // Admin needs to update balance
+      allow create: if isValidUserAccountCreate(userId);
+      allow update: if isOwner(userId) && isValidUserAccountUpdate() || isAdmin(); // Admin can update any field
       allow delete: if isOwner(userId);
-    }
-
-    match /users/{document=**} {
       allow list: if isAdmin();
     }
     
@@ -122,12 +107,10 @@ service cloud.firestore {
      */
     match /serviceRequests/{requestId} {
       // READ: Users can read their own requests, admins can read all.
-      allow get: if isOwner(resource.data.userId) || isAdmin();
-      // Users can list their own requests, admins can list all.
-      allow list: if isSignedIn(); // Query needs to enforce user ownership
+      allow get, list: if isOwner(resource.data.userId) || isAdmin();
       
       // WRITE:
-      // Users can create their own requests.
+      // Users can create their own requests if the data is valid.
       allow create: if isValidServiceRequestCreate();
       // Only admins can update (e.g., change status, add fileUrl) or delete.
       allow update, delete: if isAdmin();
@@ -139,7 +122,9 @@ service cloud.firestore {
      *   - Admins have full read/write access to manage these requests.
      */
     match /depositRequests/{requestId} {
-      allow get, list: if isAdmin();
+      // READ: Only admins can read the list of deposit requests.
+      allow get, list: if isAdmin() || isOwner(resource.data.userId);
+      // WRITE: Users can create their own valid requests. Admins can update/delete any.
       allow create: if isValidDepositRequestCreate();
       allow update, delete: if isAdmin();
     }
