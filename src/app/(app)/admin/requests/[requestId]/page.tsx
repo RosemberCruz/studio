@@ -3,8 +3,7 @@
 import { useState, useEffect, useTransition } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc, writeBatch, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +13,7 @@ import { Loader2, Save, FileText, User, Calendar, LinkIcon, FileJson, MessageSqu
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Textarea } from '@/components/ui/textarea';
+import { servicesData } from '@/lib/data';
 
 const statusOptions = ["Solicitado", "En Proceso", "Completado", "Rechazado"];
 
@@ -48,26 +48,56 @@ export default function ManageRequestPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    startTransition(() => {
-      if (!requestDocRef) {
+    startTransition(async () => {
+      if (!firestore || !requestDocRef || !request) {
         toast({ title: "Error", description: "No se pudo encontrar la solicitud.", variant: "destructive" });
         return;
       }
+      
+      const batch = writeBatch(firestore);
 
       const updatedData = {
         status,
         fileUrl: fileUrl.trim() === '' ? null : fileUrl.trim(),
         adminNotes: adminNotes.trim() === '' ? null : adminNotes.trim(),
       };
-
-      updateDocumentNonBlocking(requestDocRef, updatedData);
-
-      toast({
-        title: "Solicitud Actualizada",
-        description: "Los cambios se han guardado correctamente.",
-      });
       
-      router.back(); // Go back to the previous page
+      batch.update(requestDocRef, updatedData);
+      
+      // --- REFUND LOGIC ---
+      // If status is changing to "Rechazado" and it wasn't "Rechazado" before.
+      if (status === 'Rechazado' && request.status !== 'Rechazado') {
+        const service = servicesData.flatMap(c => c.services).find(s => s.id === request.serviceId);
+        
+        if (service) {
+          const userRef = doc(firestore, 'users', request.userId);
+          try {
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+              const currentBalance = userDoc.data().balance || 0;
+              const newBalance = currentBalance + service.cost;
+              batch.update(userRef, { balance: newBalance });
+              toast({ title: "Reembolso Aplicado", description: `Se han devuelto $${service.cost.toFixed(2)} al saldo del usuario.` });
+            }
+          } catch (refundError) {
+             toast({ title: "Error en Reembolso", description: "La solicitud fue actualizada, pero no se pudo devolver el saldo al usuario.", variant: "destructive" });
+             return; // Stop if refund fails
+          }
+        }
+      }
+      // --- END REFUND LOGIC ---
+
+      try {
+        await batch.commit();
+        toast({
+          title: "Solicitud Actualizada",
+          description: "Los cambios se han guardado correctamente.",
+        });
+        router.push('/seguimiento'); 
+      } catch (commitError: any) {
+        toast({ title: "Error al Guardar", description: `No se pudieron guardar los cambios: ${commitError.message}`, variant: "destructive" });
+      }
+
     });
   }
 
