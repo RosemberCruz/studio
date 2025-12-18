@@ -106,7 +106,8 @@ service cloud.firestore {
      */
     match /serviceRequests/{requestId} {
       // READ: Users can read their own requests, admins can read all.
-      allow get, list: if isOwner(resource.data.userId) || isAdmin();
+      allow get: if isOwner(resource.data.userId) || isAdmin();
+      allow list: if isAdmin();
       
       // WRITE:
       // Users can create their own requests if the data is valid.
