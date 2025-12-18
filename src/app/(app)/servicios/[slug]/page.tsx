@@ -80,12 +80,15 @@ export default function ServiceDetailPage() {
     const requestsColRef = collection(firestore, 'serviceRequests');
     const newRequest = {
         userId: user.uid,
+        userName: userData.firstName + ' ' + userData.lastName,
+        userEmail: userData.email,
         serviceId: service.id,
         serviceName: service.name,
         status: 'Solicitado',
         requestDate: new Date().toISOString(),
         fileUrl: null,
         formData: formData,
+        adminNotes: null
     };
     addDocumentNonBlocking(requestsColRef, newRequest).then(() => {
       toast({ title: "¡Trámite Solicitado!", description: `Se han descontado $${service.cost.toFixed(2)} de tu saldo. Pronto un administrador revisará tu solicitud.`});
