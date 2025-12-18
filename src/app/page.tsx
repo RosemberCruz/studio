@@ -16,7 +16,7 @@ export default function RootPage() {
                     <CardTitle className="text-3xl font-headline">¡Bienvenido a TramitesFacil!</CardTitle>
                 </div>
                 <CardDescription className="pt-2">
-                    Tu aplicación está lista. Sin embargo, parece que estás teniendo problemas para ejecutarla localmente.
+                    Tu aplicación está lista. Si tienes problemas para ejecutarla localmente, aquí tienes las mejores opciones para empezar.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -45,7 +45,7 @@ export default function RootPage() {
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm">
-                                Publica tu app gratis en Vercel. Obtendrás una URL pública que siempre funcionará.
+                                Publica tu app gratis en Vercel. Obtendrás una URL pública que siempre funcionará, solucionando el problema de "la página no carga".
                             </p>
                         </CardContent>
                         <CardFooter>
@@ -58,9 +58,9 @@ export default function RootPage() {
                     </Card>
                 </div>
             </CardContent>
-             <CardFooter>
+             <CardFooter className="justify-center">
                 <p className="text-xs text-muted-foreground">
-                    La Opción 2 es la solución definitiva a los problemas de "la página no carga".
+                    La Opción 2 es la solución definitiva si no puedes acceder a la página.
                 </p>
             </CardFooter>
         </Card>
