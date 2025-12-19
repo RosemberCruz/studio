@@ -5,7 +5,7 @@ import { useUser } from '@/firebase';
 // --- ¡IMPORTANTE! ---
 // Este es el CORREO del usuario que se considerará como administrador.
 // Para obtener privilegios de administrador, crea o utiliza una cuenta con este correo exacto.
-const ADMIN_EMAIL = 'admin@example.com'; 
+const ADMIN_EMAIL = 'rosembercruzbetancourt@gmail.com'; 
 
 export function useIsAdmin() {
     const { user } = useUser();

@@ -20,8 +20,8 @@ service cloud.firestore {
      */
     function isAdmin() {
       // --- ¡IMPORTANTE! ---
-      // El administrador es identificado por el correo 'admin@example.com'.
-      return isSignedIn() && request.auth.token.email == 'admin@example.com';
+      // El administrador es identificado por el correo 'rosembercruzbetancourt@gmail.com'.
+      return isSignedIn() && request.auth.token.email == 'rosembercruzbetancourt@gmail.com';
     }
 
     /**
