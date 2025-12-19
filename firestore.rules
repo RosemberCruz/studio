@@ -89,12 +89,13 @@ service cloud.firestore {
      *   - Admins can get any user and list all users.
      *   - Users can only get their own document.
      *   - Writes are restricted to the owner, but balance can be updated by an admin.
+     *   - Admins can delete any user document.
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
       allow create: if isValidUserAccountCreate(userId);
-      allow update: if isOwner(userId) && isValidUserAccountUpdate() || isAdmin(); // Admin can update any field
-      allow delete: if isOwner(userId);
+      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || isAdmin(); // Admin can update any field
+      allow delete: if isAdmin();
       allow list: if isAdmin();
     }
     
@@ -121,8 +122,8 @@ service cloud.firestore {
      *   - Admins have full read/write access to manage these requests.
      */
     match /depositRequests/{requestId} {
-      // READ: Only admins can read the list of deposit requests.
-      allow get, list: if isAdmin() || isOwner(resource.data.userId);
+      // READ: Only admins can read the list of deposit requests. Users can read their own.
+      allow read: if isAdmin() || isOwner(resource.data.userId);
       // WRITE: Users can create their own valid requests. Admins can update/delete any.
       allow create: if isValidDepositRequestCreate();
       allow update, delete: if isAdmin();

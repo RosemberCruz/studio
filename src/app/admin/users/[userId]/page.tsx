@@ -1,15 +1,29 @@
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
+import { doc, collection, query, where, deleteDoc } from 'firebase/firestore';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks } from 'lucide-react';
+import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks, Trash2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
+
 
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
     switch (status) {
@@ -26,6 +40,7 @@ export default function UserDetailPage() {
     const userId = params.userId as string;
     const firestore = useFirestore();
     const router = useRouter();
+    const { toast } = useToast();
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !userId) return null;
@@ -40,6 +55,24 @@ export default function UserDetailPage() {
     const { data: userProfile, isLoading: isUserLoading } = useDoc(userDocRef);
     const { data: serviceRequests, isLoading: areRequestsLoading } = useCollection(requestsQuery);
 
+    const handleDeleteUser = async () => {
+        if (!userDocRef) return;
+        try {
+            await deleteDoc(userDocRef);
+            toast({
+                title: "Usuario Eliminado",
+                description: "Los datos del usuario han sido eliminados de Firestore.",
+            });
+            router.push('/admin/users');
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error al Eliminar",
+                description: "No se pudieron eliminar los datos del usuario.",
+            });
+        }
+    };
+
     if (isUserLoading) {
         return (
             <div className="flex h-full items-center justify-center">
@@ -49,16 +82,26 @@ export default function UserDetailPage() {
     }
 
     if (!isUserLoading && !userProfile) {
-        notFound();
-    }
-    
-    if (!userProfile) {
+        // This can happen briefly after a user is deleted and the hook re-evaluates.
+        // Or if the user ID is invalid.
         return (
              <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Usuario no encontrado</CardTitle>
+                        <CardDescription>
+                            El usuario no existe o ya ha sido eliminado. Redirigiendo...
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
             </div>
         )
     }
+    
+    if (!userProfile) {
+        return null; // Should be covered by the case above, but as a fallback.
+    }
+
 
     const creationDate = userProfile.creationDate ? new Date(userProfile.creationDate) : new Date();
 
@@ -99,6 +142,28 @@ export default function UserDetailPage() {
                             <Badge variant="secondary" className="text-base">${userProfile.balance.toFixed(2)}</Badge>
                         </div>
                     </CardContent>
+                    <CardFooter>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="w-full">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Eliminar Usuario
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción no se puede deshacer. Esto eliminará permanentemente los datos del usuario de la base de datos de Firestore, pero no eliminará su cuenta de autenticación.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDeleteUser}>Sí, eliminar datos</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </CardFooter>
                 </Card>
             </div>
             <div className="lg:col-span-2">
