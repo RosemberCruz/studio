@@ -14,12 +14,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { FileCheck2, ShoppingCart, Clock, Loader2, Star, Wallet } from 'lucide-react';
+import { FileCheck2, ShoppingCart, Clock, Loader2, Star, Wallet, Gift } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc, collection, updateDoc } from 'firebase/firestore';
+import { doc, collection, updateDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { subHours } from 'date-fns';
 
 type PaymentMethod = 'balance' | 'credits';
 
@@ -53,6 +54,44 @@ export default function ServiceDetailPage() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   }
+
+  const checkForCreditReward = async () => {
+    if (!firestore || !user || !userDocRef || !userData) return;
+  
+    // 1. Get requests from the last 24 hours
+    const twentyFourHoursAgo = subHours(new Date(), 24);
+    const requestsRef = collection(firestore, 'serviceRequests');
+    const q = query(
+      requestsRef, 
+      where('userId', '==', user.uid), 
+      where('requestDate', '>=', twentyFourHoursAgo.toISOString())
+    );
+  
+    const querySnapshot = await getDocs(q);
+    const dailyRequestCount = querySnapshot.size; // This already includes the one we just made
+  
+    // 2. Check if it's a multiple of 20
+    if (dailyRequestCount > 0 && dailyRequestCount % 20 === 0) {
+      // 3. Grant credits
+      const currentCredits = userData.credits || 0;
+      const newCredits = currentCredits + 5;
+      
+      try {
+        await updateDoc(userDocRef, { credits: newCredits });
+        toast({
+          title: "¡Felicidades! Has ganado 5 créditos.",
+          description: `Gracias por tu lealtad. Tu nuevo saldo de créditos es ${newCredits}.`,
+          duration: 7000,
+          className: "bg-green-100 border-green-300 dark:bg-green-900 dark:border-green-700",
+          action: <div className="p-2 rounded-full bg-green-200 dark:bg-green-800"><Gift className="h-5 w-5 text-green-600 dark:text-green-300" /></div>
+        });
+      } catch (e) {
+        // Fail silently on reward, main transaction is already done
+        console.error("Failed to grant credit reward:", e);
+      }
+    }
+  };
+  
 
   const handleRequestService = async () => {
     if (!userData || !user || !firestore || !userDocRef) {
@@ -113,6 +152,10 @@ export default function ServiceDetailPage() {
         await addDocumentNonBlocking(requestsColRef, newRequest);
         
         toast({ title: "¡Trámite Solicitado!", description: `${successMessage} Pronto un administrador revisará tu solicitud.`});
+        
+        // 3. Check for reward (async, non-blocking)
+        await checkForCreditReward();
+        
         router.push('/seguimiento');
 
     } catch (error) {
@@ -247,3 +290,4 @@ export default function ServiceDetailPage() {
     </div>
   );
 }
+
