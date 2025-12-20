@@ -76,7 +76,8 @@ export default function LoginPage() {
       lastName: signupLastName,
       phoneNumber: signupPhone,
       creationDate: new Date().toISOString(),
-      balance: 0, // Initial balance for new users
+      balance: 0,
+      credits: 0,
     };
     await setDoc(userRef, userData);
   };

@@ -25,6 +25,7 @@ import {
   LogOut,
   ShieldCheck,
   Info,
+  Star,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -58,9 +59,16 @@ function UserProfile() {
             <div className="flex items-center gap-3 p-2 border rounded-lg m-2">
                 <Wallet className="h-6 w-6 text-primary" />
                 <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Saldo Actual</span>
+                    <span className="text-xs text-muted-foreground">Saldo</span>
                     <span className="font-semibold text-lg">
                         {userData ? `$${userData.balance.toFixed(2)}` : '$0.00'}
+                    </span>
+                </div>
+                 <div className="flex flex-col border-l pl-3 ml-3">
+                    <span className="text-xs text-muted-foreground">Créditos</span>
+                    <span className="font-semibold text-lg flex items-center gap-1">
+                        <Star className="h-5 w-5 text-yellow-500" />
+                        {userData ? userData.credits || 0 : 0}
                     </span>
                 </div>
             </div>

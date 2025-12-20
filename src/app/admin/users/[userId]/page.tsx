@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
-import { doc, collection, query, where, deleteDoc } from 'firebase/firestore';
+import { doc, collection, query, where, deleteDoc, updateDoc } from 'firebase/firestore';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks, Trash2 } from 'lucide-react';
+import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks, Trash2, PlusCircle, Star } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -23,6 +24,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
@@ -41,6 +44,8 @@ export default function UserDetailPage() {
     const firestore = useFirestore();
     const router = useRouter();
     const { toast } = useToast();
+    const [creditsToAdd, setCreditsToAdd] = useState(0);
+    const [isUpdatingCredits, setIsUpdatingCredits] = useState(false);
 
     const userDocRef = useMemoFirebase(() => {
         if (!firestore || !userId) return null;
@@ -70,6 +75,38 @@ export default function UserDetailPage() {
                 title: "Error al Eliminar",
                 description: "No se pudieron eliminar los datos del usuario.",
             });
+        }
+    };
+    
+    const handleAddCredits = async () => {
+        if (!userDocRef || !userProfile || creditsToAdd <= 0) {
+            toast({
+                title: "Valor inválido",
+                description: "Por favor, introduce un número de créditos mayor a cero.",
+                variant: "destructive"
+            });
+            return;
+        }
+        
+        setIsUpdatingCredits(true);
+        const currentCredits = userProfile.credits || 0;
+        const newCredits = currentCredits + creditsToAdd;
+        
+        try {
+            await updateDoc(userDocRef, { credits: newCredits });
+            toast({
+                title: "Créditos Añadidos",
+                description: `Se han añadido ${creditsToAdd} créditos a ${userProfile.firstName}. Nuevo total: ${newCredits}.`
+            });
+            setCreditsToAdd(0);
+        } catch (error) {
+             toast({
+                variant: "destructive",
+                title: "Error al Actualizar",
+                description: "No se pudieron añadir los créditos.",
+            });
+        } finally {
+            setIsUpdatingCredits(false);
         }
     };
 
@@ -111,7 +148,7 @@ export default function UserDetailPage() {
 
     return (
         <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-8">
                 <Card>
                     <CardHeader className="items-center text-center">
                         <Avatar className="h-24 w-24 mb-4">
@@ -141,6 +178,11 @@ export default function UserDetailPage() {
                             <span className="text-sm">Saldo Actual:</span>
                             <Badge variant="secondary" className="text-base">${userProfile.balance.toFixed(2)}</Badge>
                         </div>
+                        <div className="flex items-center gap-3">
+                            <Star className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm">Créditos:</span>
+                            <Badge variant="secondary" className="text-base">{userProfile.credits || 0}</Badge>
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <AlertDialog>
@@ -165,6 +207,33 @@ export default function UserDetailPage() {
                         </AlertDialog>
                     </CardFooter>
                 </Card>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Administrar Créditos</CardTitle>
+                        <CardDescription>Añade créditos a la cuenta de este usuario.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="credits-to-add">Créditos a añadir</Label>
+                            <Input
+                                id="credits-to-add"
+                                type="number"
+                                value={creditsToAdd}
+                                onChange={(e) => setCreditsToAdd(Number(e.target.value))}
+                                placeholder="Ej: 10"
+                                min="0"
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={handleAddCredits} disabled={isUpdatingCredits} className="w-full">
+                            {isUpdatingCredits ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
+                            Añadir Créditos
+                        </Button>
+                    </CardFooter>
+                </Card>
+
             </div>
             <div className="lg:col-span-2">
                 <Card>

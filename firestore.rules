@@ -40,7 +40,8 @@ service cloud.firestore {
       // The `id` field in the document must match the creator's UID.
       return isOwner(userId) &&
              data.id == userId &&
-             data.balance == 0; // Ensure initial balance is 0
+             data.balance == 0 &&
+             data.credits == 0; // Ensure initial credits is 0
     }
 
 
@@ -53,7 +54,8 @@ service cloud.firestore {
       // Users cannot change their own ID.
       // Only an admin can change a user's balance. Regular users cannot.
       return incomingData.id == existingData.id &&
-             (incomingData.balance == existingData.balance || isAdmin());
+             (incomingData.balance == existingData.balance || isAdmin()) &&
+             (incomingData.credits == existingData.credits || isAdmin()); // Admin can change credits
     }
 
     /**
@@ -86,7 +88,7 @@ service cloud.firestore {
      * @description Manages UserAccount documents.
      *   - Admins can get any user and list all users.
      *   - Users can only get their own document.
-     *   - Writes are restricted to the owner, but balance can be updated by an admin.
+     *   - Writes are restricted to the owner, but balance/credits can be updated by an admin.
      *   - Admins can delete any user document.
      */
     match /users/{userId} {
@@ -105,7 +107,8 @@ service cloud.firestore {
      *   - Only Admins can update or delete requests.
      */
     match /serviceRequests/{requestId} {
-      allow read: if isAdmin() || isOwner(resource.data.userId);
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+      allow list: if isAdmin();
       allow create: if isValidServiceRequestCreate();
       allow update, delete: if isAdmin();
     }

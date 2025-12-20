@@ -5,7 +5,7 @@ import { collection, query, orderBy } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Star } from 'lucide-react';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 
@@ -48,8 +48,8 @@ export default function AdminUsersPage() {
                                 <TableRow>
                                     <TableHead>Usuario</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Teléfono</TableHead>
                                     <TableHead>Miembro Desde</TableHead>
+                                    <TableHead>Créditos</TableHead>
                                     <TableHead className="text-right">Saldo</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -66,8 +66,13 @@ export default function AdminUsersPage() {
                                         </div>
                                     </TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.phoneNumber || 'N/A'}</TableCell>
                                     <TableCell>{format(new Date(user.creationDate), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-1">
+                                            <Star className="h-4 w-4 text-yellow-500" />
+                                            <span className="font-mono">{user.credits || 0}</span>
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="text-right font-mono">${user.balance.toFixed(2)}</TableCell>
                                 </TableRow>
                                 ))}

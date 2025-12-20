@@ -36,6 +36,10 @@
         "balance": {
             "type": "number",
             "description": "The user's current account balance."
+        },
+        "credits": {
+            "type": "number",
+            "description": "The user's current credit balance for specific services."
         }
       },
       "required": [
@@ -44,7 +48,8 @@
         "firstName",
         "lastName",
         "creationDate",
-        "balance"
+        "balance",
+        "credits"
       ]
     },
     "ServiceRequest": {
@@ -204,6 +209,6 @@
         }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance. Added a 'credits' field to the UserAccount to support a dual-currency system (balance and credits)."
   }
 }
