@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   Info,
   Star,
+  Gift,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -56,20 +57,33 @@ function UserProfile() {
   return (
     <>
         <SidebarMenuItem>
-            <div className="flex items-center gap-3 p-2 border rounded-lg m-2">
-                <Wallet className="h-6 w-6 text-primary" />
-                <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Saldo</span>
-                    <span className="font-semibold text-lg">
-                        {userData ? `$${userData.balance.toFixed(2)}` : '$0.00'}
-                    </span>
+            <div className="grid grid-cols-2 gap-2 p-2 border rounded-lg m-2">
+                <div className="flex items-center gap-2">
+                    <Wallet className="h-6 w-6 text-primary" />
+                    <div>
+                        <span className="text-xs text-muted-foreground">Saldo</span>
+                        <span className="font-semibold text-base block">
+                            {userData ? `$${userData.balance.toFixed(2)}` : '$0.00'}
+                        </span>
+                    </div>
                 </div>
-                 <div className="flex flex-col border-l pl-3 ml-3">
-                    <span className="text-xs text-muted-foreground">Créditos</span>
-                    <span className="font-semibold text-lg flex items-center gap-1">
-                        <Star className="h-5 w-5 text-yellow-500" />
-                        {userData ? userData.credits || 0 : 0}
-                    </span>
+                 <div className="flex items-center gap-2 border-l pl-2">
+                    <Star className="h-6 w-6 text-yellow-500" />
+                    <div>
+                        <span className="text-xs text-muted-foreground">Créditos</span>
+                        <span className="font-semibold text-base block">
+                            {userData ? userData.credits || 0 : 0}
+                        </span>
+                    </div>
+                </div>
+                <div className="col-span-2 flex items-center gap-2 border-t pt-2 mt-2">
+                    <Gift className="h-6 w-6 text-pink-500" />
+                    <div>
+                        <span className="text-xs text-muted-foreground">Créditos Promo</span>
+                        <span className="font-semibold text-base block">
+                            {userData ? userData.promotionalCredits || 0 : 0}
+                        </span>
+                    </div>
                 </div>
             </div>
         </SidebarMenuItem>

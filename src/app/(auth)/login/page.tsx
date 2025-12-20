@@ -78,6 +78,7 @@ export default function LoginPage() {
       creationDate: new Date().toISOString(),
       balance: 0,
       credits: 0,
+      promotionalCredits: 0,
     };
     await setDoc(userRef, userData);
   };

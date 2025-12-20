@@ -22,7 +22,10 @@ import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { subHours } from 'date-fns';
 
-type PaymentMethod = 'balance' | 'credits';
+type PaymentMethod = 'balance' | 'credits' | 'promotionalCredits';
+
+// IDs de los servicios que se pueden pagar con créditos promocionales
+const PROMOTIONAL_CREDIT_SERVICES = ['rfc-clon', 'antecedentes-no-penales'];
 
 export default function ServiceDetailPage() {
   const params = useParams();
@@ -50,6 +53,8 @@ export default function ServiceDetailPage() {
     notFound();
   }
 
+  const isPromotionalService = PROMOTIONAL_CREDIT_SERVICES.includes(service.id);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -58,7 +63,6 @@ export default function ServiceDetailPage() {
   const checkForCreditReward = async () => {
     if (!firestore || !user || !userDocRef || !userData) return;
   
-    // 1. Get requests from the last 24 hours
     const twentyFourHoursAgo = subHours(new Date(), 24);
     const requestsRef = collection(firestore, 'serviceRequests');
     const q = query(
@@ -68,26 +72,23 @@ export default function ServiceDetailPage() {
     );
   
     const querySnapshot = await getDocs(q);
-    const dailyRequestCount = querySnapshot.size; // This already includes the one we just made
+    const dailyRequestCount = querySnapshot.size;
   
-    // 2. Check if it's a multiple of 20
     if (dailyRequestCount > 0 && dailyRequestCount % 20 === 0) {
-      // 3. Grant credits
-      const currentCredits = userData.credits || 0;
-      const newCredits = currentCredits + 5;
+      const currentPromoCredits = userData.promotionalCredits || 0;
+      const newPromoCredits = currentPromoCredits + 5;
       
       try {
-        await updateDoc(userDocRef, { credits: newCredits });
+        await updateDoc(userDocRef, { promotionalCredits: newPromoCredits });
         toast({
-          title: "¡Felicidades! Has ganado 5 créditos.",
-          description: `Gracias por tu lealtad. Tu nuevo saldo de créditos es ${newCredits}.`,
+          title: "¡Felicidades! Has ganado 5 Créditos Promocionales.",
+          description: `Puedes usarlos en trámites seleccionados. Tu nuevo saldo es ${newPromoCredits}.`,
           duration: 7000,
           className: "bg-green-100 border-green-300 dark:bg-green-900 dark:border-green-700",
           action: <div className="p-2 rounded-full bg-green-200 dark:bg-green-800"><Gift className="h-5 w-5 text-green-600 dark:text-green-300" /></div>
         });
       } catch (e) {
-        // Fail silently on reward, main transaction is already done
-        console.error("Failed to grant credit reward:", e);
+        console.error("Failed to grant promotional credit reward:", e);
       }
     }
   };
@@ -99,7 +100,6 @@ export default function ServiceDetailPage() {
         return;
     }
 
-    // Validate that all required fields are filled
     const missingDocs = service.documents.filter(doc => !formData[doc.id] || formData[doc.id].trim() === '');
     if (missingDocs.length > 0) {
         toast({ title: "Campos Requeridos", description: `Por favor, completa los siguientes campos: ${missingDocs.map(d => d.name).join(', ')}`, variant: "destructive" });
@@ -109,7 +109,6 @@ export default function ServiceDetailPage() {
     let updatePayload = {};
     let successMessage = "";
     
-    // Validate funds and prepare update
     if (paymentMethod === 'balance') {
       if (userData.balance < service.cost) {
         toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo. Necesitas $${service.cost.toFixed(2)}.`, variant: "destructive"});
@@ -118,23 +117,30 @@ export default function ServiceDetailPage() {
       updatePayload = { balance: userData.balance - service.cost };
       successMessage = `Se han descontado $${service.cost.toFixed(2)} de tu saldo.`;
 
-    } else { // paymentMethod === 'credits'
+    } else if (paymentMethod === 'credits') {
       const currentCredits = userData.credits || 0;
       if (currentCredits < service.creditCost) {
-        toast({ title: "Créditos Insuficientes", description: `No tienes suficientes créditos. Necesitas ${service.creditCost}.`, variant: "destructive"});
+        toast({ title: "Créditos Generales Insuficientes", description: `Necesitas ${service.creditCost} créditos generales.`, variant: "destructive"});
         return;
       }
       updatePayload = { credits: currentCredits - service.creditCost };
-      successMessage = `Se han descontado ${service.creditCost} créditos de tu cuenta.`;
+      successMessage = `Se han descontado ${service.creditCost} créditos generales.`;
+    
+    } else { // paymentMethod === 'promotionalCredits'
+        const currentPromoCredits = userData.promotionalCredits || 0;
+        if (currentPromoCredits < service.creditCost) {
+            toast({ title: "Créditos Promocionales Insuficientes", description: `Necesitas ${service.creditCost} créditos promocionales.`, variant: "destructive"});
+            return;
+        }
+        updatePayload = { promotionalCredits: currentPromoCredits - service.creditCost };
+        successMessage = `Se han descontado ${service.creditCost} créditos promocionales.`;
     }
 
     setIsSubmitting(true);
 
     try {
-        // 1. Deduct funds (blocking for safety)
         await updateDoc(userDocRef, updatePayload);
 
-        // 2. Create service request document (non-blocking)
         const requestsColRef = collection(firestore, 'serviceRequests');
         const newRequest = {
             userId: user.uid,
@@ -153,19 +159,16 @@ export default function ServiceDetailPage() {
         
         toast({ title: "¡Trámite Solicitado!", description: `${successMessage} Pronto un administrador revisará tu solicitud.`});
         
-        // 3. Check for reward (async, non-blocking)
         await checkForCreditReward();
         
         router.push('/seguimiento');
 
     } catch (error) {
-        // This simple revert might not be perfect in all race conditions, but it's a good first step.
         let revertPayload = {};
-        if (paymentMethod === 'balance') {
-            revertPayload = { balance: userData.balance };
-        } else {
-            revertPayload = { credits: userData.credits || 0 };
-        }
+         if (paymentMethod === 'balance') revertPayload = { balance: userData.balance };
+         else if (paymentMethod === 'credits') revertPayload = { credits: userData.credits || 0 };
+         else revertPayload = { promotionalCredits: userData.promotionalCredits || 0 };
+
         await updateDoc(userDocRef, revertPayload);
 
         toast({ title: "Error", description: "No se pudo completar la solicitud. Tu saldo no ha sido modificado. Inténtalo de nuevo.", variant: "destructive"});
@@ -236,8 +239,8 @@ export default function ServiceDetailPage() {
                     <Label className="font-semibold">Método de Pago</Label>
                     <RadioGroup 
                         defaultValue="balance" 
-                        onValueChange={(value: PaymentMethod) => setPaymentMethod(value)}
-                        className="grid grid-cols-2 gap-4"
+                        onValueChange={(value: any) => setPaymentMethod(value)}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
                         disabled={!user || isSubmitting}
                     >
                       <Label htmlFor="pay-balance" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
@@ -245,10 +248,17 @@ export default function ServiceDetailPage() {
                         <Wallet className="mb-3 h-6 w-6" />
                         Pagar con Saldo
                       </Label>
+                      
                       <Label htmlFor="pay-credits" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
                         <RadioGroupItem value="credits" id="pay-credits" className="sr-only" />
                         <Star className="mb-3 h-6 w-6" />
-                        Pagar con Créditos
+                        Créditos Generales
+                      </Label>
+                      
+                      <Label htmlFor="pay-promotional-credits" className={`flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 ${isPromotionalService ? 'hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
+                        <RadioGroupItem value="promotionalCredits" id="pay-promotional-credits" className="sr-only" disabled={!isPromotionalService} />
+                        <Gift className="mb-3 h-6 w-6" />
+                        Créditos Promo
                       </Label>
                     </RadioGroup>
                   </div>
@@ -290,4 +300,3 @@ export default function ServiceDetailPage() {
     </div>
   );
 }
-

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { notFound, useParams, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks, Trash2, PlusCircle, Star } from 'lucide-react';
+import { Loader2, Mail, Phone, Calendar, DollarSign, ListChecks, Trash2, PlusCircle, Star, Gift } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -180,8 +181,13 @@ export default function UserDetailPage() {
                         </div>
                         <div className="flex items-center gap-3">
                             <Star className="h-5 w-5 text-muted-foreground" />
-                            <span className="text-sm">Créditos:</span>
+                            <span className="text-sm">Créditos Generales:</span>
                             <Badge variant="secondary" className="text-base">{userProfile.credits || 0}</Badge>
+                        </div>
+                         <div className="flex items-center gap-3">
+                            <Gift className="h-5 w-5 text-muted-foreground" />
+                            <span className="text-sm">Créditos Promo:</span>
+                            <Badge variant="secondary" className="text-base">{userProfile.promotionalCredits || 0}</Badge>
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -210,7 +216,7 @@ export default function UserDetailPage() {
                 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Administrar Créditos</CardTitle>
+                        <CardTitle>Administrar Créditos Generales</CardTitle>
                         <CardDescription>Añade créditos a la cuenta de este usuario.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">

@@ -41,7 +41,8 @@ service cloud.firestore {
       return isOwner(userId) &&
              data.id == userId &&
              data.balance == 0 &&
-             data.credits == 0; // Ensure initial credits is 0
+             data.credits == 0 &&
+             data.promotionalCredits == 0; // Ensure initial promo credits is 0
     }
 
 
@@ -55,7 +56,8 @@ service cloud.firestore {
       // Only an admin can change a user's balance. Regular users cannot.
       return incomingData.id == existingData.id &&
              (incomingData.balance == existingData.balance || isAdmin()) &&
-             (incomingData.credits == existingData.credits || isAdmin()); // Admin can change credits
+             (incomingData.credits == existingData.credits || isAdmin()) &&
+             (incomingData.promotionalCredits == existingData.promotionalCredits || isAdmin()); // Admin can change credits
     }
 
     /**
