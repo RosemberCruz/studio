@@ -36,8 +36,6 @@ import { signOut } from 'firebase/auth';
 import { WhatsappIcon } from '@/components/WhatsappIcon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
-import AuthGuard from './AuthGuard';
-
 
 function UserProfile() {
   const { user } = useUser();
@@ -132,7 +130,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <AuthGuard>
       <SidebarProvider>
         <Sidebar>
           <SidebarHeader>
@@ -227,6 +224,5 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </TooltipProvider>
         </SidebarInset>
       </SidebarProvider>
-    </AuthGuard>
   );
 }
