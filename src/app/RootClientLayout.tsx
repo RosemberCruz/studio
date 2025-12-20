@@ -12,29 +12,18 @@ export default function RootClientLayout({ children }: { children: React.ReactNo
   const pathname = usePathname();
 
   useEffect(() => {
-    // If the user data is still loading, don't do anything.
     if (isUserLoading) {
       return;
     }
 
     const isAuthPage = pathname === '/';
 
-    // If the user is logged in...
-    if (user) {
-      // ...and they are on an authentication page, redirect them to the dashboard.
-      if (isAuthPage) {
-        router.replace('/dashboard');
-      }
-    } 
-    // If the user is NOT logged in...
-    else {
-      // ...and they are on a protected page, redirect them to the login page.
-      if (!isAuthPage) {
-        router.replace('/');
-      }
+    if (user && isAuthPage) {
+      router.replace('/dashboard');
+    } else if (!user && !isAuthPage) {
+      router.replace('/');
     }
   }, [user, isUserLoading, pathname, router]);
-
 
   if (isUserLoading) {
     return (
