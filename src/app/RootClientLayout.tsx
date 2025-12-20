@@ -12,16 +12,29 @@ export default function RootClientLayout({ children }: { children: React.ReactNo
   const pathname = usePathname();
 
   useEffect(() => {
-    // If the user is authenticated and not already on a dashboard page, redirect them.
-    if (!isUserLoading && user && !pathname.startsWith('/dashboard') && !pathname.startsWith('/admin') && !pathname.startsWith('/servicios') && !pathname.startsWith('/recargar-saldo') && !pathname.startsWith('/seguimiento')) {
-        router.replace('/dashboard');
+    // If the user data is still loading, don't do anything.
+    if (isUserLoading) {
+      return;
     }
-    // If the user is not authenticated and trying to access a protected page, redirect to login.
-    // This is a fallback, as AuthGuard should handle it, but good for safety.
-    if (!isUserLoading && !user && pathname.startsWith('/dashboard')) {
+
+    const isAuthPage = pathname === '/';
+
+    // If the user is logged in...
+    if (user) {
+      // ...and they are on an authentication page, redirect them to the dashboard.
+      if (isAuthPage) {
+        router.replace('/dashboard');
+      }
+    } 
+    // If the user is NOT logged in...
+    else {
+      // ...and they are on a protected page, redirect them to the login page.
+      if (!isAuthPage) {
         router.replace('/');
+      }
     }
   }, [user, isUserLoading, pathname, router]);
+
 
   if (isUserLoading) {
     return (
@@ -31,11 +44,9 @@ export default function RootClientLayout({ children }: { children: React.ReactNo
     );
   }
 
-  // If user is logged in, show the app layout for any route inside (app)
   if (user) {
       return <AppLayout>{children}</AppLayout>;
   }
 
-  // If user is not logged in, show the children (which should be the auth pages)
   return <>{children}</>;
 }
