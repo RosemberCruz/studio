@@ -14,11 +14,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { FileCheck2, ShoppingCart, Clock, Loader2 } from 'lucide-react';
+import { FileCheck2, ShoppingCart, Clock, Loader2, Star, Wallet } from 'lucide-react';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
-import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc, collection, updateDoc } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
+type PaymentMethod = 'balance' | 'credits';
 
 export default function ServiceDetailPage() {
   const params = useParams();
@@ -29,6 +32,7 @@ export default function ServiceDetailPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<{[key: string]: string}>({});
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('balance');
 
   const userDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -50,8 +54,8 @@ export default function ServiceDetailPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   }
 
-  const handleRequestService = () => {
-    if (!userData || !user || !firestore) {
+  const handleRequestService = async () => {
+    if (!userData || !user || !firestore || !userDocRef) {
         toast({ title: "Error", description: "Debes iniciar sesión para solicitar un trámite.", variant: "destructive"});
         return;
     }
@@ -63,60 +67,94 @@ export default function ServiceDetailPage() {
         return;
     }
 
-    if (userData.balance < service.cost) {
-        toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo para solicitar este trámite. Necesitas $${service.cost.toFixed(2)}.`, variant: "destructive"});
+    let updatePayload = {};
+    let successMessage = "";
+    
+    // Validate funds and prepare update
+    if (paymentMethod === 'balance') {
+      if (userData.balance < service.cost) {
+        toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo. Necesitas $${service.cost.toFixed(2)}.`, variant: "destructive"});
         return;
+      }
+      updatePayload = { balance: userData.balance - service.cost };
+      successMessage = `Se han descontado $${service.cost.toFixed(2)} de tu saldo.`;
+
+    } else { // paymentMethod === 'credits'
+      const currentCredits = userData.credits || 0;
+      if (currentCredits < service.creditCost) {
+        toast({ title: "Créditos Insuficientes", description: `No tienes suficientes créditos. Necesitas ${service.creditCost}.`, variant: "destructive"});
+        return;
+      }
+      updatePayload = { credits: currentCredits - service.creditCost };
+      successMessage = `Se han descontado ${service.creditCost} créditos de tu cuenta.`;
     }
 
     setIsSubmitting(true);
 
-    // 1. Deduct balance (non-blocking)
-    const newBalance = userData.balance - service.cost;
-    if(userDocRef) {
-      updateDocumentNonBlocking(userDocRef, { balance: newBalance });
-    }
+    try {
+        // 1. Deduct funds (blocking for safety)
+        await updateDoc(userDocRef, updatePayload);
 
-    // 2. Create service request document (non-blocking)
-    const requestsColRef = collection(firestore, 'serviceRequests');
-    const newRequest = {
-        userId: user.uid,
-        userName: userData.firstName + ' ' + userData.lastName,
-        userEmail: userData.email,
-        serviceId: service.id,
-        serviceName: service.name,
-        status: 'Solicitado',
-        requestDate: new Date().toISOString(),
-        fileUrl: null,
-        formData: formData,
-        adminNotes: null
-    };
-    addDocumentNonBlocking(requestsColRef, newRequest).then(() => {
-      toast({ title: "¡Trámite Solicitado!", description: `Se han descontado $${service.cost.toFixed(2)} de tu saldo. Pronto un administrador revisará tu solicitud.`});
-      setIsSubmitting(false);
-      router.push('/seguimiento');
-    }).catch(() => {
-      // Revert balance if request creation fails (simplified approach)
-      if (userDocRef) {
-        updateDocumentNonBlocking(userDocRef, { balance: userData.balance });
-      }
-      toast({ title: "Error", description: "No se pudo crear la solicitud. Inténtalo de nuevo.", variant: "destructive"});
-      setIsSubmitting(false);
-    })
+        // 2. Create service request document (non-blocking)
+        const requestsColRef = collection(firestore, 'serviceRequests');
+        const newRequest = {
+            userId: user.uid,
+            userName: userData.firstName + ' ' + userData.lastName,
+            userEmail: userData.email,
+            serviceId: service.id,
+            serviceName: service.name,
+            status: 'Solicitado',
+            requestDate: new Date().toISOString(),
+            fileUrl: null,
+            formData: formData,
+            adminNotes: null
+        };
+
+        await addDocumentNonBlocking(requestsColRef, newRequest);
+        
+        toast({ title: "¡Trámite Solicitado!", description: `${successMessage} Pronto un administrador revisará tu solicitud.`});
+        router.push('/seguimiento');
+
+    } catch (error) {
+        // This simple revert might not be perfect in all race conditions, but it's a good first step.
+        let revertPayload = {};
+        if (paymentMethod === 'balance') {
+            revertPayload = { balance: userData.balance };
+        } else {
+            revertPayload = { credits: userData.credits || 0 };
+        }
+        await updateDoc(userDocRef, revertPayload);
+
+        toast({ title: "Error", description: "No se pudo completar la solicitud. Tu saldo no ha sido modificado. Inténtalo de nuevo.", variant: "destructive"});
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex justify-between items-start">
+      <div className="grid md:grid-cols-2 gap-8 items-start">
         <div>
             <h1 className="text-4xl font-bold font-headline">{service.name}</h1>
             <p className="text-lg text-muted-foreground mt-2">{service.description}</p>
         </div>
-        <Card className="p-4 text-center">
-            <div className="text-lg font-bold text-primary">${service.cost.toFixed(2)} MXN</div>
+        <Card className="p-4">
+            <CardTitle className="mb-2 text-lg">Costo del Trámite</CardTitle>
+            <div className="flex justify-around items-center text-center p-2 bg-secondary/50 rounded-lg">
+                <div>
+                    <div className="text-lg font-bold text-primary">${service.cost.toFixed(2)}</div>
+                    <div className="text-sm text-muted-foreground">MXN</div>
+                </div>
+                <div className="border-l h-8 border-border"></div>
+                <div className="flex items-center gap-2">
+                    <div className="text-lg font-bold text-yellow-500">{service.creditCost}</div>
+                    <Star className="h-5 w-5 text-yellow-500" />
+                </div>
+            </div>
             {service.deliveryTime && (
-                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-1">
+                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-3">
                     <Clock className="h-4 w-4" />
-                    <span>{service.deliveryTime}</span>
+                    <span>Entrega estimada: {service.deliveryTime}</span>
                 </div>
             )}
         </Card>
@@ -129,25 +167,49 @@ export default function ServiceDetailPage() {
                 <CardHeader>
                   <CardTitle>Realizar Trámite</CardTitle>
                   <CardDescription>
-                      Completa los siguientes campos con la información requerida para tu trámite.
+                      Completa los campos y elige tu método de pago para iniciar el trámite.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {service.documents.map((doc) => (
-                    <div key={doc.id} className="space-y-2">
-                        <Label htmlFor={doc.id} className="font-semibold">
-                            {doc.name}
-                        </Label>
-                         <Input 
-                            id={doc.id} 
-                            name={doc.id}
-                            placeholder={doc.description}
-                            onChange={handleInputChange}
-                            required 
-                            disabled={!user || isSubmitting}
-                        />
-                    </div>
-                  ))}
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    {service.documents.map((doc) => (
+                      <div key={doc.id} className="space-y-2">
+                          <Label htmlFor={doc.id} className="font-semibold">
+                              {doc.name}
+                          </Label>
+                          <Input 
+                              id={doc.id} 
+                              name={doc.id}
+                              placeholder={doc.description}
+                              onChange={handleInputChange}
+                              required 
+                              disabled={!user || isSubmitting}
+                          />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Método de Pago</Label>
+                    <RadioGroup 
+                        defaultValue="balance" 
+                        onValueChange={(value: PaymentMethod) => setPaymentMethod(value)}
+                        className="grid grid-cols-2 gap-4"
+                        disabled={!user || isSubmitting}
+                    >
+                      <Label htmlFor="pay-balance" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                        <RadioGroupItem value="balance" id="pay-balance" className="sr-only" />
+                        <Wallet className="mb-3 h-6 w-6" />
+                        Pagar con Saldo
+                      </Label>
+                      <Label htmlFor="pay-credits" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
+                        <RadioGroupItem value="credits" id="pay-credits" className="sr-only" />
+                        <Star className="mb-3 h-6 w-6" />
+                        Pagar con Créditos
+                      </Label>
+                    </RadioGroup>
+                  </div>
+
                 </CardContent>
                 <CardFooter>
                   <Button size="lg" className="w-full" onClick={handleRequestService} disabled={!user || isSubmitting}>
@@ -156,7 +218,7 @@ export default function ServiceDetailPage() {
                       ) : (
                           <ShoppingCart className="mr-2"/>
                       )}
-                      {isSubmitting ? 'Enviando Solicitud...' : 'Solicitar Trámite'}
+                      {isSubmitting ? 'Procesando Pago...' : 'Confirmar y Pagar'}
                   </Button>
                 </CardFooter>
             </Card>

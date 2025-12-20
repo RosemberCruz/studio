@@ -15,6 +15,7 @@ export type Service = {
   name: string;
   description: string;
   cost: number;
+  creditCost: number; // Costo en créditos
   deliveryTime?: string;
   steps: Step[];
   documents: Document[];
@@ -44,6 +45,10 @@ export type ProgressItem = {
     lastUpdate: string;
 }
 
+// Para la conversión, asumimos 1 crédito = $10 MXN.
+// Esto se puede ajustar fácilmente aquí.
+const toCredits = (cost: number) => Math.ceil(cost / 10);
+
 export const servicesData: ServiceCategory[] = [
   {
     id: 'tramites-fiscales',
@@ -56,6 +61,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situación Fiscal Original',
         description: 'Obtén tu CSF en tiempo y forma de manera original.',
         cost: 100,
+        creditCost: toCredits(100),
         deliveryTime: "1 a 4 HRAS",
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
@@ -74,6 +80,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situacion Fiscal Generica',
         description: 'Solicita una reimpresión de tu constancia del RFC. Nosotros nos encargamos del proceso y te entregamos el PDF.',
         cost: 50,
+        creditCost: toCredits(50),
         deliveryTime: "10 minutos",
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/ceb65f70-d1e5-4f40-9a84-0679776d5427.png',
         imageHint: 'tax logo',
@@ -92,6 +99,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Constancia de Situación Fiscal IDCIF',
         description: 'Gestionamos y te entregamos tu Cédula de Identificación Fiscal (CIF) oficial.',
         cost: 60,
+        creditCost: toCredits(60),
         deliveryTime: "10 minutos",
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/a45a2784-0985-4519-8131-4b1369a48d88.png',
         imageHint: 'tax document',
@@ -118,6 +126,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Certificado de Antecedentes No Penales',
             description: 'Obtén tu certificado que acredita la ausencia de antecedentes penales.',
             cost: 100,
+            creditCost: toCredits(100),
             deliveryTime: "20 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/d2170367-937d-4113-adaf-557375e2f754.png',
             imageHint: 'legal document',
@@ -141,6 +150,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Actas del Registro Civil',
             description: 'Obtén copias certificadas de actas de nacimiento, matrimonio, divorcio o defunción.',
             cost: 50,
+            creditCost: toCredits(50),
             deliveryTime: "10 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/b0f19ac5-c6e3-40f4-8a4b-e8533b379965.png',
             imageHint: 'birth certificate',
@@ -160,6 +170,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Semanas Cotizadas',
             description: 'Consulta y obtén tu constancia de semanas cotizadas ante el IMSS.',
             cost: 30,
+            creditCost: toCredits(30),
             deliveryTime: "15 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
             imageHint: 'social security',
@@ -179,6 +190,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Constancia de Vigencia de Derecho NSS',
             description: 'Obtén tu constancia de vigencia de derechos del IMSS usando tu CURP.',
             cost: 30,
+            creditCost: toCredits(30),
             deliveryTime: "15 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/e0e1e69b-3c35-4e78-9e5c-20516b3f7f07.png',
             imageHint: 'social security document',
@@ -205,6 +217,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Póliza de Seguro Vehicular',
         description: 'POLIZA DE SEGURO ADMINISTRATIVO POR 1 AÑO',
         cost: 130,
+        creditCost: toCredits(130),
         deliveryTime: "10 minutos",
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/238b7157-555f-46df-98c4-a3f1244463c2.png',
         imageHint: 'car insurance',
@@ -229,6 +242,7 @@ export const servicesData: ServiceCategory[] = [
         name: 'Permiso para Circular sin Placas',
         description: 'Obtén un permiso temporal para circular mientras realizas el trámite de placas.',
         cost: 160,
+        creditCost: toCredits(160),
         deliveryTime: "1 hora",
         imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/32bb649c-a1b7-4e38-89c0-9d0d346fe18f.png',
         imageHint: 'temporary permit',
@@ -261,6 +275,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Certificado de Estudios',
             description: 'Solicita un duplicado o valida tu certificado de estudios de cualquier nivel educativo.',
             cost: 300,
+            creditCost: toCredits(300),
             deliveryTime: "10 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/4134b22c-a251-4f3b-8515-5152865c3637.png',
             imageHint: 'school certificate',
@@ -281,6 +296,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Receta Médica Digital',
             description: 'Genera una receta médica certificada por un profesional de la salud.',
             cost: 120,
+            creditCost: toCredits(120),
             deliveryTime: "10 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/51296cc6-13a8-450f-a391-72a3e5e18237.png',
             imageHint: 'medical prescription',
@@ -300,6 +316,7 @@ export const servicesData: ServiceCategory[] = [
             name: 'Justificante de Incapacidad Médica',
             description: 'Obtén un justificante de incapacidad médica para tu trabajo o escuela.',
             cost: 220,
+            creditCost: toCredits(220),
             deliveryTime: "10 minutos",
             imageUrl: 'https://storage.googleapis.com/studiop-artifacts/google-project-images/studio-8783231251-fea41/436069048916/d32f50d1-d250-4fe7-9130-31626f21c561.png',
             imageHint: 'doctor note',
@@ -328,6 +345,7 @@ export const progressData: ProgressItem[] = [
     
 
     
+
 
 
 
