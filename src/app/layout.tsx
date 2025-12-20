@@ -1,51 +1,8 @@
-'use client';
-
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { useUser } from '@/firebase';
-import { useRouter, usePathname } from 'next/navigation';
-import AppLayout from '@/app/(app)/layout';
-import { Loader2 } from 'lucide-react';
-import React, { useEffect } from 'react';
-
-function RootClientLayout({ children }: { children: React.ReactNode }) {
-  const { user, isUserLoading } = useUser();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (isUserLoading) {
-      return; // Do nothing while loading
-    }
-    // If user is logged in and on the login page, redirect to dashboard
-    if (user && pathname === '/') {
-      router.push('/dashboard');
-    } 
-    // If user is not logged in and not on the login page, redirect to login
-    else if (!user && pathname !== '/') {
-      router.push('/');
-    }
-  }, [user, isUserLoading, pathname, router]);
-
-  if (isUserLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      </div>
-    );
-  }
-  
-  if (user) {
-    // If user is logged in, show the main app layout
-    return <AppLayout>{children}</AppLayout>;
-  }
-
-  // If user is not logged in, show the public pages (login)
-  return <>{children}</>;
-}
-
+import RootClientLayout from './RootClientLayout'; // Importamos el nuevo componente
 
 export default function RootLayout({
   children,
@@ -63,6 +20,7 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <FirebaseClientProvider>
+          {/* El RootClientLayout ahora se encarga de toda la lógica de cliente */}
           <RootClientLayout>{children}</RootClientLayout>
         </FirebaseClientProvider>
         <Toaster />
