@@ -10,7 +10,7 @@ export default function AccessDeniedPage() {
        <div className="mb-8 flex justify-center">
             <div className="flex items-center gap-2">
               <AppLogo />
-              <h1 className="text-2xl font-semibold font-headline">Kugar</h1>
+              <h1 className="text-2xl font-semibold font-headline">TramitesFacil</h1>
             </div>
         </div>
       <Card className="max-w-md p-8">

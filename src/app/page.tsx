@@ -319,7 +319,7 @@ export default function LoginPage() {
         <div className="mb-6 flex justify-center">
           <Link href="/" className="flex items-center gap-2">
             <AppLogo />
-            <h1 className="text-2xl font-semibold font-headline">Kugar</h1>
+            <h1 className="text-2xl font-semibold font-headline">TramitesFacil</h1>
           </Link>
         </div>
         <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2 rounded-t-lg">

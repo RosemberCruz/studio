@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Kugar',
+  title: 'TramitesFacil',
   description: 'Tu asistente para trámites y servicios.',
 };
 

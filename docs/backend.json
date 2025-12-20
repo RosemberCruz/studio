@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserAccount",
       "type": "object",
-      "description": "Stores user account information for the Kugar app.",
+      "description": "Stores user account information for the TramitesFacil app.",
       "properties": {
         "id": {
           "type": "string",
@@ -219,6 +219,6 @@
         }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the Kugar app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance. Added a 'credits' field to the UserAccount to support a dual-currency system (balance and credits). Added 'promotionalCredits' and 'promoCreditsGrantDate' to track gifted credits and their expiration for specific services."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance. Added a 'credits' field to the UserAccount to support a dual-currency system (balance and credits). Added 'promotionalCredits' and 'promoCreditsGrantDate' to track gifted credits and their expiration for specific services."
   }
 }
