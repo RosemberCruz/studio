@@ -36,6 +36,13 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  experimental: {
+    // This is required to allow the Next.js dev server to accept requests from
+    // the Cloud Workstation previewer.
+    allowedDevOrigins: [
+      "*.cloudworkstations.dev",
+    ],
+  },
 };
 
 export default nextConfig;
