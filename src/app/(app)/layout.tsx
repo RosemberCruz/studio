@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -110,7 +111,7 @@ function LogoutButton() {
     const handleSignOut = async () => {
         if (!auth) return;
         await signOut(auth);
-        router.push('/');
+        router.push('/login');
     }
     return (
         <SidebarMenuItem>
@@ -135,10 +136,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center gap-2 p-2">
+          <Link href="/dashboard" className="flex items-center gap-2 p-2">
             <AppLogo />
             <h1 className="text-xl font-semibold font-headline">TramitesFacil</h1>
-          </div>
+          </Link>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
