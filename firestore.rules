@@ -105,8 +105,7 @@ service cloud.firestore {
      *   - Only Admins can update or delete requests.
      */
     match /serviceRequests/{requestId} {
-      allow get: if isAdmin() || isOwner(resource.data.userId);
-      allow list: if isAdmin();
+      allow read: if isAdmin() || isOwner(resource.data.userId);
       allow create: if isValidServiceRequestCreate();
       allow update, delete: if isAdmin();
     }
