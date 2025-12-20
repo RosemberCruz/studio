@@ -198,10 +198,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2">
-            <Info className="h-4 w-4" />
-            La creación de esta cuenta es gratuita, ¡no te dejes engañar!
-        </div>
         <ClientAppHeader />
         <main className="p-4 lg:p-6">{children}</main>
         <TooltipProvider>
