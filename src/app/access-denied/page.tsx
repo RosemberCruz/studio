@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ShieldAlert } from 'lucide-react';
 import { AppLogo } from '@/components/AppLogo';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function AccessDeniedPage() {
   return (
@@ -37,6 +38,3 @@ export default function AccessDeniedPage() {
     </div>
   );
 }
-
-// Minimal Card components for this standalone page
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
