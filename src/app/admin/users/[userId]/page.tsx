@@ -200,7 +200,7 @@ export default function UserDetailPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                                <AlertDialogTitle>¿Estás absolutely seguro?</AlertDialogTitle>
                                 <AlertDialogDescription>
                                     Esta acción no se puede deshacer. Esto eliminará permanentemente los datos del usuario de la base de datos de Firestore, pero no eliminará su cuenta de autenticación.
                                 </AlertDialogDescription>
