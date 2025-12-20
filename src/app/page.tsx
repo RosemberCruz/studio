@@ -1,335 +1,140 @@
-'use client';
 
-import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { useAuth, useFirestore } from '@/firebase';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from 'firebase/auth';
-import { updateProfile, User } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
 import { AppLogo } from '@/components/AppLogo';
-import { Info } from 'lucide-react';
+import { FileText, Car, HeartPulse, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
-function AuthFormComponent() {
-  const auth = useAuth();
-  const firestore = useFirestore();
-  const { toast } = useToast();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const defaultTab = searchParams.get('tab') === 'signup' ? 'signup' : 'login';
+const features = [
+  {
+    icon: FileText,
+    title: 'Trámites Fiscales',
+    description: 'Obtén tu constancia de situación fiscal, RFC, y más, de forma rápida y segura.',
+  },
+  {
+    icon: Car,
+    title: 'Vehículos y Transporte',
+    description: 'Gestiona pólizas de seguro, permisos para circular y otros documentos para tu vehículo.',
+  },
+  {
+    icon: HeartPulse,
+    title: 'Salud y Educación',
+    description: 'Solicita certificados de estudios, recetas médicas digitales y justificantes de incapacidad.',
+  },
+];
 
+const steps = [
+  {
+    icon: CheckCircle,
+    title: 'Elige tu Trámite',
+    description: 'Explora nuestro catálogo de servicios y selecciona el que necesitas.',
+  },
+  {
+    icon: CheckCircle,
+    title: 'Completa los Datos',
+    description: 'Llena un formulario simple con la información necesaria para tu trámite.',
+  },
+  {
+    icon: CheckCircle,
+    title: 'Recibe tu Documento',
+    description: 'Un administrador procesará tu solicitud y recibirás tu documento listo para descargar.',
+  },
+];
 
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [resetEmail, setResetEmail] = useState('');
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-
-
-  const [signupFirstName, setSignupFirstName] = useState('');
-  const [signupLastName, setSignupLastName] = useState('');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPhone, setSignupPhone] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!auth) {
-        toast({ title: "Error", description: "El servicio de autenticación no está listo.", variant: "destructive" });
-        return;
-    }
-    try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      router.push('/dashboard'); 
-    } catch (error: any) {
-      console.error("Login Error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Error al Iniciar Sesión",
-        description: "Credenciales incorrectas. Por favor, verifica tu email y contraseña."
-      });
-    }
-  };
-
-  const createFirestoreUserDocument = async (user: User) => {
-    if (!firestore) return;
-    const userRef = doc(firestore, 'users', user.uid);
-    const userData = {
-      id: user.uid,
-      email: signupEmail,
-      firstName: signupFirstName,
-      lastName: signupLastName,
-      phoneNumber: signupPhone,
-      creationDate: new Date().toISOString(),
-      balance: 0,
-      credits: 0,
-      promotionalCredits: 0,
-      promoCreditsGrantDate: null,
-    };
-    await setDoc(userRef, userData);
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-     if (!auth) {
-        toast({ title: "Error", description: "El servicio de autenticación no está listo.", variant: "destructive" });
-        return;
-    }
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, signupEmail, signupPassword);
-      const user = userCredential.user;
-
-      if (user) {
-        await updateProfile(user, {
-          displayName: `${signupFirstName} ${signupLastName}`,
-        });
-
-        await createFirestoreUserDocument(user);
-        
-        router.push('/dashboard');
-      }
-    } catch (error: any) {
-      console.error("Sign-up Error: ", error);
-      if (error.code === 'auth/email-already-in-use') {
-        toast({
-            variant: "destructive",
-            title: "Correo ya registrado",
-            description: "Este correo electrónico ya está en uso. Intenta iniciar sesión."
-        });
-      } else {
-        toast({
-            variant: "destructive",
-            title: "Error al Crear Cuenta",
-            description: error.message || "No se pudo completar el registro."
-        });
-      }
-    }
-  };
-
-  const handlePasswordReset = async () => {
-     if (!auth) {
-        toast({ title: "Error", description: "El servicio de autenticación no está listo.", variant: "destructive" });
-        return;
-    }
-    if (!resetEmail) {
-        toast({
-            variant: "destructive",
-            title: "Correo requerido",
-            description: "Por favor, ingresa tu correo electrónico."
-        });
-        return;
-    }
-    try {
-        await sendPasswordResetEmail(auth, resetEmail);
-        toast({
-            title: "Correo Enviado",
-            description: "Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico."
-        });
-        setIsResetDialogOpen(false);
-        setResetEmail('');
-    } catch (error: any) {
-        console.error("Password Reset Error: ", error);
-        toast({
-            variant: "destructive",
-            title: "Error al Enviar Correo",
-            description: "No se pudo enviar el correo de restablecimiento. Verifica que el correo sea correcto."
-        });
-    }
-  }
-
+export default function LandingPage() {
   return (
-      <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
-        <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-            <TabsTrigger value="signup">Crear Cuenta</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>Iniciar Sesión</CardTitle>
-                <CardDescription>
-                  Ingresa a tu cuenta para continuar.
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleLogin}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      placeholder="tu@email.com"
-                      required
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="login-password">Contraseña</Label>
-                        <DialogTrigger asChild>
-                            <Button variant="link" type="button" className="p-0 h-auto text-xs">
-                                ¿Olvidaste tu contraseña?
-                            </Button>
-                        </DialogTrigger>
-                    </div>
-                    <Input
-                      id="login-password"
-                      type="password"
-                      required
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full">
-                    Iniciar Sesión
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader>
-                <CardTitle>Crear una Cuenta</CardTitle>
-                <CardDescription>
-                  Completa el formulario para registrarte.
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleSignUp}>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="first-name">Nombres</Label>
-                      <Input
-                        id="first-name"
-                        required
-                        value={signupFirstName}
-                        onChange={(e) => setSignupFirstName(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last-name">Apellidos</Label>
-                      <Input
-                        id="last-name"
-                        required
-                        value={signupLastName}
-                        onChange={(e) => setSignupLastName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="tu@email.com"
-                      required
-                      value={signupEmail}
-                      onChange={(e) => setSignupEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone-number">Número de Teléfono</Label>
-                    <Input
-                      id="phone-number"
-                      type="tel"
-                      value={signupPhone}
-                      onChange={(e) => setSignupPhone(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Contraseña</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      required
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full">
-                    Crear Cuenta
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Restablecer Contraseña</DialogTitle>
-            <DialogDescription>
-              Ingresa tu correo electrónico y te enviaremos un enlace para que puedas restablecer tu contraseña.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2">
-            <Label htmlFor="reset-email">Correo Electrónico</Label>
-            <Input
-              id="reset-email"
-              type="email"
-              placeholder="tu@email.com"
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsResetDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handlePasswordReset}>Enviar Correo</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="mb-6 flex justify-center">
-          <Link href="/" className="flex items-center gap-2">
-            <AppLogo />
-            <h1 className="text-2xl font-semibold font-headline">TramitesFacil</h1>
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="px-4 lg:px-6 h-16 flex items-center border-b">
+        <Link href="/" className="flex items-center justify-center gap-2">
+          <AppLogo />
+          <span className="text-xl font-semibold font-headline">TramitesFacil</span>
+        </Link>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
+            Iniciar Sesión
           </Link>
-        </div>
-        <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2 rounded-t-lg">
-          <Info className="h-4 w-4" />
-          La creación de esta cuenta es gratuita, ¡no te dejes engañar!
-        </div>
-        <Suspense fallback={<div>Loading...</div>}>
-          <AuthFormComponent />
-        </Suspense>
-      </div>
+          <Button asChild>
+            <Link href="/login?tab=signup">Crear Cuenta</Link>
+          </Button>
+        </nav>
+      </header>
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-secondary/50">
+          <div className="container px-4 md:px-6 text-center">
+            <div className="max-w-3xl mx-auto space-y-4">
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl font-headline">
+                Tus Trámites, Más Fáciles que Nunca
+              </h1>
+              <p className="text-muted-foreground md:text-xl">
+                Deja la burocracia en nuestras manos. En TramitesFacil, gestionamos tus documentos importantes de forma rápida, segura y sin complicaciones.
+              </p>
+              <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center">
+                <Button asChild size="lg">
+                  <Link href="/login?tab=signup">
+                    Empezar Ahora
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="w-full py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">Nuestros Servicios</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Todo lo que necesitas en un solo lugar</h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                    Desde documentos fiscales hasta trámites vehiculares, tenemos una amplia gama de servicios para ti.
+                </p>
+            </div>
+            <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:grid-cols-3">
+              {features.map((feature) => (
+                <div key={feature.title} className="flex flex-col items-center text-center gap-2">
+                  <div className="p-4 bg-primary/10 rounded-full">
+                    <feature.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
+          <div className="container px-4 md:px-6">
+             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm">¿Cómo Funciona?</div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Proceso Simple en 3 Pasos</h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                    Obtener tus documentos nunca ha sido tan fácil. Sigue estos pasos y nosotros nos encargamos del resto.
+                </p>
+            </div>
+            <div className="mx-auto grid gap-6 md:grid-cols-3">
+              {steps.map((step) => (
+                 <div key={step.title} className="flex flex-col p-6 bg-background rounded-lg shadow-md items-center text-center">
+                    <step.icon className="h-10 w-10 text-primary mb-4" />
+                    <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
+                    <p className="text-muted-foreground">{step.description}</p>
+                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+        <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} TramitesFacil. Todos los derechos reservados.</p>
+        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+          <Link href="#" className="text-xs hover:underline underline-offset-4">
+            Términos de Servicio
+          </Link>
+          <Link href="#" className="text-xs hover:underline underline-offset-4">
+            Política de Privacidad
+          </Link>
+        </nav>
+      </footer>
     </div>
-  )
+  );
 }
