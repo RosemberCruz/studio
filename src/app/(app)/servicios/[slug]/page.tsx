@@ -20,7 +20,7 @@ import { doc, collection, updateDoc, query, where, getDocs, Timestamp } from 'fi
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { subHours } from 'date-fns';
+import { sub, subDays } from 'date-fns';
 
 type PaymentMethod = 'balance' | 'credits' | 'promotionalCredits';
 
@@ -63,7 +63,7 @@ export default function ServiceDetailPage() {
   const checkForCreditReward = async () => {
     if (!firestore || !user || !userDocRef || !userData) return;
   
-    const twentyFourHoursAgo = subHours(new Date(), 24);
+    const twentyFourHoursAgo = sub({ days: 1 }, );
     const requestsRef = collection(firestore, 'serviceRequests');
     const q = query(
       requestsRef, 
@@ -79,10 +79,13 @@ export default function ServiceDetailPage() {
       const newPromoCredits = currentPromoCredits + 5;
       
       try {
-        await updateDoc(userDocRef, { promotionalCredits: newPromoCredits });
+        await updateDoc(userDocRef, { 
+            promotionalCredits: newPromoCredits,
+            promoCreditsGrantDate: new Date().toISOString() // Set grant date
+        });
         toast({
           title: "¡Felicidades! Has ganado 5 Créditos Promocionales.",
-          description: `Puedes usarlos en trámites seleccionados. Tu nuevo saldo es ${newPromoCredits}.`,
+          description: `Puedes usarlos en trámites seleccionados. Tu nuevo saldo es ${newPromoCredits}. Válidos por 7 días.`,
           duration: 7000,
           className: "bg-green-100 border-green-300 dark:bg-green-900 dark:border-green-700",
           action: <div className="p-2 rounded-full bg-green-200 dark:bg-green-800"><Gift className="h-5 w-5 text-green-600 dark:text-green-300" /></div>
@@ -128,6 +131,14 @@ export default function ServiceDetailPage() {
     
     } else { // paymentMethod === 'promotionalCredits'
         const currentPromoCredits = userData.promotionalCredits || 0;
+        const grantDate = userData.promoCreditsGrantDate ? new Date(userData.promoCreditsGrantDate) : null;
+        const sevenDaysAgo = subDays(new Date(), 7);
+
+        if (grantDate && grantDate < sevenDaysAgo) {
+            toast({ title: "Créditos Promocionales Vencidos", description: "Tus créditos promocionales han expirado y no pueden ser utilizados.", variant: "destructive"});
+            return;
+        }
+
         if (currentPromoCredits < service.creditCost) {
             toast({ title: "Créditos Promocionales Insuficientes", description: `Necesitas ${service.creditCost} créditos promocionales.`, variant: "destructive"});
             return;

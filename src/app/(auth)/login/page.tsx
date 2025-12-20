@@ -79,6 +79,7 @@ export default function LoginPage() {
       balance: 0,
       credits: 0,
       promotionalCredits: 0,
+      promoCreditsGrantDate: null,
     };
     await setDoc(userRef, userData);
   };

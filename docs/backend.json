@@ -44,6 +44,11 @@
         "promotionalCredits": {
           "type": "number",
           "description": "The user's promotional credit balance, usable for specific services."
+        },
+        "promoCreditsGrantDate": {
+          "type": ["string", "null"],
+          "description": "The date when the last batch of promotional credits were granted, used to check for expiration.",
+          "format": "date-time"
         }
       },
       "required": [
@@ -214,6 +219,6 @@
         }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance. Added a 'credits' field to the UserAccount to support a dual-currency system (balance and credits). Added 'promotionalCredits' to track gifted credits for specific services."
+    "reasoning": "This Firestore structure is designed to support the TramitesFacil app. The 'depositRequests' collection is added to manage the new administrator-approval workflow for balance recharges, which is more secure than the previous pre-registration system. Users submit requests, and admins approve them to credit the balance. Added a 'credits' field to the UserAccount to support a dual-currency system (balance and credits). Added 'promotionalCredits' and 'promoCreditsGrantDate' to track gifted credits and their expiration for specific services."
   }
 }
