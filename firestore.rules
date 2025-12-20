@@ -19,8 +19,6 @@ service cloud.firestore {
      * This is the primary mechanism for granting admin privileges.
      */
     function isAdmin() {
-      // --- ¡IMPORTANTE! ---
-      // El administrador es identificado por el correo 'rosembercruzbetancourt@gmail.com'.
       return isSignedIn() && request.auth.token.email == 'rosembercruzbetancourt@gmail.com';
     }
 
@@ -107,7 +105,8 @@ service cloud.firestore {
      */
     match /serviceRequests/{requestId} {
       // READ: Admins can read (get + list) all requests. Users can only get their own.
-      allow read: if isAdmin() || isOwner(resource.data.userId);
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+      allow list: if isAdmin();
       
       // WRITE:
       // Users can create their own requests if the data is valid.
