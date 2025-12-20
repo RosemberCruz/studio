@@ -1,8 +1,7 @@
-import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import RootClientLayout from './RootClientLayout'; // Importamos el nuevo componente
 
 export default function RootLayout({
   children,
@@ -20,8 +19,7 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <FirebaseClientProvider>
-          {/* El RootClientLayout ahora se encarga de toda la lógica de cliente */}
-          <RootClientLayout>{children}</RootClientLayout>
+          {children}
         </FirebaseClientProvider>
         <Toaster />
       </body>

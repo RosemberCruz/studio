@@ -26,6 +26,7 @@ import {
   Info,
   Star,
   Gift,
+  Loader2,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClientAppHeader } from '@/components/ClientAppHeader';
@@ -36,7 +37,6 @@ import { signOut } from 'firebase/auth';
 import { WhatsappIcon } from '@/components/WhatsappIcon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
-import AuthGuard from './AuthGuard';
 
 function UserProfile() {
   const { user } = useUser();
@@ -123,15 +123,30 @@ function LogoutButton() {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isUserLoading } = useUser();
   const isActive = (path: string) => pathname.startsWith(path);
   const isAdmin = useIsAdmin();
 
-  const phoneNumber = "529621934078"; // Replace with your number
+  const phoneNumber = "529621934078";
   const message = "Hola, he encontrado un error en la aplicación y necesito ayuda.";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
+  React.useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.replace('/');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
-    <AuthGuard>
       <SidebarProvider>
         <Sidebar>
           <SidebarHeader>
@@ -222,6 +237,5 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </TooltipProvider>
         </SidebarInset>
       </SidebarProvider>
-    </AuthGuard>
   );
 }
