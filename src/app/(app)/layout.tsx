@@ -109,7 +109,7 @@ function LogoutButton() {
     const handleSignOut = async () => {
         if (!auth) return;
         await signOut(auth);
-        router.push('/');
+        router.push('/login');
     }
     return (
         <SidebarMenuItem>
