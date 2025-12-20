@@ -4,9 +4,6 @@ runConfig:
   cpu: 1
   memoryMiB: 512
   maxInstances: 2
-# Server-side environment variables
-# env:
-#   - variable: API_KEY
-#     secret: API_KEY_SECRET
-#   - variable: ENVIRONMENT
-#     value: production
+# This setting is required to ensure that the Next.js app is built before deployment.
+requires:
+  - build

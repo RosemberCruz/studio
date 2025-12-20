@@ -2,7 +2,6 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
@@ -12,32 +11,20 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'storage.googleapis.com',
-        port: '',
-        pathname: '/**',
       }
     ],
-  },
-  experimental: {
-    // Note: `allowedDevOrigins` is no longer an experimental feature.
-    // It is placed at the top level of the config.
   },
   // This is required to allow the Next.js dev server to accept requests from
   // the Cloud Workstation previewer.
