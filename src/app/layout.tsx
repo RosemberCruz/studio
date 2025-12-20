@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'TramitesFacil',
-  description: 'Tu asistente para trámites y servicios gubernamentales.',
+  title: 'Kugar',
+  description: 'Tu asistente para trámites y servicios.',
 };
 
 export default function RootLayout({

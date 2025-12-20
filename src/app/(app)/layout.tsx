@@ -109,7 +109,7 @@ function LogoutButton() {
     const handleSignOut = async () => {
         if (!auth) return;
         await signOut(auth);
-        router.push('/');
+        router.push('/?tab=login');
     }
     return (
         <SidebarMenuItem>
@@ -136,7 +136,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <Link href="/dashboard" className="flex items-center gap-2 p-2">
             <AppLogo />
-            <h1 className="text-xl font-semibold font-headline">TramitesFacil</h1>
+            <h1 className="text-xl font-semibold font-headline">Kugar</h1>
           </Link>
         </SidebarHeader>
         <SidebarContent>
