@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -36,11 +36,14 @@ import { useToast } from '@/hooks/use-toast';
 import { AppLogo } from '@/components/AppLogo';
 import { Info } from 'lucide-react';
 
-function AuthForm() {
+function AuthFormComponent() {
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get('tab') === 'signup' ? 'signup' : 'login';
+
 
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -161,7 +164,7 @@ function AuthForm() {
 
   return (
       <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
             <TabsTrigger value="signup">Crear Cuenta</TabsTrigger>
@@ -309,23 +312,24 @@ function AuthForm() {
   );
 }
 
-
 export default function LoginPage() {
-    return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-            <div className="w-full max-w-md">
-                <div className="mb-6 flex justify-center">
-                    <Link href="/" className="flex items-center gap-2">
-                        <AppLogo />
-                        <h1 className="text-2xl font-semibold font-headline">TramitesFacil</h1>
-                    </Link>
-                </div>
-                <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2 rounded-t-lg">
-                    <Info className="h-4 w-4" />
-                    La creación de esta cuenta es gratuita, ¡no te dejes engañar!
-                </div>
-                <AuthForm />
-            </div>
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-6 flex justify-center">
+          <Link href="/" className="flex items-center gap-2">
+            <AppLogo />
+            <h1 className="text-2xl font-semibold font-headline">TramitesFacil</h1>
+          </Link>
         </div>
-    )
+        <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2 rounded-t-lg">
+          <Info className="h-4 w-4" />
+          La creación de esta cuenta es gratuita, ¡no te dejes engañar!
+        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthFormComponent />
+        </Suspense>
+      </div>
+    </div>
+  )
 }
