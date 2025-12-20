@@ -36,6 +36,7 @@ import { signOut } from 'firebase/auth';
 import { WhatsappIcon } from '@/components/WhatsappIcon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import AuthGuard from './AuthGuard';
 
 
 function UserProfile() {
@@ -109,7 +110,7 @@ function LogoutButton() {
     const handleSignOut = async () => {
         if (!auth) return;
         await signOut(auth);
-        router.push('/login');
+        router.push('/');
     }
     return (
         <SidebarMenuItem>
@@ -131,99 +132,101 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Link href="/dashboard" className="flex items-center gap-2 p-2">
-            <AppLogo />
-            <h1 className="text-xl font-semibold font-headline">TramitesFacil</h1>
-          </Link>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
-                <Link href="/dashboard">
-                  <LayoutDashboard />
-                  Dashboard
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            {isAdmin && (
-               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/admin')}>
-                  <Link href="/admin">
-                    <ShieldCheck />
-                    Admin
+    <AuthGuard>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Link href="/dashboard" className="flex items-center gap-2 p-2">
+              <AppLogo />
+              <h1 className="text-xl font-semibold font-headline">TramitesFacil</h1>
+            </Link>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
+                  <Link href="/dashboard">
+                    <LayoutDashboard />
+                    Dashboard
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )}
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={isActive('/servicios')}>
-                <Link href="/servicios">
-                  <ListChecks />
-                  Directorio de Servicios
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/recargar-saldo'}>
-                <Link href="/recargar-saldo">
-                  <Landmark />
-                  Recargar Saldo
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/seguimiento'}>
-                <Link href="/seguimiento">
-                  <ClipboardCheck />
-                  Mis Órdenes
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <Settings />
-                Configuración
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <UserProfile />
-            <LogoutButton />
-          </SidebarMenu>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2">
-            <Info className="h-4 w-4" />
-            La creación de esta cuenta es gratuita, ¡no te dejes engañar!
-        </div>
-        <ClientAppHeader />
-        <main className="p-4 lg:p-6">{children}</main>
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <a
-                        href={whatsappUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-transform hover:scale-110"
-                        >
-                        <WhatsappIcon className="h-7 w-7" />
-                        <span className="sr-only">Reportar un error por WhatsApp</span>
-                    </a>
-                </TooltipTrigger>
-                <TooltipContent side="left">
-                    <p>¿Necesitas ayuda? ¡Contáctanos!</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-      </SidebarInset>
-    </SidebarProvider>
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive('/admin')}>
+                    <Link href="/admin">
+                      <ShieldCheck />
+                      Admin
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive('/servicios')}>
+                  <Link href="/servicios">
+                    <ListChecks />
+                    Directorio de Servicios
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/recargar-saldo'}>
+                  <Link href="/recargar-saldo">
+                    <Landmark />
+                    Recargar Saldo
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/seguimiento'}>
+                  <Link href="/seguimiento">
+                    <ClipboardCheck />
+                    Mis Órdenes
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <Settings />
+                  Configuración
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <UserProfile />
+              <LogoutButton />
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>
+          <div className="w-full bg-accent text-accent-foreground text-center p-2 text-sm font-semibold flex items-center justify-center gap-2">
+              <Info className="h-4 w-4" />
+              La creación de esta cuenta es gratuita, ¡no te dejes engañar!
+          </div>
+          <ClientAppHeader />
+          <main className="p-4 lg:p-6">{children}</main>
+          <TooltipProvider>
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-transform hover:scale-110"
+                          >
+                          <WhatsappIcon className="h-7 w-7" />
+                          <span className="sr-only">Reportar un error por WhatsApp</span>
+                      </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                      <p>¿Necesitas ayuda? ¡Contáctanos!</p>
+                  </TooltipContent>
+              </Tooltip>
+          </TooltipProvider>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthGuard>
   );
 }
