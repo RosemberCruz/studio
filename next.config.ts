@@ -5,10 +5,15 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: '/dashboard',
-        destination: '/',
+        source: '/',
+        destination: '/login',
         permanent: true,
       },
+      {
+        source: '/dashboard',
+        destination: '/login',
+        permanent: true,
+      }
     ]
   },
   eslint: {
