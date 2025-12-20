@@ -135,7 +135,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     <ShieldCheck />
                     Admin
                   </Link>
-                </SidebarMenuBodieuton>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             )}
             <SidebarMenuItem>
