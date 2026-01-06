@@ -13,30 +13,24 @@ Primero, necesitas descargar el código de tu aplicación a tu computadora.
 
 ---
 
-### Paso 2: Sube tu Código a un Repositorio de GitHub
+### Paso 2: Sube tu Código a tu Repositorio de GitHub
 
-Vercel se conecta a GitHub para desplegar tu código.
+Vercel se conecta a GitHub para desplegar tu código. Ya has creado tu repositorio, ahora solo queda subir el código.
 
-1.  **Crea una cuenta en GitHub**: Ve a [github.com](https://github.com) y regístrate gratis.
+1.  **Abre una terminal** (o "Git Bash" si usas Windows) y navega a la carpeta de tu proyecto que descomprimiste antes.
 
-2.  **Crea un nuevo repositorio**:
-    *   En GitHub, haz clic en el botón **"New"** (Nuevo).
-    *   Dale un nombre (ej. `tramites-facil-app`).
-    *   Selecciona **"Private"** (Privado) para que solo tú puedas verlo.
-    *   Haz clic en **"Create repository"**.
-
-3.  **Sube tu código**:
-    *   Abre una terminal (o "Git Bash" si usas Windows) y navega a la carpeta de tu proyecto que descomprimiste antes.
-    *   Ejecuta los siguientes comandos uno por uno (reemplaza `TU_USUARIO` y `TU_REPOSITORIO` con tus datos de GitHub):
+2.  **Ejecuta los siguientes comandos uno por uno**. Solo tienes que copiar, pegar y presionar Enter para cada línea.
 
     ```bash
     git init
     git add .
     git commit -m "Preparando para migración a Vercel"
     git branch -M main
-    git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+    git remote add origin https://github.com/RosemberCruz/Tramitesfacil.git
     git push -u origin main
     ```
+   
+   *(Nota: Al ejecutar `git push`, es posible que te pida tu nombre de usuario y contraseña/token de GitHub).*
 
 ---
 
@@ -48,7 +42,7 @@ Este es el paso final y más sencillo.
 
 2.  **Importa tu Proyecto**:
     *   En tu dashboard de Vercel, haz clic en **"Add New..."** -> **"Project"**.
-    *   Busca tu repositorio de GitHub (`tramites-facil-app`) y haz clic en **"Import"**.
+    *   Busca tu repositorio de GitHub (`Tramitesfacil`) y haz clic en **"Import"**.
 
 3.  **Configura las Variables de Entorno**:
     *   Vercel detectará que es un proyecto Next.js. Ve a la sección **"Environment Variables"**.
