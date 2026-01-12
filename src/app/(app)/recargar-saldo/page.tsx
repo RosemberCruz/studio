@@ -60,8 +60,12 @@ export default function AddBalancePage() {
 
   const onSubmit: SubmitHandler<DepositRequestFormValues> = (data) => {
     startTransition(async () => {
-      if (!user || !firestore || !userData) {
+      if (!user || !firestore) {
         toast({ title: "Error", description: "Debes iniciar sesión para solicitar una recarga.", variant: "destructive" });
+        return;
+      }
+       if (!userData) {
+        toast({ title: "Error de Datos", description: "No se pudieron cargar los datos del usuario. Por favor, intenta de nuevo.", variant: "destructive" });
         return;
       }
       
