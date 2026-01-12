@@ -1,3 +1,4 @@
+'use client';
 
 import {
   Card,
@@ -13,6 +14,7 @@ import {
   DollarSign,
   ListChecks,
   Users,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -24,36 +26,63 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const quickActions = [
     { title: "Ver Servicios", href: "/servicios", icon: ListChecks, description: "Explora todos los trámites." },
     { title: "Mis Órdenes", href: "/seguimiento", icon: ClipboardCheck, description: "Revisa tus solicitudes." },
 ]
 
-const recentOrders = [
-    { id: "#3210", service: "Reimpresión de Constancia RFC", status: "Completado", date: "Hace 2 días" },
-    { id: "#3209", service: "Póliza de Seguro Vehicular", status: "En Proceso", date: "Hace 1 semana" },
-    { id: "#3208", service: "Acta de Nacimiento", status: "Requiere Acción", date: "Hace 2 semanas" },
-    { id: "#3207", service: "Certificado de Antecedentes No Penales", status: "Rechazado", date: "Hace 1 mes" },
-]
-
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
     switch (status) {
-        case "Completado":
-            return "default";
-        case "En Proceso":
-            return "secondary";
-        case "Requiere Acción":
-            return "destructive";
-        case "Rechazado":
-            return "outline";
-        default:
-            return "secondary";
+        case "Completado": return "default";
+        case "En Proceso": return "secondary";
+        case "Solicitado": return "outline";
+        case "Rechazado": return "destructive";
+        default: return "secondary";
     }
 }
 
 
 export default function DashboardPage() {
+    const { user } = useUser();
+    const firestore = useFirestore();
+
+    const requestsQuery = useMemoFirebase(() => {
+        if (!firestore || !user) return null;
+        return query(
+            collection(firestore, 'serviceRequests'),
+            where('userId', '==', user.uid),
+            orderBy('requestDate', 'desc')
+        );
+    }, [firestore, user]);
+    
+    const recentRequestsQuery = useMemoFirebase(() => {
+        if (!firestore || !user) return null;
+        return query(
+            collection(firestore, 'serviceRequests'),
+            where('userId', '==', user.uid),
+            orderBy('requestDate', 'desc'),
+            limit(4)
+        );
+    }, [firestore, user]);
+
+    const { data: allRequests, isLoading: isLoadingAll } = useCollection(requestsQuery);
+    const { data: recentRequests, isLoading: isLoadingRecent } = useCollection(recentRequestsQuery);
+
+    const stats = useMemo(() => {
+        if (!allRequests) {
+            return { completed: 0, active: 0 };
+        }
+        const completed = allRequests.filter(r => r.status === 'Completado').length;
+        const active = allRequests.filter(r => r.status === 'En Proceso' || r.status === 'Solicitado').length;
+        return { completed, active };
+    }, [allRequests]);
+
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex-1 space-y-4">
@@ -67,8 +96,8 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">+2 este mes</p>
+            {isLoadingAll ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.completed}</div>}
+            <p className="text-xs text-muted-foreground">En total</p>
           </CardContent>
         </Card>
         <Card>
@@ -77,8 +106,8 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">+1 esta semana</p>
+            {isLoadingAll ? <Loader2 className="h-6 w-6 animate-spin" /> : <div className="text-2xl font-bold">{stats.active}</div>}
+            <p className="text-xs text-muted-foreground">Actualmente en proceso</p>
           </CardContent>
         </Card>
         <Card>
@@ -87,7 +116,7 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">Nuevas desde la última visita</p>
           </CardContent>
         </Card>
@@ -98,35 +127,51 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle>Órdenes Recientes</CardTitle>
             <CardDescription>
-              Un vistazo a tus últimos 4 trámites.
+              Un vistazo a tus últimos trámites solicitados.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Trámite</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Fecha</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentOrders.map((app) => (
-                    <TableRow key={app.id}>
-                        <TableCell>
-                            <div className="font-medium">{app.service}</div>
-                            <div className="text-sm text-muted-foreground md:inline">
-                                {app.id}
-                            </div>
-                        </TableCell>
-                        <TableCell>
-                            <Badge variant={getStatusBadgeVariant(app.status)}>{app.status}</Badge>
-                        </TableCell>
-                         <TableCell className="text-right">{app.date}</TableCell>
+            {isLoadingRecent ? (
+                 <div className="flex justify-center items-center h-40">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                 </div>
+            ) : (
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead>Trámite</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead className="text-right">Fecha</TableHead>
                     </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                    {recentRequests && recentRequests.length > 0 ? (
+                        recentRequests.map((req) => (
+                            <TableRow key={req.id}>
+                                <TableCell>
+                                    <div className="font-medium">{req.serviceName}</div>
+                                    <div className="text-sm text-muted-foreground md:inline">
+                                        {req.id}
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant={getStatusBadgeVariant(req.status)}>{req.status}</Badge>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    {formatDistanceToNow(new Date(req.requestDate), { addSuffix: true, locale: es })}
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={3} className="h-24 text-center">
+                                No has solicitado ningún trámite todavía.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+                </Table>
+            )}
           </CardContent>
         </Card>
 
