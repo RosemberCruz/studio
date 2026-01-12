@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
                                             <span className="font-mono">{user.promotionalCredits || 0}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-right font-mono">${user.balance.toFixed(2)}</TableCell>
+                                    <TableCell className="text-right font-mono">${(user.balance || 0).toFixed(2)}</TableCell>
                                 </TableRow>
                                 ))}
                             </TableBody>
@@ -90,3 +90,5 @@ export default function AdminUsersPage() {
         </div>
     )
 }
+
+    
