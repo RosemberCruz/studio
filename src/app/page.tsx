@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth, useFirestore, useUser } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -34,7 +34,7 @@ import { updateProfile, User } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { AppLogo } from '@/components/AppLogo';
-import { Info } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
 
 function AuthFormComponent() {
   const auth = useAuth();
@@ -313,6 +313,23 @@ function AuthFormComponent() {
 }
 
 export default function LoginPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+  
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
@@ -326,7 +343,7 @@ export default function LoginPage() {
           <Info className="h-4 w-4" />
           La creación de esta cuenta es gratuita, ¡no te dejes engañar!
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="flex justify-center p-10"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>}>
           <AuthFormComponent />
         </Suspense>
       </div>
