@@ -54,6 +54,7 @@ export default function ServiceDetailPage() {
   }
 
   const isPromotionalService = PROMOTIONAL_CREDIT_SERVICES.includes(service.id);
+  const hasCreditCost = typeof service.creditCost === 'number' && service.creditCost > 0;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -112,6 +113,12 @@ export default function ServiceDetailPage() {
     let updatePayload = {};
     let successMessage = "";
     
+    // Validate if credit payment is attempted for a service without a credit cost
+    if ((paymentMethod === 'credits' || paymentMethod === 'promotionalCredits') && !hasCreditCost) {
+        toast({ title: "Método de Pago no Válido", description: "Este servicio solo puede ser pagado con saldo.", variant: "destructive"});
+        return;
+    }
+
     if (paymentMethod === 'balance') {
       if (userData.balance < service.cost) {
         toast({ title: "Saldo Insuficiente", description: `No tienes suficiente saldo. Necesitas $${service.cost.toFixed(2)}.`, variant: "destructive"});
@@ -202,11 +209,15 @@ export default function ServiceDetailPage() {
                     <div className="text-lg font-bold text-primary">${service.cost.toFixed(2)}</div>
                     <div className="text-sm text-muted-foreground">MXN</div>
                 </div>
-                <div className="border-l h-8 border-border"></div>
-                <div className="flex items-center gap-2">
-                    <div className="text-lg font-bold text-yellow-500">{service.creditCost}</div>
-                    <Star className="h-5 w-5 text-yellow-500" />
-                </div>
+                {hasCreditCost && (
+                  <>
+                    <div className="border-l h-8 border-border"></div>
+                    <div className="flex items-center gap-2">
+                        <div className="text-lg font-bold text-yellow-500">{service.creditCost}</div>
+                        <Star className="h-5 w-5 text-yellow-500" />
+                    </div>
+                  </>
+                )}
             </div>
             {service.deliveryTime && (
                 <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-3">
@@ -249,7 +260,7 @@ export default function ServiceDetailPage() {
                   <div className="space-y-3">
                     <Label className="font-semibold">Método de Pago</Label>
                     <RadioGroup 
-                        defaultValue="balance" 
+                        value={paymentMethod}
                         onValueChange={(value: any) => setPaymentMethod(value)}
                         className="grid grid-cols-1 md:grid-cols-3 gap-4"
                         disabled={!user || isSubmitting}
@@ -260,14 +271,14 @@ export default function ServiceDetailPage() {
                         Pagar con Saldo
                       </Label>
                       
-                      <Label htmlFor="pay-credits" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer">
-                        <RadioGroupItem value="credits" id="pay-credits" className="sr-only" />
+                      <Label htmlFor="pay-credits" className={`flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 ${hasCreditCost ? 'hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
+                        <RadioGroupItem value="credits" id="pay-credits" className="sr-only" disabled={!hasCreditCost}/>
                         <Star className="mb-3 h-6 w-6" />
                         Créditos Generales
                       </Label>
                       
-                      <Label htmlFor="pay-promotional-credits" className={`flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 ${isPromotionalService ? 'hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
-                        <RadioGroupItem value="promotionalCredits" id="pay-promotional-credits" className="sr-only" disabled={!isPromotionalService} />
+                      <Label htmlFor="pay-promotional-credits" className={`flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 ${isPromotionalService && hasCreditCost ? 'hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer' : 'cursor-not-allowed opacity-50'}`}>
+                        <RadioGroupItem value="promotionalCredits" id="pay-promotional-credits" className="sr-only" disabled={!isPromotionalService || !hasCreditCost} />
                         <Gift className="mb-3 h-6 w-6" />
                         Créditos Promo
                       </Label>
