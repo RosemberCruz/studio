@@ -19,7 +19,7 @@ const adminActions = [
     },
     {
         title: "Ver Solicitudes de Trámites",
-        href: "/seguimiento",
+        href: "/admin/requests",
         icon: ListChecks,
         description: "Revisar y gestionar todas las solicitudes de servicios."
     }

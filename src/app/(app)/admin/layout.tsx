@@ -17,7 +17,7 @@ import AdminAuthGuard from './AdminAuthGuard';
 const adminNavItems = [
     { href: '/admin/users', icon: Users, label: 'Usuarios' },
     { href: '/admin/deposits', icon: Banknote, label: 'Depósitos' },
-    { href: '/seguimiento', icon: ListChecks, label: 'Trámites' },
+    { href: '/admin/requests', icon: ListChecks, label: 'Trámites' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
