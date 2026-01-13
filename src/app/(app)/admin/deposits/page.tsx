@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, writeBatch, doc, getDoc } from 'firebase/firestore';
+import { collection, query, writeBatch, doc, getDoc, orderBy } from 'firebase/firestore';
 import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -28,8 +28,7 @@ export default function ManageDepositRequestsPage() {
 
   const requestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // Potentially sort by date in a real app: orderBy('requestDate', 'desc')
-    return query(collection(firestore, 'depositRequests'));
+    return query(collection(firestore, 'depositRequests'), orderBy('requestDate', 'desc'));
   }, [firestore]);
 
   const { data: requests, isLoading } = useCollection(requestsQuery);
