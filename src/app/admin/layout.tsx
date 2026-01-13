@@ -54,7 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Link href="/dashboard" className="flex items-center gap-2 p-2">
+          <Link href="/admin" className="flex items-center gap-2 p-2">
             <AppLogo />
             <h1 className="text-xl font-semibold font-headline">Admin Panel</h1>
           </Link>
