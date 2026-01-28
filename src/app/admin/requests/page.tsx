@@ -9,7 +9,6 @@ import { collection, query, orderBy } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 function getStatusBadgeVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
@@ -24,12 +23,11 @@ function getStatusBadgeVariant(status: string): "default" | "secondary" | "destr
 export default function AdminRequestsPage() {
     const firestore = useFirestore();
     const router = useRouter();
-    const isAdmin = useIsAdmin();
 
     const allRequestsQuery = useMemoFirebase(() => {
-        if (!firestore || !isAdmin) return null; // Explicitly wait for admin confirmation
+        if (!firestore) return null;
         return query(collection(firestore, 'serviceRequests'), orderBy('requestDate', 'desc'));
-    }, [firestore, isAdmin]);
+    }, [firestore]);
 
     const { data: requests, isLoading } = useCollection(allRequestsQuery);
 
@@ -38,7 +36,7 @@ export default function AdminRequestsPage() {
     }
 
     const renderContent = () => {
-        if (isLoading || !isAdmin) { // Show loader if isAdmin is still being determined
+        if (isLoading) {
             return (
                 <div className="flex justify-center items-center h-60">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
