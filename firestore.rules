@@ -15,13 +15,6 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the user is an admin by their unique ID (UID) for maximum reliability.
-     */
-    function isAdmin() {
-      return isSignedIn() && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
-    }
-
-    /**
      * Checks if the requesting user's UID matches the provided userId.
      * This is the foundation of the user-ownership model for non-admins.
      */
@@ -52,13 +45,14 @@ service cloud.firestore {
     function isValidUserAccountUpdate() {
       let incomingData = request.resource.data;
       let existingData = resource.data;
+      let isAdminCheck = request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
       // Users cannot change their own ID.
       // Only an admin can change a user's balance/credits. Regular users cannot.
       return incomingData.id == existingData.id &&
-             (incomingData.balance == existingData.balance || isAdmin()) &&
-             (incomingData.credits == existingData.credits || isAdmin()) &&
-             (incomingData.promotionalCredits == existingData.promotionalCredits || isAdmin()) &&
-             (incomingData.promoCreditsGrantDate == existingData.promoCreditsGrantDate || isAdmin()); // Admin can change grant date
+             (incomingData.balance == existingData.balance || isAdminCheck) &&
+             (incomingData.credits == existingData.credits || isAdminCheck) &&
+             (incomingData.promotionalCredits == existingData.promotionalCredits || isAdminCheck) &&
+             (incomingData.promoCreditsGrantDate == existingData.promoCreditsGrantDate || isAdminCheck); // Admin can change grant date
     }
 
     /**
@@ -91,18 +85,18 @@ service cloud.firestore {
      * @description Manages UserAccount documents.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId) || isAdmin();
+      allow get: if isOwner(userId) || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2');
       allow create: if isValidUserAccountCreate(userId);
-      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || isAdmin();
-      allow delete: if isAdmin();
-      allow list: if isAdmin();
+      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2');
+      allow delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
     }
     
     /**
      * @description Rules for the serviceRequests collection itself.
      */
     match /serviceRequests {
-      allow list: if isAdmin();
+      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
       allow create: if isValidServiceRequestCreate();
     }
 
@@ -110,8 +104,8 @@ service cloud.firestore {
      * @description Rules for individual documents in serviceRequests.
      */
     match /serviceRequests/{requestId} {
-      allow get: if isAdmin() || isOwner(resource.data.userId);
-      allow update, delete: if isAdmin();
+      allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || isOwner(resource.data.userId);
+      allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
     }
 
     /**
@@ -119,11 +113,11 @@ service cloud.firestore {
      */
     match /depositRequests/{requestId} {
       // READ: Only admins can read the list of deposit requests. Users can read their own.
-      allow get: if isAdmin() || isOwner(resource.data.userId);
-      allow list: if isAdmin();
+      allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || isOwner(resource.data.userId);
+      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
       // WRITE: Users can create their own valid requests. Admins can update/delete any.
       allow create: if isValidDepositRequestCreate();
-      allow update, delete: if isAdmin();
+      allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
     }
   }
 }
