@@ -15,11 +15,11 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the requesting user has the admin email.
-     * This is the primary mechanism for granting admin privileges.
+     * Checks if the requesting user has the admin UID.
+     * This is a temporary diagnostic step to isolate rule evaluation issues.
      */
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email == 'rosembercruzbetancourt@gmail.com';
+      return isSignedIn() && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
     }
 
     /**
@@ -103,7 +103,6 @@ service cloud.firestore {
      * @description Rules for the serviceRequests collection itself.
      */
     match /serviceRequests {
-      // Admins can list all requests. Users can create them.
       allow list: if isAdmin();
       allow create: if isValidServiceRequestCreate();
     }
@@ -112,7 +111,6 @@ service cloud.firestore {
      * @description Rules for individual documents in serviceRequests.
      */
     match /serviceRequests/{requestId} {
-      // Admins can read/update/delete any. Users can only read their own.
       allow get: if isAdmin() || isOwner(resource.data.userId);
       allow update, delete: if isAdmin();
     }
