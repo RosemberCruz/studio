@@ -105,15 +105,21 @@ service cloud.firestore {
     
     /**
      * @description Manages ServiceRequest documents.
-     *   - Admins can read all requests.
-     *   - Users can read/list only their own requests.
+     *   - Admins have full read/write access.
      *   - Users can create their own valid requests.
-     *   - Only Admins can update or delete requests.
+     *   - Users can read/list only their own requests.
      */
     match /serviceRequests/{requestId} {
-      allow get, list: if isAdmin() || (request.query.where.find(c => c[0] == 'userId' && c[2] == request.auth.uid) != null);
+      // Prioritize Admin access: Admins can read and write anything in this collection.
+      allow read, write: if isAdmin();
+      
+      // User access:
+      // Allow users to create their own valid requests.
       allow create: if isValidServiceRequestCreate();
-      allow update, delete: if isAdmin();
+      // Allow users to get a document if they are the owner.
+      allow get: if isOwner(resource.data.userId);
+      // Allow users to list documents only if they are querying for their own userId.
+      allow list: if request.query.where.find(c => c[0] == 'userId' && c[2] == request.auth.uid) != null;
     }
 
     /**
