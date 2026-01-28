@@ -109,10 +109,12 @@ service cloud.firestore {
      *   - Users can create their own valid requests and read their own data.
      */
     match /serviceRequests/{requestId} {
-      // READ: Admin can read all requests. A user can read their own.
-      // This combined rule is critical. It short-circuits for admins.
-      // For users, it allows queries constrained by `where('userId', '==', uid)`.
-      allow read: if isAdmin() || isOwner(resource.data.userId);
+      // GET: Admin can get any document. A user can get their own.
+      // This rule also implicitly covers user-constrained queries (lists).
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+
+      // LIST: Only an admin can list the entire collection without constraints.
+      allow list: if isAdmin();
 
       // CREATE: A logged-in user can create a valid request for themselves.
       allow create: if isValidServiceRequestCreate();
