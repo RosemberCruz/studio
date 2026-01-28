@@ -108,10 +108,12 @@ service cloud.firestore {
      * This rule set ensures admins have full access while users are restricted to their own data.
      */
     match /serviceRequests/{requestId} {
-      // READ: Admin can list the whole collection and get any document.
-      // Users can only get their own documents (which also enables filtered queries).
-      // The `resource != null` check is crucial to prevent errors on `list` operations for non-admins.
-      allow read: if isAdmin() || (resource != null && isOwner(resource.data.userId));
+      // GET: Admins can get any document. Users can only get their own.
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+      
+      // LIST: Only Admins can list the entire collection without filters.
+      // User queries (e.g., for 'Mis Órdenes') are secured by the 'get' rule.
+      allow list: if isAdmin();
 
       // CREATE: Users can create their own valid requests.
       allow create: if isValidServiceRequestCreate();
