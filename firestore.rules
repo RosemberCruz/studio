@@ -109,12 +109,18 @@ service cloud.firestore {
      *   - Users can create their own valid requests and read their own data.
      */
     match /serviceRequests/{requestId} {
-      // 1. Grant admin full read/write access. This is evaluated first.
-      allow read, write: if isAdmin();
-      
-      // 2. If not an admin, grant specific permissions to users.
-      allow create: if isValidServiceRequestCreate();
-      allow get: if isOwner(resource.data.userId);
+      // READ: Admins can get any doc. Users can only get their own.
+      allow get: if isAdmin() || isOwner(resource.data.userId);
+
+      // WRITE: Admins can update/delete anything.
+      allow update, delete: if isAdmin();
+    }
+
+    match /serviceRequests {
+        // LIST: Only admins can list the entire collection.
+        allow list: if isAdmin();
+        // CREATE: Users can create new requests for themselves.
+        allow create: if isValidServiceRequestCreate();
     }
 
     /**
