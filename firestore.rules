@@ -90,15 +90,11 @@ service cloud.firestore {
 
     /**
      * @description Manages UserAccount documents.
-     *   - Admins can get any user and list all users.
-     *   - Users can only get their own document.
-     *   - Writes are restricted to the owner, but balance/credits can be updated by an admin.
-     *   - Admins can delete any user document.
      */
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
       allow create: if isValidUserAccountCreate(userId);
-      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || isAdmin(); // Admin can update any field
+      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || isAdmin();
       allow delete: if isAdmin();
       allow list: if isAdmin();
     }
@@ -108,24 +104,19 @@ service cloud.firestore {
      * This rule set ensures admins have full access while users are restricted to their own data.
      */
     match /serviceRequests/{requestId} {
-      // ADMIN ACCESS: Admins have full read/write access. This rule is checked first.
-      allow read, write: if isAdmin();
-
-      // USER ACCESS: The following rules are only evaluated if the user is NOT an admin.
-
-      // Allow users to create their own service requests.
-      allow create: if isValidServiceRequestCreate();
+      // READ: Admins can get any document. Users can only get their own.
+      allow get: if isAdmin() || (resource.data.userId == request.auth.uid);
       
-      // Allow users to read (get) only their own service requests.
-      // This rule, combined with client-side queries (where('userId', '==', auth.uid)),
-      // securely enables users to list their own requests.
-      allow get: if resource != null && isOwner(resource.data.userId);
+      // LIST: Only admins can list the entire collection.
+      allow list: if isAdmin();
+
+      // WRITE: Users can create their own requests. Admins can update/delete any.
+      allow create: if isValidServiceRequestCreate();
+      allow update, delete: if isAdmin();
     }
 
     /**
      * @description Manages user-submitted deposit requests for balance recharges.
-     *   - Users can create their own deposit requests.
-     *   - Admins have full read/write access to manage these requests.
      */
     match /depositRequests/{requestId} {
       // READ: Only admins can read the list of deposit requests. Users can read their own.
