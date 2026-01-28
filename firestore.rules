@@ -93,18 +93,15 @@ service cloud.firestore {
     }
     
     /**
-     * @description Rules for the serviceRequests collection itself.
-     */
-    match /serviceRequests {
-      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
-      allow create: if isValidServiceRequestCreate();
-    }
-
-    /**
-     * @description Rules for individual documents in serviceRequests.
+     * @description Manages service requests.
      */
     match /serviceRequests/{requestId} {
+      // READ: Admins can list all. Users can get their own.
       allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || isOwner(resource.data.userId);
+      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+      
+      // WRITE: Users can create valid requests. Admins can update/delete any.
+      allow create: if isValidServiceRequestCreate();
       allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
     }
 
