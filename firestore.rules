@@ -106,21 +106,19 @@ service cloud.firestore {
     /**
      * @description Manages ServiceRequest documents.
      *   - Admins have full read/write access.
-     *   - Users can create their own valid requests.
-     *   - Users can read/list only their own requests.
+     *   - Users can create their own valid requests and read their own data.
      */
     match /serviceRequests/{requestId} {
-      // Admins can read and write anything. This rule takes precedence for admins.
-      allow read, write: if isAdmin();
+      // READ: Admin can read all requests. A user can read their own.
+      // This combined rule is critical. It short-circuits for admins.
+      // For users, it allows queries constrained by `where('userId', '==', uid)`.
+      allow read: if isAdmin() || isOwner(resource.data.userId);
 
-      // Logged-in users can create requests for themselves.
+      // CREATE: A logged-in user can create a valid request for themselves.
       allow create: if isValidServiceRequestCreate();
-
-      // A user can read a request IF they are the owner.
-      // This single 'read' rule covers both 'get' and 'list'.
-      // For 'list', Firestore enforces that the query must constrain
-      // the results to documents where this rule is true (e.g., via a `where` clause).
-      allow read: if isOwner(resource.data.userId);
+      
+      // UPDATE, DELETE: Only an admin can update or delete requests.
+      allow update, delete: if isAdmin();
     }
 
     /**
