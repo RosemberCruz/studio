@@ -1,8 +1,12 @@
+// This file reads the Firebase configuration from environment variables.
+// This is the standard and secure way to handle secrets in a Next.js application.
+// The values will be provided by Vercel in production, and by the `.env.local` file for local development.
+
 export const firebaseConfig = {
-  "projectId": "studio-8783231251-fea41",
-  "appId": "1:436069048916:web:be1a9d39f7992ab23843c1",
-  "apiKey": "AIzaSyDX2yBXeI0TZ4PgyVraNGAYppx-uwO1mEU",
-  "authDomain": "studio-8783231251-fea41.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "436069048916"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 };
