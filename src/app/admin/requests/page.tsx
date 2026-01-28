@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRight } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query } from 'firebase/firestore'; // Removed orderBy
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -26,7 +26,8 @@ export default function AdminRequestsPage() {
 
     const allRequestsQuery = useMemoFirebase(() => {
         if (!firestore) return null;
-        return query(collection(firestore, 'serviceRequests'), orderBy('requestDate', 'desc'));
+        // Diagnostic change: Removed orderBy('requestDate', 'desc')
+        return query(collection(firestore, 'serviceRequests'));
     }, [firestore]);
 
     const { data: requests, isLoading } = useCollection(allRequestsQuery);
