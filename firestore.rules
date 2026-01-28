@@ -110,16 +110,17 @@ service cloud.firestore {
      *   - Users can read/list only their own requests.
      */
     match /serviceRequests/{requestId} {
-      // Prioritize Admin access: Admins can read and write anything in this collection.
+      // Admins can read and write anything. This rule takes precedence for admins.
       allow read, write: if isAdmin();
-      
-      // User access:
-      // Allow users to create their own valid requests.
+
+      // Logged-in users can create requests for themselves.
       allow create: if isValidServiceRequestCreate();
-      // Allow users to get a document if they are the owner.
-      allow get: if isOwner(resource.data.userId);
-      // Allow users to list documents only if they are querying for their own userId.
-      allow list: if request.query.where.find(c => c[0] == 'userId' && c[2] == request.auth.uid) != null;
+
+      // A user can read a request IF they are the owner.
+      // This single 'read' rule covers both 'get' and 'list'.
+      // For 'list', Firestore enforces that the query must constrain
+      // the results to documents where this rule is true (e.g., via a `where` clause).
+      allow read: if isOwner(resource.data.userId);
     }
 
     /**
@@ -129,7 +130,7 @@ service cloud.firestore {
      */
     match /depositRequests/{requestId} {
       // READ: Only admins can read the list of deposit requests. Users can read their own.
-      allow read: if isAdmin() || isOwner(resource.data.userId);
+      allow get: if isAdmin() || isOwner(resource.data.userId);
       allow list: if isAdmin();
       // WRITE: Users can create their own valid requests. Admins can update/delete any.
       allow create: if isValidDepositRequestCreate();
