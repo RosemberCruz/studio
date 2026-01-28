@@ -15,8 +15,7 @@ service cloud.firestore {
     }
 
     /**
-     * Checks if the requesting user has the admin UID.
-     * This is a temporary diagnostic step to isolate rule evaluation issues.
+     * Checks if the user is an admin by their unique ID (UID) for maximum reliability.
      */
     function isAdmin() {
       return isSignedIn() && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
