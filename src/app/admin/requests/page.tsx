@@ -27,7 +27,7 @@ export default function AdminRequestsPage() {
     const isAdmin = useIsAdmin();
 
     const allRequestsQuery = useMemoFirebase(() => {
-        if (!firestore || !isAdmin) return null;
+        if (!firestore || !isAdmin) return null; // Explicitly wait for admin confirmation
         return query(collection(firestore, 'serviceRequests'), orderBy('requestDate', 'desc'));
     }, [firestore, isAdmin]);
 
@@ -38,7 +38,7 @@ export default function AdminRequestsPage() {
     }
 
     const renderContent = () => {
-        if (isLoading || !isAdmin) {
+        if (isLoading || !isAdmin) { // Show loader if isAdmin is still being determined
             return (
                 <div className="flex justify-center items-center h-60">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
