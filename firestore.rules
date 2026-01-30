@@ -67,7 +67,8 @@ service cloud.firestore {
      */
     function isValidServiceRequestCreate() {
       let data = request.resource.data;
-      return isOwner(data.userId) &&
+      return request.auth != null && 
+             request.auth.uid == data.userId &&
              data.status == 'Solicitado' &&
              data.fileUrl == null &&
              data.formData is map; // Ensure formData is a map
@@ -101,15 +102,15 @@ service cloud.firestore {
     
     /**
      * @description Manages service requests.
-     * This uses the correct, canonical structure for Firestore rules.
+     * This uses direct UID checks for diagnostics.
      */
     match /serviceRequests {
-      allow list: if isAdmin();
+      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
       allow create: if isValidServiceRequestCreate();
       
       match /{requestId} {
-        allow get: if isAdmin() || isOwner(resource.data.userId);
-        allow update, delete: if isAdmin();
+        allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || (request.auth != null && request.auth.uid == resource.data.userId);
+        allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
       }
     }
 
