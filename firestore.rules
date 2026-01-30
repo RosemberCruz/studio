@@ -22,6 +22,13 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    /**
+     * Checks if the current user is the administrator based on their UID.
+     */
+    function isAdmin() {
+      return isSignedIn() && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+    }
+
 
     /**
      * Validates required authorization fields during UserAccount creation.
@@ -49,10 +56,10 @@ service cloud.firestore {
       // Users cannot change their own ID.
       // Only an admin can change a user's balance/credits. Regular users cannot.
       return incomingData.id == existingData.id &&
-             (incomingData.balance == existingData.balance || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2')) &&
-             (incomingData.credits == existingData.credits || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2')) &&
-             (incomingData.promotionalCredits == existingData.promotionalCredits || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2')) &&
-             (incomingData.promoCreditsGrantDate == existingData.promoCreditsGrantDate || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2')); // Admin can change grant date
+             (incomingData.balance == existingData.balance || isAdmin()) &&
+             (incomingData.credits == existingData.credits || isAdmin()) &&
+             (incomingData.promotionalCredits == existingData.promotionalCredits || isAdmin()) &&
+             (incomingData.promoCreditsGrantDate == existingData.promoCreditsGrantDate || isAdmin()); // Admin can change grant date
     }
 
     /**
@@ -85,11 +92,11 @@ service cloud.firestore {
      * @description Manages UserAccount documents.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId) || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2');
+      allow get: if isOwner(userId) || isAdmin();
       allow create: if isValidUserAccountCreate(userId);
-      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2');
-      allow delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
-      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+      allow update: if (isOwner(userId) && isValidUserAccountUpdate()) || isAdmin();
+      allow delete: if isAdmin();
+      allow list: if isAdmin();
     }
     
     /**
@@ -97,14 +104,12 @@ service cloud.firestore {
      * This uses the correct, canonical structure for Firestore rules.
      */
     match /serviceRequests {
-      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+      allow list: if isAdmin();
       allow create: if isValidServiceRequestCreate();
       
       match /{requestId} {
-        allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || isOwner(resource.data.userId);
-        allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
-        // Writes are handled by 'create' on the collection and 'update' here.
-        // There is no general 'write' permission to avoid accidental overwrites.
+        allow get: if isAdmin() || isOwner(resource.data.userId);
+        allow update, delete: if isAdmin();
       }
     }
 
@@ -112,13 +117,14 @@ service cloud.firestore {
     /**
      * @description Manages user-submitted deposit requests for balance recharges.
      */
-    match /depositRequests/{requestId} {
-      // READ: Admins can list all. Users can get their own.
-      allow get: if (request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2') || isOwner(resource.data.userId);
-      allow list: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
-      // WRITE: Users can create valid requests. Admins can update/delete any.
+    match /depositRequests {
+      allow list: if isAdmin();
       allow create: if isValidDepositRequestCreate();
-      allow update, delete: if request.auth != null && request.auth.uid == 'LMXNKsZh9NMgk3tKoyyqYlqcbFY2';
+
+      match /{requestId} {
+        allow get: if isAdmin() || isOwner(resource.data.userId);
+        allow update, delete: if isAdmin();
+      }
     }
   }
 }
